@@ -1,5 +1,0 @@
-spring:
-  profiles:
-    active: local
-  config:
-    import: "classpath:../../../config-yml/config/application-local.yml"
