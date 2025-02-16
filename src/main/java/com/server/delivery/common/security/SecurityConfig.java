@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement( session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request.anyRequest().permitAll()//모든 경로 현재 개방 상태
                 );
         //인증Filter 연결
@@ -46,10 +46,9 @@ public class SecurityConfig {
     }
 
     /**
-    정적 리소스 접근에 대한 허용
-    @Method
-    PathRequest.toStaticResources().atCommonLocations() : 정
-    적 리소스 파일을 탐색하는 기본 위치(Static)을 나타내며, 아래 경로들에 대해 허용하는 메서드.
+     * 정적 리소스 접근에 대한 허용
+     *
+     * @Method PathRequest.toStaticResources().atCommonLocations() : 정적 리소스 파일을 탐색하는 기본 위치(Static)을 나타내며, 아래 경로들에 대해 허용하는 메서드.
      */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -61,7 +60,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("X-Requested-With", "Content-Type", "Authorization", "X-XSRF-token"));
         configuration.setAllowCredentials(false);
         configuration.setMaxAge(3600L);
