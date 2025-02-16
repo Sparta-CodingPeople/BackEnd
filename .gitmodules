@@ -1,4 +1,3 @@
-[submodule "config-yml"]
-	path = config-yml
+[submodule "src/main/resources/delivery-submodule"]
+	path = src/main/resources/delivery-submodule
 	url = https://github.com/Sparta-CodingPeople/yml-repo.git
-    branch = develop  # 변경하려는 브랜치로 수정
