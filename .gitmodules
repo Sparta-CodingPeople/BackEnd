@@ -1,0 +1,4 @@
+[submodule "config-yml"]
+	path = config-yml
+	url = https://github.com/Sparta-CodingPeople/yml-repo.git
+    branch = develop  # 변경하려는 브랜치로 수정
