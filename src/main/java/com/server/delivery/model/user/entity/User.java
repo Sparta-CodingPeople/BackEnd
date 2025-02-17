@@ -18,8 +18,8 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE p_user SET deleted = true WHERE user_id = ?")
-@SQLRestriction("deleted = false")
+@SQLDelete(sql = "UPDATE p_user SET user_deleted = true WHERE user_id = ?")
+@SQLRestriction("user_deleted = false")
 @Table(name = "p_user")
 public class User extends BaseEntity {
 
@@ -70,6 +70,9 @@ public class User extends BaseEntity {
 
     @Column(name = "user_token_issued_at")
     private LocalDateTime tokenIssuedAt;
+
+    @Column(name = "user_deleted")
+    private Boolean deleted;
 
     public void updateTokenIssuedAt() {
         this.tokenIssuedAt = LocalDateTime.now();
