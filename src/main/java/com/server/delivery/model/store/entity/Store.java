@@ -1,7 +1,9 @@
 package com.server.delivery.model.store.entity;
 
 import com.server.delivery.common.BaseEntity;
+import com.server.delivery.model.menu.entity.Menu;
 import com.server.delivery.model.user.entity.Owner;
+import com.server.delivery.model.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -49,8 +51,8 @@ public class Store extends BaseEntity{
     @OneToMany(mappedBy = "store")
     private List<Menu> menus;
 
-    @OneToMany(mappedBy = "store")
-    private List<Order> orders;
+//    @OneToMany(mappedBy = "store")
+//    private List<Order> orders;
 
     @OneToMany(mappedBy = "store")
     private List<StoreOperatingHours> operatingHours;
