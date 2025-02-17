@@ -51,6 +51,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserResponseDto findUserById(Long userId, CustomUserDetail customUserDetail) {
         //유저 검증
         userHelper.validateUser(customUserDetail.getUsername());
