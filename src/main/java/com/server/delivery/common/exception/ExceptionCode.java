@@ -43,8 +43,7 @@ public enum ExceptionCode {
 
     //유저 - 6000
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "User Not Found.", 6000),
-    USERNAME_IS_EXIST(HttpStatus.BAD_REQUEST, "Username is exist.", 6001),
-    ;
+    USERNAME_IS_EXIST(HttpStatus.BAD_REQUEST, "Username is exist.", 6001);
 
 
     private final HttpStatus httpStatus;
