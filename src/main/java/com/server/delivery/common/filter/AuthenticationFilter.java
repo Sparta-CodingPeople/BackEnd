@@ -19,11 +19,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtHelper jwtHelper;
-
     private static final List<String> EXCLUDE_URLS = List.of(
             "/api/v1/auth/sign-up", "/api/owner/v1/auth/sign-up", "/api/v1/auth/sign-in"
     );
+    private final JwtHelper jwtHelper;
 
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -46,8 +45,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
-        }catch (CustomJwtException e) {
-            request.setAttribute("httpStatus",e.getHttpStatus());
+        } catch (CustomJwtException e) {
+            request.setAttribute("httpStatus", e.getHttpStatus());
             request.setAttribute("message", e.getMessage());
             request.setAttribute("code", e.getCode());
         }
