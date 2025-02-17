@@ -12,14 +12,14 @@ import static com.server.delivery.common.exception.ExceptionCode.NOT_HANDLED_EXC
 @Builder
 @Slf4j
 public record ExceptionResponse(
-        String status,
+        HttpStatus status,
         @JsonIgnore HttpStatus httpStatus,
         Integer code,
         String message
 ) {
     public static ExceptionResponse fromException(ExceptionCode errorCode) {
         return new ExceptionResponse(
-                "ERROR",
+                errorCode.getHttpStatus(),
                 errorCode.getHttpStatus(),
                 errorCode.getCode(),
                 errorCode.getMessage()
@@ -29,7 +29,7 @@ public record ExceptionResponse(
     public static ExceptionResponse fromError(Exception ex) {
         log.error("Unhandled exception occurred", ex);
         return new ExceptionResponse(
-                "ERROR",
+                HttpStatus.INTERNAL_SERVER_ERROR,
                 NOT_HANDLED_EXCEPTION.getHttpStatus(),
                 NOT_HANDLED_EXCEPTION.getCode(),
                 "An unexpected error occurred. Please try again later."
