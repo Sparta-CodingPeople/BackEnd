@@ -2,10 +2,14 @@ package com.server.delivery.common.jwt;
 
 import com.server.delivery.common.exception.ExceptionCode;
 import com.server.delivery.common.exception.customException.CustomJwtException;
+import com.server.delivery.common.exception.customException.CustomUserException;
+import com.server.delivery.model.user.entity.User;
+import com.server.delivery.model.user.repository.UserJpaRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,22 +19,23 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class JwtHelper {
     // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    // 사용자 권한 값의 KEY
-    public static final String AUTHORIZATION_KEY = "auth";
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
-    // 어세스 토큰 만료 시간
 
+    private final UserJpaRepository userRepository;
+
+    // 어세스 토큰 만료 시간
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
     private String secretKey;
 
@@ -53,10 +58,22 @@ public class JwtHelper {
     public boolean validateToken(String token) {
         try {
             log.info("validateToken 검증 시작");
-            Jwts.parserBuilder()
+            Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
+            //4. 사용자 정보 확인
+            String username = getAuthenticationFromAccessToken(token).getName();
+            User user = userRepository.findByUsername(username).orElseThrow(
+                    () -> new CustomUserException(ExceptionCode.USER_NOT_FOUND)
+            );
+
+            // JWT 발급 시간과 token_issued_at 비교
+            LocalDateTime tokenIssuedAt = LocalDateTime.parse(claims.getBody().get("tokenIssuedAt").toString());
+            if (tokenIssuedAt != null && tokenIssuedAt.isBefore(user.getTokenIssuedAt())) {
+                log.error("JWT token issued time is earlier than token_issued_at in user data.");
+                throw new CustomJwtException(ExceptionCode.TOKEN_IS_INVALID);
+            }
             return true;
         } catch (SecurityException | MalformedJwtException | io.jsonwebtoken.security.SignatureException e) {
             log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
