@@ -1,0 +1,15 @@
+package com.server.delivery.domain.review.dto.res;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+public record ReviewUpdateResponseDto(
+	Double rating,
+	String comment,
+	List<String> images,
+	LocalDateTime createdAt,
+	String createdBy,
+	LocalDateTime updatedAt,
+	String updatedBy
+) {
+}
