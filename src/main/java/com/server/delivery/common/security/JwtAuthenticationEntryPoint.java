@@ -19,7 +19,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          AuthenticationException authException) throws IOException {
 
         String message = request.getAttribute("message").toString();
-        int code = (int)request.getAttribute("code");
+        int code = (int) request.getAttribute("code");
 
 
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -27,7 +27,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType("application/json");
 
         ObjectMapper objectMapper = new ObjectMapper();
-        String result = objectMapper.writeValueAsString(ExceptionResponse.builder().httpStatus(HttpStatus.FORBIDDEN).status(message).code(code).build());
+        String result = objectMapper.writeValueAsString(ExceptionResponse.builder().httpStatus(HttpStatus.FORBIDDEN).status(HttpStatus.FORBIDDEN).message(message).code(code).build());
 
         response.getWriter().write(result);
     }
