@@ -72,7 +72,8 @@ public class User extends BaseEntity {
     private LocalDateTime tokenIssuedAt;
 
     @Column(name = "user_deleted")
-    private Boolean deleted;
+    @Builder.Default
+    private Boolean deleted = Boolean.FALSE;
 
     public void updateTokenIssuedAt() {
         this.tokenIssuedAt = LocalDateTime.now();
