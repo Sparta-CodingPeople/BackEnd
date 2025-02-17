@@ -32,14 +32,15 @@ import java.util.Date;
 public class AuthServiceImpl implements AuthService {
 
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    @Value("${jwt.secret.key}")
-    private static String secretKey;
     private final S3ImageUtilImpl s3ImageUtilImpl;
     private final UserJpaRepository userRepository;
     private final UserHelper userHelper;
+    // Change this to a non-static field
+    @Value("${jwt.secret.key}")
+    private String secretKey;
 
     // JWT 토큰 생성 정적 메서드
-    private static String generateToken(User user) {
+    private static String generateToken(User user, String secretKey) {
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .claim("id", user.getId())
@@ -47,11 +48,11 @@ public class AuthServiceImpl implements AuthService {
                 .claim("tokenIssuedAt", LocalDateTime.now().toString())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1시간 만료
-                .signWith(getSigningKey())
+                .signWith(getSigningKey(secretKey))
                 .compact();
     }
 
-    private static SecretKey getSigningKey() {
+    private static SecretKey getSigningKey(String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
@@ -69,7 +70,6 @@ public class AuthServiceImpl implements AuthService {
         User user = CustomerCreateRequestDto.from(signUpRequestDto, uploadedImage);
 
         userRepository.save(user);
-
     }
 
     @Transactional
@@ -84,7 +84,6 @@ public class AuthServiceImpl implements AuthService {
         User user = OwnerCreateRequestDto.from(requestDto, uploadedImage);
 
         userRepository.save(user);
-
     }
 
     @Transactional
@@ -94,7 +93,7 @@ public class AuthServiceImpl implements AuthService {
 
         if (passwordEncoder.matches(signInRequestDto.getPassword(), user.getPassword())) {
             user.updateTokenIssuedAt();
-            return generateToken(user);
+            return generateToken(user, secretKey);
         } else {
             throw new CustomUserException(ExceptionCode.BAD_REQUEST);
         }
@@ -104,7 +103,7 @@ public class AuthServiceImpl implements AuthService {
     public String renewToken(CustomUserDetail customUserDetail) {
         User user = userHelper.getUser(customUserDetail.getUsername());
 
-        String renewToken = generateToken(user);
+        String renewToken = generateToken(user, secretKey);
         user.updateTokenIssuedAt();
 
         return renewToken;
