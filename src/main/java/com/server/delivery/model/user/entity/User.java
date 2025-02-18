@@ -3,6 +3,7 @@ package com.server.delivery.model.user.entity;
 import com.server.delivery.common.BaseEntity;
 import com.server.delivery.model.user.entity.constant.UserGender;
 import com.server.delivery.model.user.entity.constant.UserRole;
+import com.server.delivery.model.userStore.entity.UserStore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -11,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -74,6 +76,9 @@ public class User extends BaseEntity {
     @Column(name = "user_deleted")
     @Builder.Default
     private Boolean deleted = Boolean.FALSE;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserStore> userStores;
 
     public void updateTokenIssuedAt() {
         this.tokenIssuedAt = LocalDateTime.now();

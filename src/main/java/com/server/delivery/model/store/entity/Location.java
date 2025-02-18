@@ -2,17 +2,14 @@ package com.server.delivery.model.store.entity;
 
 import com.server.delivery.common.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(name = "p_location")
 public class Location extends BaseEntity {
@@ -22,7 +19,7 @@ public class Location extends BaseEntity {
     @Column(name = "location_uuid")
     private UUID locationUuid;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "location_category_id", nullable = false)
     private SeoulAreaCode locationCategory;
 

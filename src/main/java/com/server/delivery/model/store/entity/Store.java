@@ -2,12 +2,11 @@ package com.server.delivery.model.store.entity;
 
 import com.server.delivery.common.BaseEntity;
 import com.server.delivery.model.menu.entity.Menu;
-import com.server.delivery.model.user.entity.Owner;
-import com.server.delivery.model.user.entity.User;
+import com.server.delivery.model.review.entity.Review;
+import com.server.delivery.model.userStore.entity.UserStore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
-
 
 import java.util.List;
 import java.util.UUID;
@@ -15,11 +14,11 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE p_store SET store_is_deleted = true WHERE store_uuid = ?")
 @Table(name = "p_store")
-public class Store extends BaseEntity{
+public class Store extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -41,9 +40,8 @@ public class Store extends BaseEntity{
     @Column(name = "store_is_granted")
     private boolean storeIsGranted = Boolean.FALSE;
 
-    @ManyToOne
-    @JoinColumn(name = "user_uuid", nullable = false)
-    private User user;
+    @OneToMany(mappedBy = "store")
+    private List<UserStore> userStore;
 
     @ManyToOne
     @JoinColumn(name = "store_category_id")
@@ -57,4 +55,11 @@ public class Store extends BaseEntity{
 
     @OneToMany(mappedBy = "store")
     private List<StoreOperationTimes> operatingHours;
+
+    @OneToMany(mappedBy = "store")
+    private List<Review> reviews;
+
+    @OneToOne
+    @JoinColumn(name = "store_location_uuid")
+    private StoreLocation storeLocation;  // 이 부분에서 StoreLocation과 연결
 }
