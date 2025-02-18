@@ -1,6 +1,7 @@
 package com.server.delivery.domain.menu.service;
 
-import com.server.delivery.domain.menu.dto.request.MenuRequestDto;
+import com.server.delivery.domain.menu.dto.request.MenuCreateRequestDto;
+import com.server.delivery.domain.menu.dto.request.MenuUpdateRequestDto;
 import com.server.delivery.domain.menu.dto.response.MenuResponseDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ public class MenuService {
 
     public int registerMenu(
             UUID restaurantId,
-            MenuRequestDto requestDto,
+            MenuCreateRequestDto requestDto,
             MultipartFile foodImage) {
         return 0;
     }
@@ -22,7 +23,7 @@ public class MenuService {
     public int updateMenu(
             UUID restaurantId,
             UUID menuId,
-            MenuRequestDto requestDto) {
+            MenuUpdateRequestDto requestDto) {
         return 0;
     }
 
