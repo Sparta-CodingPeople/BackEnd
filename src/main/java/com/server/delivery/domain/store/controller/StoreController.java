@@ -1,6 +1,8 @@
 package com.server.delivery.domain.store.controller;
 
 import com.server.delivery.common.PageCustom;
+import com.server.delivery.common.jwt.CustomUserDetail;
+import com.server.delivery.common.response.CustomResponse;
 import com.server.delivery.domain.store.dto.request.*;
 import com.server.delivery.domain.store.dto.response.StoreResponseDto;
 import com.server.delivery.domain.store.service.StoreService;
@@ -24,109 +26,76 @@ public class StoreController {
 
     // 매장 등록
     @PostMapping
-    public ResponseEntity<StoreResponseDto> registerStore(@RequestBody StoreRequestDto requestDto) {
+    public ResponseEntity<CustomResponse<Void>> registerStore(@RequestBody StoreRegisterRequestDto requestDto) {
 
             storeService.registerStore(requestDto);
-            StoreResponseDto response = StoreResponseDto.builder()
-                    .status("200")
-                    .message("매장 등록 요청 성공, 관리자의 승인이 필요합니다.")
-                    .data(null)
-                    .build();
-            return ResponseEntity.ok(response);
 
+            return ResponseEntity.ok(CustomResponse.success("매장 등록 요청 성공"));
     }
 
     // 매장 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<StoreResponseDto> deleteStore(
+    public ResponseEntity<CustomResponse<Void>> deleteStore(
             @PathVariable UUID id,
-            @AuthenticationPrincipal String password ) {
+            @AuthenticationPrincipal CustomUserDetail userDetail ) {
 
-            storeService.deleteStore(id, password);
+            // userDetail이 null일 경우 임시 비밀번호 설정(테스트용)
+            String userPassword = (userDetail != null) ? userDetail.getPassword() : "password1234!";
 
-            StoreResponseDto response = StoreResponseDto.builder()
-                    .status("200")
-                    .message("매장 삭제 성공")
-                    .data(null)
-                    .build();
+            storeService.deleteStore(id, userPassword);
 
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(CustomResponse.success("매장 삭제 성공"));
     }
 
     // 매장 정보 수정
     @PatchMapping("/{id}")
-    public ResponseEntity<StoreResponseDto> updateStore(
+    public ResponseEntity<CustomResponse<Void>> updateStore(
             @PathVariable UUID id,
-            @RequestBody StoreRequestDto requestDto) {
-            storeService.updateStore(id, requestDto);
+            @RequestBody StoreUpdateRequestDto requestDto) {
 
-            StoreResponseDto response = StoreResponseDto.builder()
-                    .status("200")
-                    .message("매장 정보 수정 성공")
-                    .data(null)
-                    .build();
+        storeService.updateStore(id, requestDto);
 
-            return ResponseEntity.ok(response);
+        return ResponseEntity.ok(CustomResponse.success("매장 정보 수정 성공"));
 
     }
 
     // 매장 단일 조회
     @GetMapping("/{id}")
-    public ResponseEntity<StoreResponseDto> getStore(@PathVariable UUID id) {
+    public ResponseEntity<CustomResponse<StoreResponseDto>> getStore(@PathVariable UUID id) {
 
         StoreResponseDto storeData = storeService.getStore(id);
 
-            StoreResponseDto response = StoreResponseDto.builder()
-                    .status("200")
-                    .message("매장 단일 조회 성공")
-                    .data(storeData)
-                    .build();
-
-            return ResponseEntity.ok(response);
+        return ResponseEntity.ok(CustomResponse.success("매장 단일 조회 성공", storeData));
 
     }
 
     // 매장 위치 수정
     @PatchMapping("/{id}/location")
-    public ResponseEntity<StoreResponseDto> updateStoreLocation(
+    public ResponseEntity<CustomResponse<Void>> updateStoreLocation(
             @PathVariable UUID id,
             @RequestBody StoreLocationRequestDto requestDto) {
 
              storeService.updateStoreLocation(id, requestDto);
 
-
-            StoreResponseDto response = StoreResponseDto.builder()
-                    .status("200")
-                    .message("매장 위치 수정 성공")
-                    .data(null)
-                    .build();
-
-            return ResponseEntity.ok(response);
+             return ResponseEntity.ok(CustomResponse.success("매장 위치 수정 성공"));
 
     }
 
     // 매장 영업 시간 수정
     @PatchMapping("/{id}/time")
-    public ResponseEntity<StoreResponseDto> updateStoreOperatingHours(
+    public ResponseEntity<CustomResponse<Void>> updateStoreOperatingHours(
             @PathVariable UUID id,
-            @RequestBody StoreOperatingHoursRequestDto[] requestDto) {
+            @RequestBody List<StoreOperatingHoursRequestDto> requestDto) {
 
         storeService.updateStoreOperatingHours(id, requestDto);
 
-
-            StoreResponseDto response = StoreResponseDto.builder()
-                    .status("200")
-                    .message("매장 운영 시간 수정 성공")
-                    .data(null)
-                    .build();
-
-            return ResponseEntity.ok(response);
+        return ResponseEntity.ok(CustomResponse.success("매장 운영 시간 수정 성공"));
 
     }
 
     // 매장 검색
     @GetMapping
-    public ResponseEntity<StoreResponseDto> searchStores(
+    public ResponseEntity<CustomResponse<PageCustom<StoreResponseDto>>> searchStores(
             @RequestParam("search") String search,
             @RequestParam("size") int size,
             @RequestParam("page") int page,
@@ -140,12 +109,6 @@ public class StoreController {
 
         PageCustom<StoreResponseDto> pageResultList = new PageCustom<>(storeList, pageable, totalStores);
 
-        StoreResponseDto response = StoreResponseDto.builder()
-                .status("200")
-                .message("매장 검색 결과")
-                .data(pageResultList)
-                .build();
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(CustomResponse.success("매장 검색 결과", pageResultList));
     }
 }
