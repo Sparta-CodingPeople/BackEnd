@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,9 +26,10 @@ public class MenuController {
     @PostMapping("/{storeId}")
     public ResponseEntity<MenuResponseDto> registerMenu(
             @PathVariable UUID storeId,
-            @RequestBody MenuRequestDto requestDto) {
+            @RequestPart("menuData") MenuRequestDto requestDto,
+            @RequestPart(value = "foodImage", required = false) MultipartFile foodImage ) {
 
-        menuService.registerMenu(storeId, requestDto);
+        menuService.registerMenu(storeId, requestDto, foodImage);
 
         MenuResponseDto response = MenuResponseDto.builder()
                 .status("200")
