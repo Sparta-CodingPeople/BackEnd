@@ -1,4 +1,4 @@
-package com.server.delivery.model.user.entity;
+package com.server.delivery.model.review.entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import com.server.delivery.common.BaseEntity;
+import com.server.delivery.model.user.entity.User;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

@@ -1,4 +1,4 @@
-package com.server.delivery.model.user.entity;
+package com.server.delivery.model.review.entity;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
