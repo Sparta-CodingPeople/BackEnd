@@ -24,8 +24,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@SQLDelete(sql = "UPDATE p_review_image SET review_image_Deleted = true WHERE review_image_id = ?")
-@SQLRestriction("review_image_Deleted = false")
+@SQLDelete(sql = "UPDATE p_review_image SET review_image_is_Deleted = true WHERE review_image_id = ?")
+@SQLRestriction("review_image_is_Deleted = false")
 public class ReviewImage extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
@@ -43,7 +43,7 @@ public class ReviewImage extends BaseEntity {
 	private Long imageSize;
 
 	@Builder.Default
-	@Column(name = "review_image_Deleted")
+	@Column(name = "review_image_is_Deleted")
 	private Boolean isDeleted = Boolean.FALSE;
 
 }

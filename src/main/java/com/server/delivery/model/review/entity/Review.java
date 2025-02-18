@@ -30,8 +30,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@SQLDelete(sql = "UPDATE p_review SET review_Deleted = true WHERE review_id = ?")
-@SQLRestriction("review_Deleted = false")
+@SQLDelete(sql = "UPDATE p_review SET review_is_Deleted = true WHERE review_id = ?")
+@SQLRestriction("review_is_Deleted = false")
 public class Review extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
@@ -51,7 +51,7 @@ public class Review extends BaseEntity {
 	private List<ReviewImage> images = new ArrayList<>();
 
 	@Builder.Default
-	@Column(name = "review_Deleted")
+	@Column(name = "review_is_Deleted")
 	private Boolean isDeleted = Boolean.FALSE;
 
 	// todo. 가게 id, 주문 id FK
