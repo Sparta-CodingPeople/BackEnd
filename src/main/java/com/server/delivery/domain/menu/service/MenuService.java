@@ -4,6 +4,7 @@ import com.server.delivery.domain.menu.dto.request.MenuRequestDto;
 import com.server.delivery.domain.menu.dto.response.MenuResponseDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,7 +14,8 @@ public class MenuService {
 
     public int registerMenu(
             UUID restaurantId,
-            MenuRequestDto requestDto) {
+            MenuRequestDto requestDto,
+            MultipartFile foodImage) {
         return 0;
     }
 
