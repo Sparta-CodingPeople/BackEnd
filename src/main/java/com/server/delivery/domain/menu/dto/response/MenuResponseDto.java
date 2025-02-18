@@ -23,11 +23,11 @@ public class MenuResponseDto {
 
     public static MenuResponseDto from(Menu menu) {
         return MenuResponseDto.builder()
-                .menuId(menu.getMenuId())
-                .foodName(menu.getFoodName())
-                .description(menu.getDescription())
-                .price(menu.getPrice())
-                .availability(menu.isAvailability())
+                .menuId(menu.getMenuUuId())
+                .foodName(menu.getMenuName())
+                .description(menu.getMenuDescription())
+                .price(menu.getMenuPrice())
+                .availability(menu.isMenuAvailability())
                 .foodImage(menu.getFoodImage())
                 .build();
     }
