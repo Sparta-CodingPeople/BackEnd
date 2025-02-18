@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -24,5 +26,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void delete(User user) {
         jpaRepository.delete(user);
+    }
+
+    @Override
+    public Optional<User> findById(Long userId) {
+        return jpaRepository.findById(userId);
     }
 }
