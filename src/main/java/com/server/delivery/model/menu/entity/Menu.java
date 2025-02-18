@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 
 import java.util.UUID;
 
@@ -14,29 +15,30 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "p_menu")
+@SQLDelete(sql = "UPDATE p_menus SET menuAvailability = FALSE WHERE menu_uuid = ?")
+@Table(name = "p_menus")
 public class Menu {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "menu_id")
-    private UUID menuId;
+    @Column(name = "menu_uuid")
+    private UUID menuUuId;
 
     @ManyToOne
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    @Column(name = "food_name", nullable = false)
-    private String foodName;
+    @Column(name = "menu_name", nullable = false)
+    private String menuName;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "menu_description")
+    private String menuDescription;
 
-    @Column(name = "price" , nullable = false)
-    private int price;
+    @Column(name = "menu_price" , nullable = false)
+    private int menuPrice;
 
-    @Column(name = "availability", nullable = false)
-    private boolean availability;
+    @Column(name = "menu_availability", nullable = false)
+    private boolean menuAvailability;
 
     @Column(name = "food_image")
     private String foodImage;
