@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class StoreLocationRequestDto {
     private String address;
-    private int storeRegion;
+    private int seoulRegionCode;
 }
