@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @Setter
@@ -16,15 +18,15 @@ import lombok.Setter;
 public class StoreLocation extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "store_location_id")
-    private int storeLocationId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "store_location_uuid")
+    private UUID storeLocationUuid;
 
     @ManyToOne
     @JoinColumn(name = "store_id")
     private Store store;
 
     @ManyToOne
-    @JoinColumn(name = "seoul_region_code")
-    private SeoulRegionCode seoulRegionCode;
+    @JoinColumn(name = "location_uuid")
+    private SeoulAreaCode seoulRegionCode;
 }
