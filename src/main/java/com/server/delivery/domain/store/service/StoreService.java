@@ -1,8 +1,6 @@
 package com.server.delivery.domain.store.service;
 
-import com.server.delivery.domain.store.dto.request.StoreLocationRequestDto;
-import com.server.delivery.domain.store.dto.request.StoreOperatingHoursRequestDto;
-import com.server.delivery.domain.store.dto.request.StoreRequestDto;
+import com.server.delivery.domain.store.dto.request.*;
 import com.server.delivery.domain.store.dto.response.StoreResponseDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,11 +19,12 @@ public class StoreService {
 
     public int updateStore(
             UUID id,
-            StoreRequestDto requestDto) {
+            StoreUpdateRequestDto requestDto) {
         return 0;
     }
 
     public StoreResponseDto getStore(UUID id) {
+
         return null;
     }
 
@@ -37,7 +36,7 @@ public class StoreService {
 
     public int updateStoreOperatingHours(
             UUID id,
-            StoreOperatingHoursRequestDto[] requestDto) {
+            List<StoreOperatingHoursRequestDto> requestDto) {
         return 0;
     }
 
@@ -51,7 +50,7 @@ public class StoreService {
         return null;
     }
 
-    public int registerStore(StoreRequestDto requestDto) {
+    public int registerStore(StoreRegisterRequestDto requestDto) {
         return 0;
     }
 }
