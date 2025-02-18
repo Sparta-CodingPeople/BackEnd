@@ -77,7 +77,6 @@ public class ReviewController {
 	}
 
 	// 특정 사용자가 작성한 리뷰 목록을 확인할 경우 == 본인 리뷰 조회
-	//@GetMapping("/v1/reviews/me")
 	@GetMapping("/v1/users/{userId}/reviews")
 	public ResponseEntity<PagedModel<UserReviewSearchResponseDto>> searchUserReviews(
 		@AuthenticationPrincipal CustomUserDetail userDetail,
