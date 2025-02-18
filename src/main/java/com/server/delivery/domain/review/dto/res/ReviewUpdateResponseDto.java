@@ -5,7 +5,7 @@ import java.util.List;
 
 public record ReviewUpdateResponseDto(
 	Double rating,
-	String comment,
+	String content,
 	List<String> images,
 	LocalDateTime createdAt,
 	String createdBy,
