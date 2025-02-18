@@ -11,13 +11,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "p_seoul_region_code")
-public class SeoulRegionCode {
+@Table(name = "p_seoul_area_code")
+public class SeoulAreaCode {
 
     @Id
-    @Column(name = "seoul_region_code_id")
+    @Column(name = "seoul_area_code_id")
     private int seoulRegionCode;
 
-    @Column(name = "seoul_code_category", nullable = false, length = 50)
-    private String seoulCodeCategory;
+    @Column(name = "area_name", nullable = false, length = 50)
+    private String areaName;
 }
