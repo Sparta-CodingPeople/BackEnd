@@ -2,6 +2,7 @@ package com.server.delivery.domain.review.service;
 
 import java.util.List;
 
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +17,7 @@ import com.server.delivery.domain.review.dto.res.UserReviewSearchResponseDto;
 @Service
 public class ReviewService {
 	public ReviewCreateResponseDto createReview(
+		Long userId,
 		ReviewCreateRequestDto request,
 		List<MultipartFile> images
 	) {
@@ -27,6 +29,7 @@ public class ReviewService {
 	}
 
 	public ReviewUpdateResponseDto updateReview(
+		Long userId,
 		Long reviewId,
 		ReviewUpdateRequestDto request,
 		List<MultipartFile> images
@@ -34,15 +37,26 @@ public class ReviewService {
 		return null;
 	}
 
-	public List<StoreReviewSearchResponseDto> searchStoreReviews(Long restaurantId) {
+	public PagedModel<StoreReviewSearchResponseDto> searchStoreReviews(
+		Long restaurantId,
+		int page,
+		int size
+	) {
 		return null;
 	}
 
-	public List<UserReviewSearchResponseDto> searchUserReviews(Long userId) {
+	public PagedModel<UserReviewSearchResponseDto> searchUserReviews(
+		Long userId,
+		int page,
+		int size
+	) {
 		return null;
 	}
 
-	public void deleteReview(Long reviewId) {
+	public void deleteReview(
+		Long userId,
+		Long reviewId
+	) {
 
 	}
 }
