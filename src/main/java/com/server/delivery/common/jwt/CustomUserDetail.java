@@ -21,7 +21,7 @@ public class CustomUserDetail implements UserDetails {
         this.authorities = authorities;
     }
 
-    public Long getUuid() {
+    public Long getId() {
         return userId;
     }
 
