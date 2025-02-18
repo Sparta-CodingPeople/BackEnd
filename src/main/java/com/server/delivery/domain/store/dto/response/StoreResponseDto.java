@@ -1,8 +1,6 @@
 package com.server.delivery.domain.store.dto.response;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -14,16 +12,14 @@ public class StoreResponseDto {
     private String message;
     private Object data;
 
-    private UUID storeId;
+    private UUID storeUuid;
     private String storeName;
-    private UUID ownerUuid;
-    private UUID managerUuid;
     private int storeCategoryId;
     private int storeLocationId;
     private long storeOperationId;
-    private String contactNumber;
-    private boolean isDeleted;
-    private boolean isGranted;
+    private String phoneNumber;
+    private boolean storeIsDeleted;
+    private boolean storeIsGranted;
 
 
 
