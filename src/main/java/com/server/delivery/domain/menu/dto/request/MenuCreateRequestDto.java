@@ -1,10 +1,9 @@
 package com.server.delivery.domain.menu.dto.request;
 
 import lombok.Getter;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
-public class MenuRequestDto {
+public class MenuCreateRequestDto {
     private String foodName;
     private String description;
     private int price;
