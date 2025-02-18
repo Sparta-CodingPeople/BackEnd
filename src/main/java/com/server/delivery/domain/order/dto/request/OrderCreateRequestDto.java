@@ -1,18 +1,21 @@
 package com.server.delivery.domain.order.dto.request;
 
 import com.server.delivery.domain.order.dto.OrderItemDto;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
+@Builder
 public class OrderCreateRequestDto {
     private Long userId;
     private String userName;
-    private Long storeId;
+    private UUID storeId;
     private String storeName;
     private List<OrderItemDto> items;
 
@@ -20,7 +23,7 @@ public class OrderCreateRequestDto {
     private int totalprice;
     private String deliveryAddress;
     private String messageForRider;
-    private String messageForRestorant;
+    private String messageForStore;
     private String orderType;
     private String payType;
 
