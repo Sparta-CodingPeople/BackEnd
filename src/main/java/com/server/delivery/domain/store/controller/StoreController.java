@@ -26,25 +26,13 @@ public class StoreController {
     @PostMapping
     public ResponseEntity<StoreResponseDto> registerStore(@RequestBody StoreRequestDto requestDto) {
 
-        int storeRegister =  storeService.registerStore(requestDto);
-
-        if(storeRegister!=0) {
-
+            storeService.registerStore(requestDto);
             StoreResponseDto response = StoreResponseDto.builder()
                     .status("200")
                     .message("매장 등록 요청 성공, 관리자의 승인이 필요합니다.")
                     .data(null)
                     .build();
             return ResponseEntity.ok(response);
-        }else{
-
-            StoreResponseDto response = StoreResponseDto.builder()
-                    .status("400")
-                    .message("매장 등록 요청 실패!")
-                    .data(null)
-                    .build();
-            return ResponseEntity.badRequest().body(response);
-        }
 
     }
 
@@ -54,10 +42,7 @@ public class StoreController {
             @PathVariable UUID id,
             @AuthenticationPrincipal String password ) {
 
-
-        int storeDelete = storeService.deleteStore(id, password);
-
-        if(storeDelete !=0) {
+            storeService.deleteStore(id, password);
 
             StoreResponseDto response = StoreResponseDto.builder()
                     .status("200")
@@ -66,16 +51,6 @@ public class StoreController {
                     .build();
 
             return ResponseEntity.ok(response);
-        }else{
-
-            StoreResponseDto response = StoreResponseDto.builder()
-                    .status("400")
-                    .message("매장 삭제 실패!")
-                    .data(null)
-                    .build();
-
-            return ResponseEntity.badRequest().body(response);
-        }
     }
 
     // 매장 정보 수정
@@ -83,9 +58,7 @@ public class StoreController {
     public ResponseEntity<StoreResponseDto> updateStore(
             @PathVariable UUID id,
             @RequestBody StoreRequestDto requestDto) {
-        int storeUpdate = storeService.updateStore(id, requestDto);
-
-        if(storeUpdate!=0) {
+            storeService.updateStore(id, requestDto);
 
             StoreResponseDto response = StoreResponseDto.builder()
                     .status("200")
@@ -94,16 +67,7 @@ public class StoreController {
                     .build();
 
             return ResponseEntity.ok(response);
-        }else{
 
-            StoreResponseDto response = StoreResponseDto.builder()
-                    .status("400")
-                    .message("매장 정보 수정 실패!")
-                    .data(null)
-                    .build();
-
-            return ResponseEntity.badRequest().body(response);
-        }
     }
 
     // 매장 단일 조회
@@ -112,8 +76,6 @@ public class StoreController {
 
         StoreResponseDto storeData = storeService.getStore(id);
 
-        if(storeData!=null) {
-
             StoreResponseDto response = StoreResponseDto.builder()
                     .status("200")
                     .message("매장 단일 조회 성공")
@@ -121,16 +83,7 @@ public class StoreController {
                     .build();
 
             return ResponseEntity.ok(response);
-        }else{
 
-            StoreResponseDto response = StoreResponseDto.builder()
-                    .status("200")
-                    .message("매장 단일 조회 실패!")
-                    .data(storeData)
-                    .build();
-
-            return ResponseEntity.badRequest().body(response);
-        }
     }
 
     // 매장 위치 수정
@@ -139,9 +92,9 @@ public class StoreController {
             @PathVariable UUID id,
             @RequestBody StoreLocationRequestDto requestDto) {
 
-        int updateStoreLocation = storeService.updateStoreLocation(id, requestDto);
+             storeService.updateStoreLocation(id, requestDto);
 
-        if(updateStoreLocation!=0) {
+
             StoreResponseDto response = StoreResponseDto.builder()
                     .status("200")
                     .message("매장 위치 수정 성공")
@@ -149,15 +102,7 @@ public class StoreController {
                     .build();
 
             return ResponseEntity.ok(response);
-        }else{
-            StoreResponseDto response = StoreResponseDto.builder()
-                    .status("400")
-                    .message("매장 위치 수정 실패!")
-                    .data(null)
-                    .build();
 
-            return ResponseEntity.badRequest().body(response);
-        }
     }
 
     // 매장 영업 시간 수정
@@ -166,9 +111,9 @@ public class StoreController {
             @PathVariable UUID id,
             @RequestBody StoreOperatingHoursRequestDto[] requestDto) {
 
-        int updateStoreOperatingHours = storeService.updateStoreOperatingHours(id, requestDto);
+        storeService.updateStoreOperatingHours(id, requestDto);
 
-        if(updateStoreOperatingHours!=0) {
+
             StoreResponseDto response = StoreResponseDto.builder()
                     .status("200")
                     .message("매장 운영 시간 수정 성공")
@@ -176,15 +121,7 @@ public class StoreController {
                     .build();
 
             return ResponseEntity.ok(response);
-        }else{
-            StoreResponseDto response = StoreResponseDto.builder()
-                    .status("400")
-                    .message("매장 운영 시간 수정 실패")
-                    .data(null)
-                    .build();
 
-            return ResponseEntity.badRequest().body(response);
-        }
     }
 
     // 매장 검색
