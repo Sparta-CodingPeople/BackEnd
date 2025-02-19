@@ -6,6 +6,7 @@ import com.server.delivery.common.jwt.CustomUserDetail;
 import com.server.delivery.domain.auth.dto.request.CustomerCreateRequestDto;
 import com.server.delivery.domain.auth.dto.request.OwnerCreateRequestDto;
 import com.server.delivery.domain.auth.dto.request.SignInRequestDto;
+import com.server.delivery.domain.user.dto.request.MasterSignInRequestDto;
 import com.server.delivery.model.user.entity.User;
 import com.server.delivery.model.user.repository.UserJpaRepository;
 import com.server.delivery.util.helper.UserHelper;
@@ -35,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
     private final S3ImageUtilImpl s3ImageUtilImpl;
     private final UserJpaRepository userRepository;
     private final UserHelper userHelper;
-    // Change this to a non-static field
+
     @Value("${jwt.secret.key}")
     private String secretKey;
 
@@ -87,13 +88,28 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Transactional
-    public String signIn(SignInRequestDto signInRequestDto) {
+    public String signInCustomer(SignInRequestDto signInRequestDto) {
         log.info("username = {} ", signInRequestDto.getUsername());
         User user = userHelper.getUser(signInRequestDto.getUsername());
 
         if (passwordEncoder.matches(signInRequestDto.getPassword(), user.getPassword())) {
             user.updateTokenIssuedAt();
             return generateToken(user, secretKey);
+        } else {
+            throw new CustomUserException(ExceptionCode.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public String signInMaster(MasterSignInRequestDto masterSignInRequestDto) {
+
+        User user = userHelper.getUser(masterSignInRequestDto.getUsername());
+
+        if (passwordEncoder.matches(masterSignInRequestDto.getPassword(), user.getPassword())) {
+            user.updateTokenIssuedAt();
+            return generateToken(user, secretKey);
+        } else if (!user.getMaster().getMasterCode().equals(masterSignInRequestDto.getMasterCode())) {
+            throw new CustomUserException(ExceptionCode.BAD_REQUEST);
         } else {
             throw new CustomUserException(ExceptionCode.BAD_REQUEST);
         }
