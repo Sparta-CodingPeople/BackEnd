@@ -4,8 +4,5 @@ import lombok.Getter;
 
 @Getter
 public class StoreUpdateRequestDto {
-    private String storeName;
-    private String storeCategory;
-    private String phoneNumeber;
-    private String storeDescription;
+    private StoreInfoDto storeInfo;
 }
