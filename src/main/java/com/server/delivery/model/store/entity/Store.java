@@ -15,6 +15,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE p_store SET store_is_deleted = true WHERE store_uuid = ?")
