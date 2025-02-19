@@ -25,5 +25,5 @@ public class StoreLocation extends BaseEntity {
 
     @OneToOne
     @JoinColumn(name = "location_uuid")
-    private SeoulAreaCode seoulRegionCode;
+    private Location location;
 }
