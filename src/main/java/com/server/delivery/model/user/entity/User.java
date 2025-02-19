@@ -79,8 +79,8 @@ public class User extends BaseEntity {
     @JoinColumn(name = "master_id")
     private Master master;
 
-    @OneToMany(mappedBy = "owner")
-    private List<Owner> owner;
+    @OneToMany(mappedBy = "user")
+    private List<Owner> owners;
 
     @OneToMany(mappedBy = "user")
     private List<UserStore> userStores;
