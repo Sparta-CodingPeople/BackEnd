@@ -1,6 +1,5 @@
 package com.server.delivery.domain.auth.controller;
 
-import com.server.delivery.common.jwt.CustomUserDetail;
 import com.server.delivery.common.response.CustomResponse;
 import com.server.delivery.domain.auth.dto.request.CustomerCreateRequestDto;
 import com.server.delivery.domain.auth.dto.request.OwnerCreateRequestDto;
@@ -9,11 +8,7 @@ import com.server.delivery.domain.auth.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -58,10 +53,10 @@ public class AuthController {
     //토큰 재발급
     @PostMapping(value = "/api/v1/auth/renew")
     public CustomResponse<Void> renewToken(
-            @AuthenticationPrincipal CustomUserDetail customUserDetail,
+            @RequestHeader("Authorization") String accessToken,
             HttpServletResponse response
     ) {
-        String renewToken = authService.renewToken(customUserDetail);
+        String renewToken = authService.renewToken(accessToken);
         response.setHeader("Authorization", "Bearer " + renewToken);
         return CustomResponse.success("토큰 갱신 성공");  // 회원가입 후 생성된 JWT 토큰 반환
     }
