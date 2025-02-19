@@ -1,13 +1,28 @@
 package com.server.delivery.model.payment;
 
-import com.server.delivery.model.order.entity.Order;
-import jakarta.persistence.*;
-import lombok.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import com.server.delivery.model.order.entity.Order;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -18,28 +33,35 @@ import java.time.LocalDateTime;
 @SQLRestriction("payment_is_deleted = false")
 @Table(name = "p_payment")
 public class Payment {
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(name = "payment_id")
+	private UUID id;
 
-    @OneToOne
-    public Order order;
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "payment_id")
-    private String id;
-    @Column(name = "payment_amount")
-    private BigDecimal amount;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "payment_method")
-    private PaymentMethod paymentMethod;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "payment_status")
-    private PaymentStatus status;
-    @Column(name = "payment_transaction_id")
-    private String transactionId;
-    @Column(name = "payment_is_deleted")
-    @Builder.Default
-    private Boolean isDeleted = Boolean.FALSE;
-    @Column(name = "paid_at")
-    private LocalDateTime paidAt;
-    @Column(name = "canceled_at")
-    private LocalDateTime canceledAt;
+	@Column(name = "payment_amount")
+	private BigDecimal amount;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "payment_method")
+	private PaymentMethod paymentMethod;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "payment_status")
+	private PaymentStatus status;
+
+	@Column(name = "payment_transaction_id")
+	private String transactionId;
+
+	@OneToOne
+	private Order order;
+
+	@Column(name = "payment_is_deleted")
+	@Builder.Default
+	private Boolean isDeleted = Boolean.FALSE;
+
+	@Column(name = "paid_at")
+	private LocalDateTime paidAt;
+    
+	@Column(name = "canceled_at")
+	private LocalDateTime canceledAt;
 }
