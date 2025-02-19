@@ -17,7 +17,7 @@ public class Owner {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String uuid;
+    private Long uuid;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
