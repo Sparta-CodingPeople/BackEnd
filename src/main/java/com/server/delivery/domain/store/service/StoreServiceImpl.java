@@ -24,16 +24,15 @@ public class StoreServiceImpl implements StoreService {
     private final StoreJpaRepository storeJpaRepository;
     private final StoreRepository storeRepository;
 
-    public int deleteStore(
+    public void deleteStore(
             UUID id,
             String password) {
-        return 0;
     }
 
-    public int updateStore(
+    public void updateStore(
             UUID id,
             StoreUpdateRequestDto requestDto) {
-        return 0;
+
     }
 
     public StoreResponseDto getStore(UUID id) {
@@ -41,16 +40,16 @@ public class StoreServiceImpl implements StoreService {
         return null;
     }
 
-    public int updateStoreLocation(
+    public void updateStoreLocation(
             UUID id,
             StoreLocationRequestDto requestDto) {
-        return 0;
+
     }
 
-    public int updateStoreOperatingHours(
+    public void updateStoreOperatingHours(
             UUID id,
             List<StoreOperatingHoursRequestDto> requestDto) {
-        return 0;
+
     }
 
     public List<StoreResponseDto> searchStores(
