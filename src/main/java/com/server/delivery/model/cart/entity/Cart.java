@@ -1,15 +1,13 @@
 package com.server.delivery.model.cart.entity;
 
 import com.server.delivery.common.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.server.delivery.model.menu.entity.MenuCart;
+import com.server.delivery.model.user.entity.User;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,4 +26,14 @@ public class Cart extends BaseEntity {
 
     @Column(name = "total_price")
     private int totalPrice;
+
+    @OneToMany(mappedBy = "cart")
+    private List<MenuCart> menuCarts;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Column(name = "cart_is_deleted")
+    private Boolean is_deleted = Boolean.FALSE;
 }

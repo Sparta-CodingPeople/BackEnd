@@ -1,5 +1,7 @@
 package com.server.delivery.model.owner.entity;
 
+import com.server.delivery.model.store.entity.Store;
+import com.server.delivery.model.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
@@ -16,6 +18,14 @@ public class Owner {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String uuid;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "store_uuid")
+    private Store store;
 
 
 }

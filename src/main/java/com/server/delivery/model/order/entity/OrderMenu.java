@@ -1,13 +1,10 @@
 package com.server.delivery.model.order.entity;
 
 
-
 import com.server.delivery.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -29,21 +26,4 @@ public class OrderMenu extends BaseEntity {
     @Column(name = "order_menu_total_price")
     private int totalPrice;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "created_by")
-    private String createdBy;
-
-    @Column(name = "modified_at")
-    private LocalDateTime modifiedAt;
-
-    @Column(name = "modified_by")
-    private String modifiedBy;
-
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
-
-    @Column(name = "deleted_by")
-    private String deletedBy;
 }
