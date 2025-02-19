@@ -4,7 +4,7 @@ import com.server.delivery.common.jwt.CustomUserDetail;
 import com.server.delivery.domain.auth.dto.request.CustomerCreateRequestDto;
 import com.server.delivery.domain.auth.dto.request.OwnerCreateRequestDto;
 import com.server.delivery.domain.auth.dto.request.SignInRequestDto;
-import com.server.delivery.domain.user.dto.request.MasterSignInRequestDto;
+import com.server.delivery.domain.master.dto.request.MasterSignInRequestDto;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface AuthService {

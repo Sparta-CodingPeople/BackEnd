@@ -43,7 +43,7 @@ public class Delivery extends BaseEntity {
     @Column(name = "delivery_cancel_reason")
     private String cancelReason;
 
-    @OneToOne(mappedBy = "order")
+    @OneToOne(mappedBy = "delivery")  // Order 엔티티의 delivery 필드를 참조
     private Order order;
 
 }
