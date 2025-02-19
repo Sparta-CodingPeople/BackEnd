@@ -23,7 +23,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE p_user SET user_is_deleted = true WHERE user_id = ?")
-@SQLRestriction("user_deleted = false")
+@SQLRestriction("user_is_deleted = false")
 @Table(name = "p_user")
 public class User extends BaseEntity {
 
