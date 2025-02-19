@@ -6,6 +6,7 @@ import com.server.delivery.model.master.entity.Master;
 import com.server.delivery.model.owner.entity.Owner;
 import com.server.delivery.model.user.entity.constant.UserGender;
 import com.server.delivery.model.user.entity.constant.UserRole;
+import com.server.delivery.model.userStore.entity.UserStore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -14,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -85,6 +87,9 @@ public class User extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id")
     private Manager manager;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserStore> userStores;
 
     public void updateTokenIssuedAt() {
         this.tokenIssuedAt = LocalDateTime.now();

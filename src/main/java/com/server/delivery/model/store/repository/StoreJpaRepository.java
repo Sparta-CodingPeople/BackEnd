@@ -1,4 +1,7 @@
 package com.server.delivery.model.store.repository;
 
-public interface StoreJpaRepository {
+import com.server.delivery.model.store.entity.Store;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface StoreJpaRepository extends JpaRepository<Store, Long> {
 }
