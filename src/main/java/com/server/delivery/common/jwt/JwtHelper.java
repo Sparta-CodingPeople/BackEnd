@@ -5,6 +5,7 @@ import com.server.delivery.common.exception.customException.CustomJwtException;
 import com.server.delivery.common.exception.customException.CustomUserException;
 import com.server.delivery.model.user.entity.User;
 import com.server.delivery.model.user.repository.UserJpaRepository;
+import com.server.delivery.util.helper.UserHelper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
@@ -34,6 +36,7 @@ public class JwtHelper {
     public static final String BEARER_PREFIX = "Bearer ";
 
     private final UserJpaRepository userRepository;
+    private final UserHelper userHelper;
 
     // 어세스 토큰 만료 시간
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
@@ -55,6 +58,13 @@ public class JwtHelper {
         return null;
     }
 
+    public String resolveToken(String bearerToken) {
+        if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
     public boolean validateToken(String token) {
         try {
             log.info("validateToken 검증 시작");
@@ -70,11 +80,14 @@ public class JwtHelper {
 
             // JWT 발급 시간과 token_issued_at 비교
             LocalDateTime tokenIssuedAt = LocalDateTime.parse(claims.getBody().get("tokenIssuedAt").toString());
-            if (tokenIssuedAt != null && tokenIssuedAt.isBefore(user.getTokenIssuedAt())) {
+            log.info(tokenIssuedAt.truncatedTo(ChronoUnit.SECONDS).toString());
+            log.info(user.getTokenIssuedAt().truncatedTo(ChronoUnit.SECONDS).toString());
+            if (tokenIssuedAt != null && tokenIssuedAt.truncatedTo(ChronoUnit.SECONDS).isEqual(user.getTokenIssuedAt().truncatedTo(ChronoUnit.SECONDS))) {
+                return true;
+            } else {
                 log.error("JWT token issued time is earlier than token_issued_at in user data.");
                 throw new CustomJwtException(ExceptionCode.TOKEN_IS_INVALID);
             }
-            return true;
         } catch (SecurityException | MalformedJwtException | io.jsonwebtoken.security.SignatureException e) {
             log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
             throw new CustomJwtException(ExceptionCode.TOKEN_IS_INVALID);
@@ -110,6 +123,17 @@ public class JwtHelper {
         );
 
         return new UsernamePasswordAuthenticationToken(userDetail, "", authorities);
+    }
+
+    public User getUserFromToken(String accessToken) {
+        Claims claims = parseClaims(accessToken);
+        String username = claims.getSubject();
+        if (claims.get("id") == null) {
+            throw new CustomJwtException(ExceptionCode.TOKEN_IS_INVALID);
+        }
+
+        return userHelper.getUser(username);
+
     }
 
     private Claims parseClaims(String accessToken) {

@@ -2,7 +2,7 @@ package com.server.delivery.domain.auth.service;
 
 import com.server.delivery.common.exception.ExceptionCode;
 import com.server.delivery.common.exception.customException.CustomUserException;
-import com.server.delivery.common.jwt.CustomUserDetail;
+import com.server.delivery.common.jwt.JwtHelper;
 import com.server.delivery.domain.auth.dto.request.CustomerCreateRequestDto;
 import com.server.delivery.domain.auth.dto.request.OwnerCreateRequestDto;
 import com.server.delivery.domain.auth.dto.request.SignInRequestDto;
@@ -36,6 +36,7 @@ public class AuthServiceImpl implements AuthService {
     private final S3ImageUtilImpl s3ImageUtilImpl;
     private final UserJpaRepository userRepository;
     private final UserHelper userHelper;
+    private final JwtHelper jwtHelper;
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -116,8 +117,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Transactional
-    public String renewToken(CustomUserDetail customUserDetail) {
-        User user = userHelper.getUser(customUserDetail.getUsername());
+    public String renewToken(String bearertoken) {
+        String accessToken = jwtHelper.resolveToken(bearertoken);
+        User user = jwtHelper.getUserFromToken(accessToken);
 
         String renewToken = generateToken(user, secretKey);
         user.updateTokenIssuedAt();
