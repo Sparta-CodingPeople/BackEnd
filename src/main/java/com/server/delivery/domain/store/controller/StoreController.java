@@ -9,6 +9,7 @@ import com.server.delivery.domain.store.dto.request.StoreRegisterRequestDto;
 import com.server.delivery.domain.store.dto.request.StoreUpdateRequestDto;
 import com.server.delivery.domain.store.dto.response.StoreResponseDto;
 import com.server.delivery.domain.store.service.StoreService;
+import com.server.delivery.domain.store.service.StoreServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
