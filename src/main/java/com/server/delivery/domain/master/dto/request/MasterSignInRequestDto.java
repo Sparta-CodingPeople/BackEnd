@@ -1,4 +1,4 @@
-package com.server.delivery.domain.user.dto.request;
+package com.server.delivery.domain.master.dto.request;
 
 import lombok.Builder;
 import lombok.Data;

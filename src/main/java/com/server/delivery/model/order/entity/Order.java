@@ -2,6 +2,7 @@ package com.server.delivery.model.order.entity;
 
 import com.server.delivery.common.BaseEntity;
 import com.server.delivery.model.delivery.entity.Delivery;
+import com.server.delivery.model.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
@@ -37,8 +38,8 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "delivery_id")
     private Delivery delivery;
 
-    @OneToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @ManyToOne
+    @JoinColumn(name = "store_id")  // Store 엔티티와의 관계 설정
+    private Store store;
 
 }
