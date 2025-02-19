@@ -1,6 +1,7 @@
 package com.server.delivery.model.review.entity;
 
 import com.server.delivery.common.BaseEntity;
+import com.server.delivery.model.menu.entity.Menu;
 import com.server.delivery.model.order.entity.Order;
 import com.server.delivery.model.store.entity.Store;
 import com.server.delivery.model.user.entity.User;
@@ -52,4 +53,8 @@ public class Review extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_uuid")
+    private Menu menu;
 }
