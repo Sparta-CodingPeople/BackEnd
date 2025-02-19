@@ -44,4 +44,7 @@ public class Menu {
 
     @OneToMany(mappedBy = "menu")
     private List<Review> reviews;
+
+    @OneToMany(mappedBy = "menu")
+    private List<MenuCart> menuCarts;
 }

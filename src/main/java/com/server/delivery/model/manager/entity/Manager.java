@@ -1,5 +1,7 @@
 package com.server.delivery.model.manager.entity;
 
+import com.server.delivery.model.store.entity.Store;
+import com.server.delivery.model.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,4 +18,11 @@ public class Manager {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "store_uuid")
+    private Store store;
 }

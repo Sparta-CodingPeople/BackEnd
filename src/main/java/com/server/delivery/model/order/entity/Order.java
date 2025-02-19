@@ -1,10 +1,10 @@
 package com.server.delivery.model.order.entity;
 
+import com.server.delivery.common.BaseEntity;
+import com.server.delivery.model.delivery.entity.Delivery;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction("where is_deleted = false")
 @Table(name = "p_order")
-public class Order {
+public class Order extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "order_uuid")
@@ -33,21 +33,12 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @OneToOne
+    @JoinColumn(name = "delivery_id")
+    private Delivery delivery;
 
-    @Column(name = "created_by")
-    private String createdBy;
+    @OneToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
 
-    @Column(name = "modified_at")
-    private LocalDateTime modifiedAt;
-
-    @Column(name = "modified_by")
-    private String modifiedBy;
-
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
-
-    @Column(name = "deleted_by")
-    private String deletedBy;
 }
