@@ -1,11 +1,13 @@
 package com.server.delivery.domain.cart.controller;
 
+import com.server.delivery.common.jwt.CustomUserDetail;
 import com.server.delivery.domain.cart.dto.CartItemDto;
 import com.server.delivery.domain.cart.dto.request.CreateCartRequestDto;
 import com.server.delivery.domain.cart.dto.request.UpdateCartRequestDto;
 import com.server.delivery.domain.cart.dto.response.SearchCartResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -18,7 +20,10 @@ public class CartController {
 
     //장바구니 등록
     @PostMapping
-    public ResponseEntity<?> createCart(@RequestBody CreateCartRequestDto createCartRequestDto)
+    public ResponseEntity<?> createCart(
+            @RequestBody CreateCartRequestDto createCartRequestDto,
+            @AuthenticationPrincipal CustomUserDetail userDetail
+    )
     {
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("status", 200);
