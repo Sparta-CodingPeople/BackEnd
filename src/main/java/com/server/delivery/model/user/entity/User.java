@@ -6,7 +6,6 @@ import com.server.delivery.model.master.entity.Master;
 import com.server.delivery.model.owner.entity.Owner;
 import com.server.delivery.model.user.entity.constant.UserGender;
 import com.server.delivery.model.user.entity.constant.UserRole;
-import com.server.delivery.model.userStore.entity.UserStore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -80,16 +79,14 @@ public class User extends BaseEntity {
     @JoinColumn(name = "master_id")
     private Master master;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
-    private Owner owner;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manager_id")
-    private Manager manager;
+    @OneToMany(mappedBy = "owner")
+    private List<Owner> owner;
 
     @OneToMany(mappedBy = "user")
     private List<UserStore> userStores;
+
+    @OneToMany(mappedBy = "user")
+    private List<Manager> managers;
 
     public void updateTokenIssuedAt() {
         this.tokenIssuedAt = LocalDateTime.now();

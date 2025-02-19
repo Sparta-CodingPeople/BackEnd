@@ -1,7 +1,7 @@
 package com.server.delivery.model.review.entity;
 
 import com.server.delivery.common.BaseEntity;
-import com.server.delivery.model.menu.entity.Menu;
+import com.server.delivery.model.order.entity.Order;
 import com.server.delivery.model.store.entity.Store;
 import com.server.delivery.model.user.entity.User;
 import jakarta.persistence.*;
@@ -45,13 +45,11 @@ public class Review extends BaseEntity {
     @Column(name = "review_is_Deleted")
     private Boolean isDeleted = Boolean.FALSE;
 
-    // todo. 가게 id, 주문 id FK <- 주문과 리뷰는 다대다?
     @ManyToOne
     @JoinColumn(name = "store_uuid")
     private Store store;
 
     @ManyToOne
-    @JoinColumn(name = "menu_uuid")
-    private Menu menu;
-
+    @JoinColumn(name = "order_id")
+    private Order order;
 }
