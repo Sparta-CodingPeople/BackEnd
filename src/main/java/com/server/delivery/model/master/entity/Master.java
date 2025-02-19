@@ -16,7 +16,7 @@ public class Master {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "master_id", nullable = false, updatable = false)
-    private String id;
+    private Long id;
 
     @Column(name = "master_master_code")
     private String masterCode;
