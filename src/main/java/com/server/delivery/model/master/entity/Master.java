@@ -1,4 +1,4 @@
-package com.server.delivery.model.user.entity;
+package com.server.delivery.model.master.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,6 +14,11 @@ import org.hibernate.annotations.SQLRestriction;
 public class Master {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String uuid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "master_id", nullable = false, updatable = false)
+    private String id;
+
+    @Column(name = "master_master_code")
+    private String masterCode;
+
 }

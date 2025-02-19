@@ -1,6 +1,9 @@
 package com.server.delivery.model.user.entity;
 
 import com.server.delivery.common.BaseEntity;
+import com.server.delivery.model.manager.entity.Manager;
+import com.server.delivery.model.master.entity.Master;
+import com.server.delivery.model.owner.entity.Owner;
 import com.server.delivery.model.user.entity.constant.UserGender;
 import com.server.delivery.model.user.entity.constant.UserRole;
 import jakarta.persistence.*;
@@ -18,7 +21,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE p_user SET user_deleted = true WHERE user_id = ?")
+@SQLDelete(sql = "UPDATE p_user SET user_is_deleted = true WHERE user_id = ?")
 @SQLRestriction("user_deleted = false")
 @Table(name = "p_user")
 public class User extends BaseEntity {
@@ -53,10 +56,6 @@ public class User extends BaseEntity {
     @Column(name = "user_is_public", nullable = false)
     private Boolean isPublic = Boolean.FALSE;
 
-    @Builder.Default
-    @Column(name = "user_is_granted", nullable = false)
-    private Boolean isGranted = Boolean.FALSE;
-
     @Column(name = "user_role", nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
@@ -71,14 +70,27 @@ public class User extends BaseEntity {
     @Column(name = "user_token_issued_at")
     private LocalDateTime tokenIssuedAt;
 
-    @Column(name = "user_deleted")
+    @Column(name = "user_is_deleted")
     @Builder.Default
-    private Boolean deleted = Boolean.FALSE;
+    private Boolean isDeleted = Boolean.FALSE;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "master_id")
+    private Master master;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    private Owner owner;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id")
+    private Manager manager;
 
     public void updateTokenIssuedAt() {
         this.tokenIssuedAt = LocalDateTime.now();
     }
 
+    @PreRemove
     public void softDelete() {
         this.setDeletedAt(LocalDateTime.now());
         this.setDeletedBy(SecurityContextHolder.getContext().getAuthentication().getName());

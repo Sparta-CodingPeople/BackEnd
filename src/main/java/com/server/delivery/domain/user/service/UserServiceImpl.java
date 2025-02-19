@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
     public PageCustom<UserResponseDto> searchUser(CustomUserDetail customUserDetail, String keyword, Pageable pageable) {
         userHelper.getUser(customUserDetail.getUsername());
 
-        // 기본 정렬 조건: 생성일 오름차순 → 수정일 내림차순
+        // 기본 정렬 조건: 생성일 내림차순 → 수정일 내림차순
         Sort defaultSort = Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("modifiedAt"));
 
         // pageable 객체에 기본 정렬 적용
