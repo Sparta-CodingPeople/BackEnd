@@ -1,6 +1,8 @@
 package com.server.delivery.model.order.entity;
 
 
+
+import com.server.delivery.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
@@ -14,7 +16,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction("where is_deleted = false")
 @Table(name = "p_order_menu")
-public class OrderMenu {
+
+public class OrderMenu extends BaseEntity {
     @Id
     @Column(name = "orders_menus_uuid")
     @GeneratedValue(strategy = GenerationType.UUID)
