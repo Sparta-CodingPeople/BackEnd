@@ -1,11 +1,11 @@
 package com.server.delivery.domain.menu.dto.response;
 
 import com.server.delivery.common.PageCustom;
+import com.server.delivery.model.menu.entity.Menu;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.UUID;
-import com.server.delivery.model.menu.entity.Menu;
 
 @Getter
 @Builder

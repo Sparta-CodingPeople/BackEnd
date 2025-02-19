@@ -1,7 +1,6 @@
-package com.server.delivery.model.userStore.entity;
+package com.server.delivery.model.user.entity;
 
 import com.server.delivery.model.store.entity.Store;
-import com.server.delivery.model.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 

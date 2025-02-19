@@ -2,8 +2,9 @@ package com.server.delivery.model.store.entity;
 
 import com.server.delivery.common.BaseEntity;
 import com.server.delivery.model.menu.entity.Menu;
+import com.server.delivery.model.order.entity.Order;
 import com.server.delivery.model.review.entity.Review;
-import com.server.delivery.model.userStore.entity.UserStore;
+import com.server.delivery.model.user.entity.UserStore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -50,8 +51,8 @@ public class Store extends BaseEntity {
     @OneToMany(mappedBy = "store")
     private List<Menu> menus;
 
-//    @OneToMany(mappedBy = "store")
-//    private List<Order> orders;
+    @OneToMany(mappedBy = "store")
+    private List<Order> orders;
 
     @OneToMany(mappedBy = "store")
     private List<StoreOperationTimes> operatingHours;
