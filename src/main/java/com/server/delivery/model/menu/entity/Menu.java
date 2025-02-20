@@ -1,5 +1,6 @@
 package com.server.delivery.model.menu.entity;
 
+import com.server.delivery.model.cart.entity.MenuCart;
 import com.server.delivery.model.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,6 +12,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE p_menus SET menuAvailability = FALSE WHERE menu_uuid = ?")
