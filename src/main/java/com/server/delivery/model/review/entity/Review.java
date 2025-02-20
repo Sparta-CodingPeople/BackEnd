@@ -1,7 +1,6 @@
 package com.server.delivery.model.review.entity;
 
 import com.server.delivery.common.BaseEntity;
-import com.server.delivery.model.menu.entity.Menu;
 import com.server.delivery.model.order.entity.Order;
 import com.server.delivery.model.store.entity.Store;
 import com.server.delivery.model.user.entity.User;
@@ -15,6 +14,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "p_review")
@@ -22,13 +22,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@SQLDelete(sql = "UPDATE p_review SET review_is_Deleted = true WHERE review_id = ?")
-@SQLRestriction("review_is_Deleted = false")
+@SQLDelete(sql = "UPDATE p_review SET review_is_deleted = true WHERE review_id = ?") //is_deleted로 수정? 스네이크 케이스를 사용하기 때문
+@SQLRestriction("review_is_deleted = false")
 public class Review extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "review_id")
-    private String id;
+    private UUID id;
 
     private String content;
 
@@ -39,22 +39,33 @@ public class Review extends BaseEntity {
     private User user;
 
     @Builder.Default
-    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "review")
     private List<ReviewImage> images = new ArrayList<>();
 
     @Builder.Default
-    @Column(name = "review_is_Deleted")
+    @Column(name = "review_is_deleted")
     private Boolean isDeleted = Boolean.FALSE;
 
     @ManyToOne
     @JoinColumn(name = "store_uuid")
     private Store store;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
+    @OneToOne
+    @JoinColumn(name = "order_uuid", unique = true)
     private Order order;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_uuid")
-    private Menu menu;
+    // todo. 필요 시 추가
+    //    @ManyToOne
+    //    @JoinColumn(name = "menu_uuid")
+    //    private Menu menu;
+
+    public void updateReview(String content, Double rating) {
+        this.content = content;
+        this.rating = rating;
+    }
+
+    public void updateReviewImages(List<ReviewImage> images) {
+        this.images.clear();
+        this.images.addAll(images);
+    }
 }

@@ -20,7 +20,7 @@ import java.util.List;
 public class AuthenticationFilter extends OncePerRequestFilter {
 
     private static final List<String> EXCLUDE_URLS = List.of(
-            "/api/v1/auth/sign-up", "/api/owner/v1/auth/sign-up", "/api/v1/auth/sign-in"
+            "/api/v1/auth/sign-up", "/api/owner/v1/auth/sign-up", "/api/v1/auth/sign-in", "/api/v1/auth/renew"
     );
     private final JwtHelper jwtHelper;
 
@@ -39,18 +39,30 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         //3. Token 검증
         try {
             String accessToken = jwtHelper.resolveToken(request);
-            if (accessToken != null && jwtHelper.validateToken(accessToken)) {
+            if (accessToken != null) {
+                jwtHelper.validateToken(accessToken);
                 Authentication authentication = jwtHelper.getAuthenticationFromAccessToken(accessToken);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                filterChain.doFilter(request, response);
-                return;
+                if (authentication != null) {
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    filterChain.doFilter(request, response);
+                    return;
+                }
             }
         } catch (CustomJwtException e) {
-            request.setAttribute("httpStatus", e.getHttpStatus());
-            request.setAttribute("message", e.getMessage());
-            request.setAttribute("code", e.getCode());
-        }
+            log.error("JWT validation failed: {}", e.getMessage());
 
+            //response에 바로 에러 응답을 설정하여 필터 체인 중단
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.setStatus(e.getHttpStatus().value());
+
+            // ObjectMapper로 예쁘게 출력할 수 있도록 수정
+            String errorResponse = String.format("{\"status\": \"%s\", \"message\": \"%s\", \"code\": \"%s\"}",
+                    e.getHttpStatus(), e.getMessage(), e.getCode());
+
+            response.getWriter().write(errorResponse);
+            return;
+        }
 
         filterChain.doFilter(request, response);
 
