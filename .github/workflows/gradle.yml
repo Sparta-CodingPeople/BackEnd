@@ -2,7 +2,7 @@ name: CI/CD github Actions & Docker
 
 on:
   push:
-    branches: ["develop"]
+    branches: [ "develop" ]
 
 permissions:
   contents: read
@@ -13,6 +13,9 @@ jobs:
     steps:
       # 코드 체크아웃
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
+          submodules: recursive
 
       # JDK 설정
       - name: Set up JDK 17
@@ -31,29 +34,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-
-      # 환경 설정(application-dev.yml 파일 생성)
-      # - name: Make application-dev.yml
-      #   if: contains(github.ref, 'develop')
-      #   run: |
-      #     cd ./src/main/resources
-      #     touch ./application-dev.yml
-      #     echo "${{ secrets.YML_DEV }}" > ./application-dev.yml
-      #   shell: bash
-
-      # 서브모듈 설정
-      - name: Checkout 
-        uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.ACTION_TOKEN }}
-          submodules: recursive
-      - name: Update submodules
-        run: git submodule update --init --recursive
-
-          
-      # gradlew 실행 권한 부여
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
 
       # Gradle 빌드
       - name: Build with Gradle
@@ -84,9 +64,7 @@ jobs:
           port: 22
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
-            sudo docker rm -f delivery  # 특정 컨테이너만 삭제
+            sudo docker rm -f delivery || true  # 기존 컨테이너 제거
             sudo docker pull ${{ secrets.DOCKER_REPO}}/delivery:dev
-            sudo docker run -d -p 8080:8080 --name delivery  ${{ secrets.DOCKER_REPO}}/delivery:dev
+            sudo docker run -d -p 8080:8080 --name delivery ${{ secrets.DOCKER_REPO}}/delivery:dev
             sudo docker image prune -f  # 필요 없는 이미지 정리
-
-
