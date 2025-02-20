@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,8 +21,9 @@ public class OperationTimes extends BaseEntity {
     @Column(name = "store_operating_times_uuid")
     private UUID storeOperatingTimesUuid;
 
+    @ElementCollection
     @Column(name = "weekday", nullable = false)
-    private int weekday;
+    private List<Integer> weekday;
 
     @Column(name = "operation_times_opening_time", nullable = false)
     private String operationTimeOpeningTime;
