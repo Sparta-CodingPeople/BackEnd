@@ -26,8 +26,8 @@ public class StoreRepositoryImpl implements StoreRepository {
     }
 
     @Override
-    public Optional<StoreCategory> findById(int storeCategoryId) {
-        return storeJpaRepository.findStoreCategoryById(storeCategoryId);
+    public Optional<Store> findById(UUID storeUuid) {
+        return storeJpaRepository.findById(storeUuid);
     }
 
 
@@ -55,6 +55,11 @@ public class StoreRepositoryImpl implements StoreRepository {
     @Override
     public void saveStoreOperationTimes(StoreOperationTimes storeOperationTimes) {
 
+    }
+
+    @Override
+    public Optional<StoreCategory> findByStoreCategoryId(int storeCategoryId) {
+        return storeJpaRepository.findStoreCategoryById(storeCategoryId);
     }
 
 

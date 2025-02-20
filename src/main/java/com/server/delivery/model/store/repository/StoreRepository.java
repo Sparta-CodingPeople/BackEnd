@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface StoreRepository {
     Store saveStore(Store store);
 
-    Optional<StoreCategory> findById(int storeCategoryId);
+    Optional<Store> findById(UUID storeUuid);
 
 
     Optional<SeoulAreaCode>  findBySeoulRegionCode(int seoulRegionCode);
@@ -25,4 +25,6 @@ public interface StoreRepository {
     void saveOperationTimes(OperationTimes operationTimes);
 
     void saveStoreOperationTimes(StoreOperationTimes storeOperationTimes);
+
+    Optional<StoreCategory> findByStoreCategoryId(int storeCategoryId);
 }
