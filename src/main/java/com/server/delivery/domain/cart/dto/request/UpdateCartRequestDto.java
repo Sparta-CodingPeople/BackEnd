@@ -9,4 +9,5 @@ import lombok.Setter;
 @Builder
 public class UpdateCartRequestDto {
     private int quantity;
+
 }
