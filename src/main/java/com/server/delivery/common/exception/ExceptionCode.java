@@ -1,60 +1,67 @@
 package com.server.delivery.common.exception;
 
-import org.springframework.http.HttpStatus;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
 public enum ExceptionCode {
 
-	// 클라이언트 오류
-	BAD_REQUEST(HttpStatus.BAD_REQUEST, "Invalid request.", 4000),
-	FILE_IS_EMPTY(HttpStatus.BAD_REQUEST, "File is Empty", 4001),
-	FILE_MISSING_EXTENSION(HttpStatus.BAD_REQUEST, "File does not contain an extension. ", 4002),
-	INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "Invalid File Extension.", 4003),
-	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "Unauthorized access.", 4100),
-	FORBIDDEN(HttpStatus.FORBIDDEN, "Forbidden access.", 4300),
-	NOT_FOUND(HttpStatus.NOT_FOUND, "Resource not found.", 4400),
-	METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "HTTP method not allowed.", 4500),
-	CONFLICT(HttpStatus.CONFLICT, "Conflict with current state.", 4900),
-	UNPROCESSABLE_ENTITY(HttpStatus.UNPROCESSABLE_ENTITY, "Unprocessable entity.", 4220),
+    // 클라이언트 오류
+    BAD_REQUEST(HttpStatus.BAD_REQUEST, "Invalid request.", 4000),
+    FILE_IS_EMPTY(HttpStatus.BAD_REQUEST, "File is Empty", 4001),
+    FILE_MISSING_EXTENSION(HttpStatus.BAD_REQUEST, "File does not contain an extension. ", 4002),
+    INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "Invalid File Extension.", 4003),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "Unauthorized access.", 4100),
+    FORBIDDEN(HttpStatus.FORBIDDEN, "Forbidden access.", 4300),
+    NOT_FOUND(HttpStatus.NOT_FOUND, "Resource not found.", 4400),
+    METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "HTTP method not allowed.", 4500),
+    CONFLICT(HttpStatus.CONFLICT, "Conflict with current state.", 4900),
+    UNPROCESSABLE_ENTITY(HttpStatus.UNPROCESSABLE_ENTITY, "Unprocessable entity.", 4220),
 
-	// 서버 오류,
-	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error.", 5000),
-	PUT_OBJECT_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "Put Object Exception", 5001),
-	FILE_READ_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "File read failed.", 5002),
-	FILE_ON_IMAGE_DELETE(HttpStatus.INTERNAL_SERVER_ERROR, "IOException on Image Delete.", 5003),
-	FILE_ON_DECODING_KEY(HttpStatus.INTERNAL_SERVER_ERROR, "IOException on decoding key.", 5003),
-	NOT_IMPLEMENTED(HttpStatus.NOT_IMPLEMENTED, "Not implemented.", 5100),
-	BAD_GATEWAY(HttpStatus.BAD_GATEWAY, "Bad gateway.", 5200),
-	SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "Service unavailable.", 5300),
+    // 서버 오류,
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error.", 5000),
+    PUT_OBJECT_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "Put Object Exception", 5001),
+    FILE_READ_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "File read failed.", 5002),
+    FILE_ON_IMAGE_DELETE(HttpStatus.INTERNAL_SERVER_ERROR, "IOException on Image Delete.", 5003),
+    FILE_ON_DECODING_KEY(HttpStatus.INTERNAL_SERVER_ERROR, "IOException on decoding key.", 5003),
+    NOT_IMPLEMENTED(HttpStatus.NOT_IMPLEMENTED, "Not implemented.", 5100),
+    BAD_GATEWAY(HttpStatus.BAD_GATEWAY, "Bad gateway.", 5200),
+    SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "Service unavailable.", 5300),
 
-	// 인증 및 권한 관련,
-	TOKEN_EXPIRED(HttpStatus.FORBIDDEN, "Token expired.", 1000),
-	UNSUPPORTED_TOKEN(HttpStatus.FORBIDDEN, "Unsupported token.", 1001),
-	NOT_FOUND_TOKEN(HttpStatus.FORBIDDEN, "Token not found.", 1002),
-	TOKEN_IS_INVALID(HttpStatus.FORBIDDEN, "Token is invalid.", 1003),
-	TOKEN_IS_NOT_SUPPORTED(HttpStatus.FORBIDDEN, "Token is not supported.", 1004),
-	TOKEN_IS_EMPTY(HttpStatus.FORBIDDEN, "Token is empty.", 1005),
+    // 인증 및 권한 관련,
+    TOKEN_EXPIRED(HttpStatus.FORBIDDEN, "Token expired.", 1000),
+    UNSUPPORTED_TOKEN(HttpStatus.FORBIDDEN, "Unsupported token.", 1001),
+    NOT_FOUND_TOKEN(HttpStatus.FORBIDDEN, "Token not found.", 1002),
+    TOKEN_IS_INVALID(HttpStatus.FORBIDDEN, "Token is invalid.", 1003),
+    TOKEN_IS_NOT_SUPPORTED(HttpStatus.FORBIDDEN, "Token is not supported.", 1004),
+    TOKEN_IS_EMPTY(HttpStatus.FORBIDDEN, "Token is empty.", 1005),
 
-	// 예기치 않은 예외 (디폴트),
-	NOT_HANDLED_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "Unhandled exception.", 9999),
+    // 예기치 않은 예외 (디폴트),
+    NOT_HANDLED_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "Unhandled exception.", 9999),
 
-	// 유저 - 6000
-	USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "User Not Found.", 6000),
-	USERNAME_IS_EXIST(HttpStatus.BAD_REQUEST, "Username is exist.", 6001),
+    // 유저 - 6000
+    USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "User Not Found.", 6000),
+    USERNAME_IS_EXIST(HttpStatus.BAD_REQUEST, "Username is exist.", 6001),
 
-	// 주문 - 7000
-	ORDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "Order Not Found.", 7000),
+    // 주문 - 7000
+    ORDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "Order Not Found.", 7000),
 
-	// 리뷰 - 8000
-	REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "Review Not Found.", 8001),
-	REVIEW_UPDATE_EXPIRED(HttpStatus.BAD_REQUEST, "Review Update Expired.", 8002);
+    // 리뷰 - 8000
+    REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "Review Not Found.", 8001),
+    REVIEW_UPDATE_EXPIRED(HttpStatus.BAD_REQUEST, "Review Update Expired.", 8002),
 
-	private final HttpStatus httpStatus;
-	private final String message;
-	private final Integer code;
+    //카트 - 9000
+    CARTS_ORDER_ITEM_EXIST(HttpStatus.BAD_REQUEST, "Carts Order Item Exist.", 9001),
+    CARTS_NOT_FOUND(HttpStatus.BAD_REQUEST, "Carts Not Found.", 9002),
+    //메뉴 - 10000
+    MENU_NOT_FOUND(HttpStatus.BAD_REQUEST, "Menu Not Found.", 10001),
+    MENU_CART_NOT_FOUND(HttpStatus.BAD_REQUEST, "Menu Cart Not Found.", 10002),
+    ;
+
+    private final HttpStatus httpStatus;
+    private final String message;
+    private final Integer code;
 
 }
