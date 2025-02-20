@@ -41,11 +41,14 @@ jobs:
       #     echo "${{ secrets.YML_DEV }}" > ./application-dev.yml
       #   shell: bash
 
+      # 서브모듈 설정
       - name: Checkout 
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           token: ${{ secrets.ACTION_TOKEN }}
           submodules: recursive
+      - name: Update submodules
+        run: git submodule update --init --recursive
 
           
       # gradlew 실행 권한 부여
