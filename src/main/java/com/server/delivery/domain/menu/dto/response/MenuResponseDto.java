@@ -1,6 +1,5 @@
 package com.server.delivery.domain.menu.dto.response;
 
-import com.server.delivery.common.PageCustom;
 import com.server.delivery.model.menu.entity.Menu;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,11 +9,8 @@ import java.util.UUID;
 @Getter
 @Builder
 public class MenuResponseDto {
-    private String status;
-    private String message;
-    private Object data;
-
-    private UUID menuId;
+    private UUID menuUuid;
+    private UUID storeUuid;
     private String foodName;
     private String description;
     private int price;
@@ -23,7 +19,8 @@ public class MenuResponseDto {
 
     public static MenuResponseDto from(Menu menu) {
         return MenuResponseDto.builder()
-                .menuId(menu.getMenuUuId())
+                .menuUuid(menu.getMenuUuId())
+                .storeUuid(menu.getStore() != null ? menu.getStore().getStoreUuid() : null)
                 .foodName(menu.getMenuName())
                 .description(menu.getMenuDescription())
                 .price(menu.getMenuPrice())
@@ -32,11 +29,4 @@ public class MenuResponseDto {
                 .build();
     }
 
-    public static MenuResponseDto fromPageCustom(PageCustom<MenuResponseDto> pageCustom) {
-        return MenuResponseDto.builder()
-                .status("200")
-                .message("음식 검색 결과")
-                .data(pageCustom)
-                .build();
-    }
 }

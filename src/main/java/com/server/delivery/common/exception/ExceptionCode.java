@@ -55,10 +55,14 @@ public enum ExceptionCode {
     //카트 - 9000
     CARTS_ORDER_ITEM_EXIST(HttpStatus.BAD_REQUEST, "Carts Order Item Exist.", 9001),
     CARTS_NOT_FOUND(HttpStatus.BAD_REQUEST, "Carts Not Found.", 9002),
+
     //메뉴 - 10000
     MENU_NOT_FOUND(HttpStatus.BAD_REQUEST, "Menu Not Found.", 10001),
     MENU_CART_NOT_FOUND(HttpStatus.BAD_REQUEST, "Menu Cart Not Found.", 10002),
-    ;
+
+    //매점 - 11000
+    STORE_NOT_FOUND(HttpStatus.BAD_REQUEST, "Store Not Found.", 11003),
+    STORE_NOT_MATCH(HttpStatus.BAD_REQUEST, "Store Not Match.", 11004);
 
     private final HttpStatus httpStatus;
     private final String message;
