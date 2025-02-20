@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver # PostgreSQL 데이터베이스 드라이버 설정
+    url: jdbc:postgresql://localhost:5432/delivery # PostgreSQL 데이터베이스 연결 URL
+    username: admin # DB 접속 계정명
+    password: Group0000- # DB 접속 비밀번호
+
+  jpa:
+    hibernate:
+      ddl-auto: update # 애플리케이션 실행 시 자동으로 테이블을 업데이트
+    show-sql: true # SQL 쿼리를 콘솔에 출력 (디버깅용)
+    database: postgresql # JPA에서 사용할 데이터베이스를 PostgreSQL로 설정
+    database-platform: org.hibernate.dialect.PostgreSQLDialect # PostgreSQL에 최적화된 Hibernate Dialect 사용
+    open-in-view: false # OSIV(Open Session In View) 비활성화 (성능 최적화를 위해 권장)
+    generate-ddl: true # JPA가 자동으로 DDL 생성하도록 설정
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+
+  # s3
+  #경로 설정
+cloud:
+  aws:
+    s3:
+      bucketName: codingpeople-delivery
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: AKIA5IJOXFB7ANTPUXV2
+      secretKey: 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
+
+      # securit
+      # jwt token 만료시간, 키
+      # jwt키 = 무작위대입해서 생성
+      # accessToken 만료시간 = 1시간  - 개발과정에서는 1일로 설정
+      # refreshTokeb 만료시간 = 7일
+
+jwt:
+  secret:
+    key: 51e03e276c4e3e3406a4c8af2cbe11214a0ca0940c1b08a794361caad48881c7f18f1cf532f1ab77edd77f229f3a075324c42ab2392bfdb2b713cfad5bb5fdbd987ec80fe632723b58be27bd11b6fedc7e0a93c91951ac6e83764687d8fe4c1b37e40cd9dbca0a6424fbfed96bd57b3524d4c4c960e4116cd586dc0c4438df9b7ba7d016d0c3c900224c36ce036ccef117cde13060c1ee9bfc3e3bfdf50b5e019c1177c0a6fcf060c67e9b79cb38f12d05a699fd25f10099cc86e58fd90dbcdeab94e4c2f4ed44e7e35ee078df912b501c281d9a6b313ef1947ffe05323e7b7122912f88c2a045dc3e622d91315ed9a0922e90043c829f191d86eaf14d1f7a94
+    access-token-expiration-time: 24* 60 * 60 * 10000  # 1일
+    refresh-token-expiration-time: 7* 24 * 60 * 60 * 1000 # 7일
