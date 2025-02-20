@@ -1,96 +1,243 @@
 package com.server.delivery.domain.store.service;
 
-import com.server.delivery.domain.store.dto.request.StoreLocationRequestDto;
-import com.server.delivery.domain.store.dto.request.StoreOperatingHoursRequestDto;
-import com.server.delivery.domain.store.dto.request.StoreRegisterRequestDto;
-import com.server.delivery.domain.store.dto.request.StoreUpdateRequestDto;
+import com.server.delivery.domain.store.dto.request.*;
 import com.server.delivery.domain.store.dto.response.StoreResponseDto;
 import com.server.delivery.model.store.entity.*;
-import com.server.delivery.model.store.repository.StoreJpaRepository;
 import com.server.delivery.model.store.repository.StoreRepository;
+import com.server.delivery.model.user.entity.User;
 import com.server.delivery.util.helper.UserHelper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class StoreServiceImpl implements StoreService {
 
-    private final StoreJpaRepository storeJpaRepository;
+
     private final StoreRepository storeRepository;
     private final UserHelper userHelper;
+    private final PasswordEncoder passwordEncoder;
 
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Transactional
     public void deleteStore(
             UUID id,
-            String password) {
+            String password,
+            String userName) {
+        System.out.println(id);
         Store store = storeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 매장을 찾을 수 없습니다."));
 
+        // 사용자 정보 가져오기
+        User user = userHelper.getUser(userName);
+
+        // 비밀번호 검증
+            if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+/*        // 테스트용 비밀번호 검증
+        String correctPassword = "password123"; // 테스트용 하드코딩된 비밀번호
+        if (!password.equals(correctPassword)) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }*/
+
+        store.setStoreIsDeleted(true);
+
+        storeRepository.save(store);
     }
 
+    @Transactional
     public void updateStore(
             UUID id,
+            String userName,
             StoreUpdateRequestDto requestDto) {
+        // 매장 정보 가져오기
+        Store store = storeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 매장을 찾을 수 없습니다."));
 
+        // 사용자 정보 가져오기
+        User user = userHelper.getUser(userName);
+
+        if (requestDto.getStoreCategoryId() != 0) {
+            StoreCategory storeCategory = storeRepository.findByStoreCategoryId(requestDto.getStoreCategoryId())
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 매장 카테고리"));
+            store.setStoreCategory(storeCategory);  // 카테고리 ID로 가져온 카테고리 객체 설정
+        }
+
+        // 변경할 값 설정
+        if (requestDto.getStoreName() != null) {
+            store.setStoreName(requestDto.getStoreName());
+        }
+        if (requestDto.getPhoneNumber() != null) {
+            store.setPhoneNumber(requestDto.getPhoneNumber());
+        }
+        if (requestDto.getStoreDescription() != null) {
+            store.setStoreDescription(requestDto.getStoreDescription());
+        }
+
+        // 수정된 매장 저장
+        storeRepository.save(store);
 
     }
 
     public StoreResponseDto getStore(UUID id) {
+        // 매장 정보 가져오기, 매장이 삭제되지 않은 상태에서만 조회
+        Store store = storeRepository.findByStoreUuidAndStoreIsDeletedFalse(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 매장입니다."));
 
-        return null;
+
+        return StoreResponseDto.builder()
+                .status("success")
+                .message("매장 단일 조회 성공")
+                .storeUuid(store.getStoreUuid())
+                .storeName(store.getStoreName())
+                .storeCategoryId(store.getStoreCategory().getId())
+                .storeLocationId(store.getStoreLocation().getLocation().getLocationUuid())
+                .phoneNumber(store.getPhoneNumber())
+                .storeIsDeleted(store.isStoreIsDeleted())
+                .storeIsGranted(store.isStoreIsGranted())
+                .operationTimeOpeningTime(store.getOperatingHours().get(0).getOperationTimes().getOperationTimeOpeningTime())
+                .operationTimeClosingTime(store.getOperatingHours().get(0).getOperationTimes().getOperationTimeClosingTime())
+                .build();
     }
 
-    public void updateStoreLocation(
-            UUID id,
-            StoreLocationRequestDto requestDto) {
 
+
+
+    @Transactional
+    public void updateStoreLocation(UUID storeUuid, StoreLocationUpdateDto updateDto) {
+
+        Store store = storeRepository.findByStoreUuidAndStoreIsDeletedFalse(storeUuid)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 매장입니다."));
+
+        SeoulAreaCode seoulAreaCode = storeRepository.findBySeoulRegionCode(updateDto.getSeoulRegionCode())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 서울 지역 코드입니다."));
+
+
+        Optional<Location> existingLocation = storeRepository.findLocationByAddressAndCategory(
+                updateDto.getAddress(),
+                seoulAreaCode.getSeoulRegionCode()
+        );
+
+        Location location = existingLocation.orElseGet(() -> {
+            Location newLocation = Location.builder()
+                    .locationCategory(seoulAreaCode)
+                    .address(updateDto.getAddress())
+                    .zipcode(updateDto.getZipcode())
+                    .build();
+            entityManager.persist(newLocation);
+            entityManager.flush();
+            return newLocation;
+        });
+
+        Optional<StoreLocation> existingStoreLocation = storeRepository.findByLocationUuid(location.getLocationUuid());
+
+        StoreLocation storeLocation = existingStoreLocation.orElseGet(() -> {
+            StoreLocation newStoreLocation = StoreLocation.builder()
+                    .location(location)
+                    .build();
+            entityManager.persist(newStoreLocation);
+            entityManager.flush();
+            return newStoreLocation;
+        });
+
+
+        store.setStoreLocation(storeLocation);
+        storeRepository.save(store);
     }
 
-    public void updateStoreOperatingHours(
-            UUID id,
-            List<StoreOperatingHoursRequestDto> requestDto) {
+    @Transactional
+    public void updateStoreOperatingHours(UUID storeUuid, List<StoreOperatingHoursUpdateDto> updateDto) {
 
+        Store store = storeRepository.findByStoreUuidAndStoreIsDeletedFalse(storeUuid)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 매장입니다."));
+
+
+        updateDto.stream()
+                .map(hoursDto -> {
+                    List<Integer> weekdays = convertWeekdayToInt(hoursDto.getWeekday());
+                    String weekdayStr = "{" + weekdays.stream()
+                            .map(String::valueOf)
+                            .collect(Collectors.joining(",")) + "}";
+
+                    UUID operationTimesUuid = storeRepository.findMatchingOperationTimesUuid(
+                            storeUuid,
+                            weekdayStr,
+                            hoursDto.getOperationTimeOpeningTime(),
+                            hoursDto.getOperationTimeClosingTime(),
+                            hoursDto.isHoliday()
+                    ).orElse(UUID.randomUUID());
+
+                    boolean isHoliday = hoursDto.isHoliday();
+
+                    if (storeRepository.existsByOperationTimesUuid(operationTimesUuid)) {
+                        storeRepository.updateOperationTimes(
+                                operationTimesUuid,
+                                weekdayStr,
+                                hoursDto.getOperationTimeOpeningTime(),
+                                hoursDto.getOperationTimeClosingTime(),
+                                isHoliday
+                        );
+                    } else {
+                        storeRepository.insertOperationTimes(
+                                operationTimesUuid,
+                                weekdayStr,
+                                hoursDto.getOperationTimeOpeningTime(),
+                                hoursDto.getOperationTimeClosingTime(),
+                                isHoliday
+                        );
+                    }
+
+                    storeRepository.updateStoreOperationTimes(store.getStoreUuid(), operationTimesUuid);
+
+                    return null;
+                })
+                .collect(Collectors.toList());
     }
 
     public List<StoreResponseDto> searchStores(
             String search,
             Pageable pageable) {
-        return null;
+
+        Page<Store> storePage = storeRepository.searchStores(search, pageable);
+        return storePage.stream()
+                .map(StoreResponseDto::fromEntity)
+                .collect(Collectors.toList());
+
     }
 
     public Long getTotalStores(String search) {
-        return null;
+        return storeRepository.countStores(search);
     }
 
-    @Override
     @Transactional
     public void registerStore(StoreRegisterRequestDto requestDto) {
-        //매장 카테고리 조회
-        StoreCategory storeCategory = storeRepository.findByStoreCategoryId(requestDto.getStoreInfo().getStoreCategoryId())
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 매장 카테고리"));
 
-        //서울 지역 코드 조회
+        StoreCategory storeCategory = storeRepository.findByStoreCategoryId(requestDto.getStoreInfo().getStoreCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 매장 카테고리"));
+
+
         SeoulAreaCode seoulAreaCode = storeRepository.findBySeoulRegionCode(requestDto.getStoreLocation().getSeoulRegionCode())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 서울 지역 코드입니다."));
 
-        // 기존 Location 확인
-        Optional<Location> existingLocation = storeRepository.findLocationBySeoulRegionCode(requestDto.getStoreLocation().getSeoulRegionCode());
+        Optional<Location> existingLocation = storeRepository.findLocationByAddressAndCategory(
+                requestDto.getStoreLocation().getAddress(),
+                seoulAreaCode.getSeoulRegionCode()
+        );
 
+        // 기존 Location이 없으면 새로 생성
         Location location = existingLocation.orElseGet(() -> {
-            System.out.println("새로운 Location 생성 시작...");
-
             Location newLocation = Location.builder()
                     .locationCategory(seoulAreaCode)
                     .address(requestDto.getStoreLocation().getAddress())
@@ -99,30 +246,24 @@ public class StoreServiceImpl implements StoreService {
 
             entityManager.persist(newLocation);
             entityManager.flush();
-
-            System.out.println("새로운 Location DB 저장 완료: " + newLocation);
             return newLocation;
         });
 
-        // 기존 StoreLocation 확인
-        Optional<StoreLocation> existingStoreLocation = storeRepository.findStoreLocationByLocation(location);
 
-        StoreLocation storeLocation = existingStoreLocation.orElseGet(() -> {
-            System.out.println("새로운 StoreLocation 생성 시작...");
+        StoreLocation storeLocation = storeRepository.findByLocationUuid(location.getLocationUuid())
+                .orElseGet(() -> {
 
-            StoreLocation newStoreLocation = StoreLocation.builder()
-                    .location(location)
-                    .build();
+                    StoreLocation newStoreLocation = StoreLocation.builder()
+                            .location(location)
+                            .build();
 
-            entityManager.persist(newStoreLocation);
-            entityManager.flush();
+                    entityManager.persist(newStoreLocation);
+                    entityManager.flush();
+                    return newStoreLocation;
+                });
 
-            System.out.println("새로운 StoreLocation DB 저장 완료: " + newStoreLocation);
-            return newStoreLocation;
-        });
-
-        //매장 정보 저장
-        final Store savedStore = storeRepository.saveStore(Store.builder()
+        // 매장 정보 저장
+        Store savedStore = storeRepository.save(Store.builder()
                 .storeName(requestDto.getStoreInfo().getStoreName())
                 .phoneNumber(requestDto.getStoreInfo().getPhoneNumber())
                 .storeDescription(requestDto.getStoreInfo().getStoreDescription())
@@ -131,34 +272,53 @@ public class StoreServiceImpl implements StoreService {
                 .build());
 
         // 운영시간 저장
-        requestDto.getOperatingHours().stream()
-                .map(hoursDto -> {
-                    if (hoursDto == null) {
-                        throw new IllegalArgumentException("OperatingHoursDto 객체가 null입니다.");
-                    }
+        requestDto.getOperatingHours().forEach(hoursDto -> {
+            List<Integer> weekdays = convertWeekdayToInt(hoursDto.getWeekday());
 
 
-                    OperationTimes operationTimes = OperationTimes.builder()
-                            .weekday(convertWeekdayToInt(hoursDto.getWeekday()))
-                            .operationTimeOpeningTime(hoursDto.getOperationTimeOpeningTime())
-                            .operationTimeClosingTime(hoursDto.getOperationTimeClosingTime())
-                            .isHoliday(hoursDto.isHoliday())
-                            .build();
+            // PostgreSQL이 인식할 수 있는 배열 형식 ('{2,3,4,5,6}')
+            String weekdayStr = "{" + weekdays.stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(",")) + "}";
 
-                    storeRepository.saveOperationTimes(operationTimes);
+            UUID operationTimeUuid = UUID.randomUUID();
 
-                    StoreOperationTimes storeOperationTimes = StoreOperationTimes.builder()
-                            .store(savedStore)
-                            .operationTimes(operationTimes)
-                            .build();
+            storeRepository.insertOperationTimes(
+                    operationTimeUuid,
+                    weekdayStr,
+                    hoursDto.getOperationTimeOpeningTime(),
+                    hoursDto.getOperationTimeClosingTime(),
+                    hoursDto.isHoliday()
+            );
 
-                    storeRepository.saveStoreOperationTimes(storeOperationTimes);
+            String weekdayStrForStringToArray = weekdays.stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(","));
 
-                    return storeOperationTimes;
-                }).forEach(storeRepository::saveStoreOperationTimes);
+            List<OperationTimes> operationTimesList = storeRepository.findOperationTimes(
+                    weekdayStrForStringToArray,
+                    hoursDto.getOperationTimeOpeningTime(),
+                    hoursDto.getOperationTimeClosingTime(),
+                    hoursDto.isHoliday()
+            );
+            System.out.println(operationTimesList.toString());
+            if (operationTimesList.isEmpty()) {
+                throw new NoSuchElementException("해당 운영 시간이 존재하지 않습니다.");
+            }
+            UUID storeOperationTimesUuid = UUID.randomUUID(); // UUID 직접 생성
+            OperationTimes savedOperationTimes = operationTimesList.get(0);
+
+            storeRepository.insertStoreOperationTimes(
+                    storeOperationTimesUuid,
+                    savedStore.getStoreUuid(),
+                    savedOperationTimes.getStoreOperatingTimesUuid()
+            );
+        });
+
     }
 
-    private int convertWeekdayToInt(List<String> weekdays) {
+
+    private List<Integer> convertWeekdayToInt(List<String> weekdays) {
         Map<String, Integer> weekdayMap = Map.of(
                 "SUNDAY", 1, "MONDAY", 2, "TUESDAY", 3, "WEDNESDAY", 4,
                 "THURSDAY", 5, "FRIDAY", 6, "SATURDAY", 7
@@ -166,7 +326,6 @@ public class StoreServiceImpl implements StoreService {
 
         return weekdays.stream()
                 .map(weekdayMap::get)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 요일 값입니다."));
+                .collect(Collectors.toList());
     }
 }
