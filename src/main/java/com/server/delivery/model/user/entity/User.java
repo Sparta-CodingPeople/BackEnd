@@ -4,6 +4,7 @@ import com.server.delivery.common.BaseEntity;
 import com.server.delivery.model.manager.entity.Manager;
 import com.server.delivery.model.master.entity.Master;
 import com.server.delivery.model.owner.entity.Owner;
+import com.server.delivery.model.review.entity.Review;
 import com.server.delivery.model.user.entity.constant.UserGender;
 import com.server.delivery.model.user.entity.constant.UserRole;
 import jakarta.persistence.*;
@@ -14,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -88,11 +90,14 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private List<Manager> managers;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    private List<Review> reviews = new ArrayList<>();
+
     public void updateTokenIssuedAt() {
         this.tokenIssuedAt = LocalDateTime.now();
     }
 
-    @PreRemove
     public void softDelete() {
         this.setDeletedAt(LocalDateTime.now());
         this.setDeletedBy(SecurityContextHolder.getContext().getAuthentication().getName());

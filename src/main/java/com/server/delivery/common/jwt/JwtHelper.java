@@ -5,6 +5,7 @@ import com.server.delivery.common.exception.customException.CustomJwtException;
 import com.server.delivery.common.exception.customException.CustomUserException;
 import com.server.delivery.model.user.entity.User;
 import com.server.delivery.model.user.repository.UserJpaRepository;
+import com.server.delivery.util.helper.UserHelper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -34,6 +35,7 @@ public class JwtHelper {
     public static final String BEARER_PREFIX = "Bearer ";
 
     private final UserJpaRepository userRepository;
+    private final UserHelper userHelper;
 
     // 어세스 토큰 만료 시간
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey

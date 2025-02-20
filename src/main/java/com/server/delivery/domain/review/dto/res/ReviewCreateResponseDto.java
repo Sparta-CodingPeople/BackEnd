@@ -1,6 +1,11 @@
 package com.server.delivery.domain.review.dto.res;
 
+import java.util.UUID;
+
 public record ReviewCreateResponseDto(
-	Long reviewId
+	UUID reviewId
 ) {
+	public static ReviewCreateResponseDto from(UUID reviewId) {
+		return new ReviewCreateResponseDto(reviewId);
+	}
 }
