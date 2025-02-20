@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class OrderResponseDto {
+public class OrderGetResponseDto {
     private Long userId;
     private String userName;
     private UUID storeId;
@@ -27,7 +27,7 @@ public class OrderResponseDto {
     private String payType;
     private LocalDateTime orderTime;
     private String userPhoneNum;
-    private String deliveryStatus;
+    private String orderStatus;
     private LocalDateTime deliveryStartTime;
     private String payStatus;
 }
