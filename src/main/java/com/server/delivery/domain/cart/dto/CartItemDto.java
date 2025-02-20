@@ -1,5 +1,6 @@
 package com.server.delivery.domain.cart.dto;
 
+import com.server.delivery.model.cart.entity.MenuCart;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,5 +14,13 @@ public class CartItemDto {
     private UUID productId;
     private String productName;
     private int quantity;
-    private int price;
+    private int totalPrice;
+
+    public static CartItemDto from(MenuCart menuCart) {
+        return CartItemDto.builder()
+                .productName(menuCart.getMenu().getMenuName())
+                .quantity(menuCart.getQuantity())
+                .totalPrice(menuCart.getTotalPrice())
+                .build();
+    }
 }
