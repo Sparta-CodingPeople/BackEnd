@@ -3,13 +3,10 @@ package com.server.delivery.domain.store.controller;
 import com.server.delivery.common.PageCustom;
 import com.server.delivery.common.jwt.CustomUserDetail;
 import com.server.delivery.common.response.CustomResponse;
-import com.server.delivery.domain.store.dto.request.StoreLocationRequestDto;
-import com.server.delivery.domain.store.dto.request.StoreOperatingHoursRequestDto;
-import com.server.delivery.domain.store.dto.request.StoreRegisterRequestDto;
-import com.server.delivery.domain.store.dto.request.StoreUpdateRequestDto;
+import com.server.delivery.domain.store.dto.request.*;
 import com.server.delivery.domain.store.dto.response.StoreResponseDto;
 import com.server.delivery.domain.store.service.StoreService;
-import com.server.delivery.domain.store.service.StoreServiceImpl;
+import com.server.delivery.util.helper.UserHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -25,6 +22,7 @@ import java.util.UUID;
 public class StoreController {
 
     private final StoreService storeService;
+    private final UserHelper userHelper;
 
     // 매장 등록
     @PostMapping
@@ -42,9 +40,12 @@ public class StoreController {
             @AuthenticationPrincipal CustomUserDetail userDetail) {
 
         // userDetail이 null일 경우 임시 비밀번호 설정(테스트용)
-        String userPassword = (userDetail != null) ? userDetail.getPassword() : "password1234!";
+/*        String userPassword = (userDetail != null) ? userDetail.getPassword() : "password123";
+        String userName = (userDetail != null) ? userDetail.getUsername() : "john_doe";*/
 
-        storeService.deleteStore(id, userPassword);
+        String userName = userDetail.getUsername();
+        String userPassword = userDetail.getPassword();
+        storeService.deleteStore(id, userPassword, userName);
 
         return CustomResponse.success("매장 삭제 성공");
     }
@@ -53,9 +54,11 @@ public class StoreController {
     @PatchMapping("/{id}")
     public CustomResponse<Void> updateStore(
             @PathVariable UUID id,
-            @RequestBody StoreUpdateRequestDto requestDto) {
-
-        storeService.updateStore(id, requestDto);
+            @RequestBody StoreUpdateRequestDto requestDto,
+            @AuthenticationPrincipal CustomUserDetail userDetail) {
+        /*String userName = userDetail.getUsername();*/
+        String userName = (userDetail != null) ? userDetail.getUsername() : "john_doe";
+        storeService.updateStore(id, userName, requestDto );
 
         return CustomResponse.success("매장 정보 수정 성공");
 
@@ -63,7 +66,8 @@ public class StoreController {
 
     // 매장 단일 조회
     @GetMapping("/{id}")
-    public CustomResponse<StoreResponseDto> getStore(@PathVariable UUID id) {
+    public CustomResponse<StoreResponseDto> getStore(
+            @PathVariable UUID id) {
 
         StoreResponseDto storeData = storeService.getStore(id);
 
@@ -75,7 +79,7 @@ public class StoreController {
     @PatchMapping("/{id}/location")
     public CustomResponse<Void> updateStoreLocation(
             @PathVariable UUID id,
-            @RequestBody StoreLocationRequestDto requestDto) {
+            @RequestBody StoreLocationUpdateDto requestDto) {
 
         storeService.updateStoreLocation(id, requestDto);
 
@@ -87,7 +91,7 @@ public class StoreController {
     @PatchMapping("/{id}/time")
     public CustomResponse<Void> updateStoreOperatingHours(
             @PathVariable UUID id,
-            @RequestBody List<StoreOperatingHoursRequestDto> requestDto) {
+            @RequestBody List<StoreOperatingHoursUpdateDto> requestDto) {
 
         storeService.updateStoreOperatingHours(id, requestDto);
 
