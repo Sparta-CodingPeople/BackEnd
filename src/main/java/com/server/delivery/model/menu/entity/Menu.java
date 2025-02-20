@@ -1,6 +1,5 @@
 package com.server.delivery.model.menu.entity;
 
-import com.server.delivery.model.review.entity.Review;
 import com.server.delivery.model.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.*;
@@ -42,8 +41,9 @@ public class Menu {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    @OneToMany(mappedBy = "menu")
-    private List<Review> reviews;
+    // todo. 필요 시 추가
+//    @OneToMany(mappedBy = "menu")
+//    private List<Review> reviews;
 
     @OneToMany(mappedBy = "menu")
     private List<MenuCart> menuCarts;
