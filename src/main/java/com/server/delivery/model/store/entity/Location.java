@@ -12,7 +12,9 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "p_location")
+@Table(name = "p_location",  uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"location_category_id", "address"})
+})
 public class Location extends BaseEntity {
 
     @Id
@@ -20,8 +22,8 @@ public class Location extends BaseEntity {
     @Column(name = "location_uuid")
     private UUID locationUuid;
 
-    @OneToOne
-    @JoinColumn(name = "location_category_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "location_category_id", nullable = false, unique = false)
     private SeoulAreaCode locationCategory;
 
     @Column(name = "address", nullable = false, length = 255)
