@@ -1,0 +1,27 @@
+package com.server.delivery.model.order.repository;
+
+import com.server.delivery.model.order.entity.OrderMenu;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+import java.util.UUID;
+
+@RequiredArgsConstructor
+@Repository
+public class OrderMenuRepositoryImpl implements OrderMenuRepository {
+    private final OrderMenuJpaRepository jpaRepository;
+
+    @Override
+    public OrderMenu save(OrderMenu orderMenu) {return jpaRepository.save(orderMenu);}
+
+    @Override
+    public Optional<OrderMenu> findById(UUID menuId) {return jpaRepository.findById(menuId);    }
+
+    @Override
+    public void delete(OrderMenu orderMenu){jpaRepository.delete(orderMenu);
+    }
+
+
+
+}
