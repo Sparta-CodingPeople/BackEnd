@@ -8,6 +8,7 @@ import com.server.delivery.domain.store.dto.response.StoreResponseDto;
 import com.server.delivery.model.store.entity.*;
 import com.server.delivery.model.store.repository.StoreJpaRepository;
 import com.server.delivery.model.store.repository.StoreRepository;
+import com.server.delivery.util.helper.UserHelper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -26,6 +27,7 @@ public class StoreServiceImpl implements StoreService {
 
     private final StoreJpaRepository storeJpaRepository;
     private final StoreRepository storeRepository;
+    private final UserHelper userHelper;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -33,11 +35,15 @@ public class StoreServiceImpl implements StoreService {
     public void deleteStore(
             UUID id,
             String password) {
+        Store store = storeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 매장을 찾을 수 없습니다."));
+
     }
 
     public void updateStore(
             UUID id,
             StoreUpdateRequestDto requestDto) {
+
 
     }
 
@@ -72,7 +78,7 @@ public class StoreServiceImpl implements StoreService {
     @Transactional
     public void registerStore(StoreRegisterRequestDto requestDto) {
         //매장 카테고리 조회
-        StoreCategory storeCategory = storeRepository.findById(requestDto.getStoreInfo().getStoreCategoryId())
+        StoreCategory storeCategory = storeRepository.findByStoreCategoryId(requestDto.getStoreInfo().getStoreCategoryId())
                 .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 매장 카테고리"));
 
         //서울 지역 코드 조회
