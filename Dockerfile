@@ -4,10 +4,10 @@ FROM bellsoft/liberica-openjdk-alpine:17
 # 작업 디렉토리 설정
 WORKDIR /app
 
-# Git 설치 (Alpine에는 기본적으로 Git이 없음)
-RUN apk update && apk add git
+# Gradle 빌드 실행 (JAR 파일을 build/libs에 생성)
+RUN ./gradlew clean build -x test
 
-# JAR 파일 복사 (GitHub Actions에서 빌드한 파일을 사용)
+# JAR 파일 복사 (빌드 후 생성된 JAR 파일을 복사)
 COPY build/libs/*.jar app.jar
 
 EXPOSE 8080
