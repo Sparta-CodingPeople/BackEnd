@@ -29,7 +29,7 @@ public class Location extends BaseEntity {
     @Column(name = "location_seoul_area_code")
     private SeoulAreaCode seoulAreaCode;
 
-    @Column(name = "location_seoul_address", nullable = false, length = 255)
+    @Column(name = "location_seoul_address", nullable = false)
     private String address;
 
     @Column(name = "location_seoul_zipcode", nullable = false, length = 10)
