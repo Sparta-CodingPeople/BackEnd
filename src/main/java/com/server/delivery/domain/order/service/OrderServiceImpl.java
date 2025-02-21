@@ -1,18 +1,21 @@
 package com.server.delivery.domain.order.service;
 
 import com.server.delivery.domain.order.dto.OrderItemDto;
+import com.server.delivery.domain.order.dto.request.OrderAcceptRequestDto;
 import com.server.delivery.domain.order.dto.request.OrderCreateRequestDto;
+import com.server.delivery.domain.order.dto.request.OrderRejectRequestDto;
+import com.server.delivery.domain.order.dto.request.OrderUpdateRequestDto;
 import com.server.delivery.domain.order.dto.response.OrderGetResponseDto;
 import com.server.delivery.model.order.entity.*;
 import com.server.delivery.model.order.repository.OrderMenuRepository;
 import com.server.delivery.model.order.repository.OrderRepository;
-import com.server.delivery.model.store.entity.Store;
 import com.server.delivery.util.helper.UserHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -30,8 +33,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void createOrder(OrderCreateRequestDto requestDto) {
         //엔티티에 연결할 다른 엔티티 조회 (유저, 스토어?? -> 생성자로 생성
-        Store store = storeRepository.findById(requestDto.getStoreId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 가게입니다"));
+//        Store store = StoreRepository.findById(requestDto.getStoreId())
+//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 가게입니다"));
 
         //주문 받고 바로 delivery 생성하는지?? -> 주문 승낙하면 하는 게 맞지 않나??
 
@@ -42,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
                 .orderType(OrderType.valueOf(requestDto.getOrderType()))
                 .orderStatus(OrderStatus.valueOf(requestDto.getOrderStatus()))
 //                .delivery(delivery)  // Todo. delivery를 order에서 생성하는지?
-                .store(store)
+//                .store(store)
                 .build();
 
         //저장, 리턴
@@ -108,6 +111,115 @@ public class OrderServiceImpl implements OrderService {
                 .toList();
     }
 
+    //주문수정
+    private void updateOrder(UUID orderId, OrderUpdateRequestDto updateDto) {
+        //주문조회
+//        Order order = orderRepository.findById(orderId)
+//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
+//
+//        //수정가능여부 -> 배송중이거나 취소된 주문 수정불가
+//                if (order.getOrderStatus() == OrderStatus.DELIVERING ||
+//                    order.getOrderStatus() == OrderStatus.CANCELED) {
+//                    throw new IllegalStateException("수정이 불가능한 주문 상태입니다.");
+//                };
+//        //수정할 필드 업데이트
+//        if (updateDto.getDeliveryAddress() != null){
+//            order.getDelivery().setDeliveryAddress(updateDto.getDeliveryAddress());
+//        }
+//        if (updateDto.getTotalprice() != null) {
+//            order.setTotalPrice(updateDto.getTotalprice());
+//        }
+//        if (updateDto.getMessageForRider() != null){
+//            order.setOrderMessage(updateDto.getMessageForRider());
+//        }
+//        if (updateDto.getMessageForStore() != null){
+//            order.setOrderMessage(updateDto.getMessageForStore());
+//        }
+//        if (updateDto.getUserPhoneNum() != null) {
+//            order.getUser().setPhoneNumber(updateDto.getUserPhoneNum());
+//        }
+//
+//        //item -> 아이템 일부교체
+//        if(updateDto.getItems() != null && !updateDto.getItems().isEmpty()){
+//            order.get
+//        }
+
+//          orderRepository.(order);
+
+    }
+
+    //주문취소
+    @Transactional
+    @Override
+    public void deleteOrder(UUID orderId) {
+        //1. 주문조회
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
+
+        //2. 취소가능여부
+        if (order.getOrderStatus() == OrderStatus.DELIVERING) {
+            throw new IllegalStateException("이미 배송 중인 주문은 취소할 수 없습니다.");
+        }
+        if (order.getOrderStatus() == OrderStatus.CANCELED) {
+            throw new IllegalStateException("이미 취소된 주문입니다.");
+        }
+        //3. 주문상태 변경
+        order.setIsDeleted(Boolean.TRUE);
+        order.setDeletedAt(LocalDateTime.now());
+
+        //4. item들 삭제처리
+        for (OrderMenu orderitem : order.getOrderMenus()){
+            orderitem.setIsDeleted(Boolean.TRUE);
+            orderitem.setDeletedAt(LocalDateTime.now());
+        }
+    }
+
+
+    //주문접수
+    @Transactional
+    @Override
+    public void acceptOrder(UUID orderId, OrderAcceptRequestDto acceptDto) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
+
+        //접수 불가능한 상황
+        if (order.getOrderStatus() == OrderStatus.DELIVERING) {
+            throw new IllegalStateException("배송중인 주문입니다");
+        }
+        if (order.getOrderStatus() == OrderStatus.CANCELED) {
+            throw new IllegalStateException("취소된 주문입니다");
+        }
+        if (order.getOrderStatus() == OrderStatus.ACCEPT) {
+            throw new IllegalStateException("이미 접수된 주문입니다");
+        }
+        if (order.getOrderStatus() == OrderStatus.REJECTED) {
+            throw new IllegalStateException("이미 거부된 주문입니다");
+        }
+
+        order.setOrderStatus(OrderStatus.ACCEPT);
+    }
+
+
+    //주문거부
+    @Transactional
+    @Override
+    public void rejectOrder(UUID orderId, OrderRejectRequestDto rejectDto) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
+
+        //거절가능/불가능
+        if (order.getOrderStatus() == OrderStatus.DELIVERING) {
+            throw new IllegalStateException("이미 배송 중인 주문은 거절할 수 없습니다.");
+        }
+        if (order.getOrderStatus() == OrderStatus.CANCELED) {
+            throw new IllegalStateException("이미 취소된 주문입니다.");
+        }
+        if (order.getOrderStatus() == OrderStatus.REJECTED) {
+            throw new IllegalStateException("이미 거부된 주문입니다");
+        }
+
+        order.setOrderStatus(OrderStatus.REJECTED);
+    }
 
 
 }
