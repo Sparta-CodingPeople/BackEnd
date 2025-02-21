@@ -1,16 +1,22 @@
 package com.server.delivery.model.store.entity;
 
 import com.server.delivery.common.BaseEntity;
+import com.server.delivery.model.store.constant.SeoulAreaCode;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@SQLRestriction("location_is_deleted = false")
 @Table(name = "p_location")
 public class Location extends BaseEntity {
 
@@ -19,14 +25,21 @@ public class Location extends BaseEntity {
     @Column(name = "location_uuid")
     private UUID locationUuid;
 
-    @OneToOne
-    @JoinColumn(name = "location_category_id", nullable = false)
-    private SeoulAreaCode locationCategory;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "location_seoul_area_code")
+    private SeoulAreaCode seoulAreaCode;
 
-    @Column(name = "address", nullable = false, length = 255)
+    @Column(name = "location_seoul_address", nullable = false, length = 255)
     private String address;
 
-    @Column(name = "zipcode", nullable = false, length = 10)
-    private String zipcode;
+    @Column(name = "location_seoul_zipcode", nullable = false, length = 10)
+    private int zipcode;
+
+    @OneToMany(mappedBy = "location")
+    private List<Store> stores = new ArrayList<>();
+
+    @Column(name = "location_is_deleted")
+    @Builder.Default
+    private boolean isDeleted = Boolean.FALSE;
 
 }

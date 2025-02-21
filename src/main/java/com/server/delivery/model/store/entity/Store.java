@@ -1,34 +1,19 @@
 package com.server.delivery.model.store.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
-
 import com.server.delivery.common.BaseEntity;
 import com.server.delivery.model.menu.entity.Menu;
 import com.server.delivery.model.order.entity.Order;
+import com.server.delivery.model.owner.entity.OwnerStore;
 import com.server.delivery.model.review.entity.Review;
 import com.server.delivery.model.user.entity.UserStore;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -41,47 +26,50 @@ import lombok.Setter;
 @Table(name = "p_store")
 public class Store extends BaseEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	@Column(name = "store_uuid")
-	private UUID storeUuid;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "store_uuid")
+    private UUID storeUuid;
 
-	@Column(name = "store_name", nullable = false, length = 100)
-	private String storeName;
+    @Column(name = "store_name", nullable = false, length = 100)
+    private String storeName;
 
-	@Column(name = "phone_number", nullable = false, length = 100)
-	private String phoneNumber;
+    @Column(name = "phone_number", nullable = false, length = 100)
+    private String phoneNumber;
 
-	@Column(name = "store_description")
-	private String storeDescription;
+    @Column(name = "store_description")
+    private String storeDescription;
 
-	@Column(name = "store_is_deleted")
-	private boolean storeIsDeleted = Boolean.FALSE;
+    @Column(name = "store_is_deleted")
+    private boolean storeIsDeleted = Boolean.FALSE;
 
-	@Column(name = "store_is_granted")
-	private boolean storeIsGranted = Boolean.FALSE;
+    @Column(name = "store_is_granted")
+    private boolean storeIsGranted = Boolean.FALSE;
 
-	@OneToMany(mappedBy = "store")
-	private List<UserStore> userStore;
+    @OneToMany(mappedBy = "store")
+    private List<UserStore> userStore;
 
-	@ManyToOne
-	@JoinColumn(name = "store_category_id")
-	private StoreCategory storeCategory;
+    @OneToMany(mappedBy = "store")
+    private List<Menu> menus;
 
-	@OneToMany(mappedBy = "store")
-	private List<Menu> menus;
+    @OneToMany(mappedBy = "store")
+    private List<Order> orders;
 
-	@OneToMany(mappedBy = "store")
-	private List<Order> orders;
+    @OneToMany(mappedBy = "store")
+    private List<StoreOperationTimes> operatingHours;
 
-	@OneToMany(mappedBy = "store")
-	private List<StoreOperationTimes> operatingHours;
+    @Builder.Default
+    @OneToMany(mappedBy = "store")
+    private List<Review> reviews = new ArrayList<>();
 
-	@Builder.Default
-	@OneToMany(mappedBy = "store")
-	private List<Review> reviews = new ArrayList<>();
+    //StoreCategoryMapping을 통해 매장과 카테고리를 연결
+    @OneToMany(mappedBy = "store")
+    private List<StoreCategoryMapping> categoryMappings = new ArrayList<>();
 
-	@OneToOne
-	@JoinColumn(name = "store_location_uuid")
-	private StoreLocation storeLocation;  // 이 부분에서 StoreLocation과 연결
+    @ManyToOne
+    @JoinColumn(name = "location_uuid")
+    private Location location;
+
+    @OneToMany(mappedBy = "store")
+    private List<OwnerStore> ownerStore;
 }

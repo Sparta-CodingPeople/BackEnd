@@ -1,16 +1,20 @@
 package com.server.delivery.model.store.entity;
 
 import com.server.delivery.common.BaseEntity;
+import com.server.delivery.model.store.constant.WeekDays;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@SQLRestriction("operation_times_is_deleted = false")
 @Table(name = "p_operation_times")
 public class OperationTimes extends BaseEntity {
 
@@ -20,7 +24,8 @@ public class OperationTimes extends BaseEntity {
     private UUID storeOperatingTimesUuid;
 
     @Column(name = "weekday", nullable = false)
-    private int weekday;
+    @Enumerated(EnumType.ORDINAL)
+    private WeekDays weekday;
 
     @Column(name = "operation_times_opening_time", nullable = false)
     private String operationTimeOpeningTime;
@@ -30,5 +35,9 @@ public class OperationTimes extends BaseEntity {
 
     @Column(name = "operation_times_is_holiday", nullable = false)
     private boolean isHoliday;
+
+    @Builder.Default
+    @Column(name = "operation_times_is_deleted")
+    private boolean isDeleted = Boolean.FALSE;
 
 }
