@@ -2,8 +2,7 @@ package com.server.delivery.domain.master.service;
 
 import com.server.delivery.common.PageCustom;
 import com.server.delivery.domain.store.dto.response.StoreResponseDto;
-import com.server.delivery.domain.store.service.StoreService;
-import com.server.delivery.model.master.repository.MasterRepository;
+import com.server.delivery.model.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,8 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class MasterServiceImpl implements MasterService {
-    private final MasterRepository masterRepository;
-    private final StoreService storeService;
+    private final UserRepository userRepository;
 
     @Override
     public PageCustom<StoreResponseDto> getStoreListNeedGrant(Long id, Pageable pageable) {

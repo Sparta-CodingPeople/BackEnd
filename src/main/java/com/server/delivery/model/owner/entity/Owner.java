@@ -1,16 +1,19 @@
 package com.server.delivery.model.owner.entity;
 
-import com.server.delivery.model.store.entity.Store;
 import com.server.delivery.model.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "p_owner")
+//TODO:: softDelete 구현하기
 public class Owner {
 
     @Id
@@ -21,9 +24,11 @@ public class Owner {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "store_uuid")
-    private Store store;
+    @OneToMany(mappedBy = "owner")
+    private List<OwnerStore> ownerStore;
+
+    @Column(name = "business_number")
+    private String businessNumber;
 
 
 }
