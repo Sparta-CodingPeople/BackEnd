@@ -31,8 +31,8 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE p_delivery SET deleted_at = true WHERE delivery_id = ?")
-@SQLRestriction("deleted_at is null") // deleted_at이 null인 데이터만 조회
+@SQLDelete(sql = "UPDATE p_delivery SET delivery_is_deleted = true WHERE delivery_id = ?")
+@SQLRestriction("delivery_is_deleted = false")
 @Table(name = "p_delivery")
 public class Delivery extends BaseEntity {
 	@Id
@@ -44,22 +44,37 @@ public class Delivery extends BaseEntity {
 	@Column(name = "delivery_status")
 	private DeliveryStatus status;
 
-	@Column(name = "delivery_address")
-	private String deliveryAddress;
-
-	@Column(name = "delivery_memo")
-	private String deliveryMemo;
-
 	@Column(name = "delivery_start_time")
 	private LocalDateTime deliveryStartTime;
 
-	@Column(name = "delivery_estimated_time")
-	private LocalDateTime deliveryEstimatedTime;
+	@Column(name = "delivery_arrival_time") // 도착 예상 시간
+	private Integer deliveryArrivalTime;
 
 	@Column(name = "delivery_cancel_reason")
 	private String cancelReason;
 
-	@OneToOne(mappedBy = "delivery")  // Order 엔티티의 delivery 필드를 참조
+	@OneToOne(mappedBy = "delivery")
 	private Order order;
 
+	@Enumerated(EnumType.STRING)
+	private DeliveryTip deliveryTip;
+
+	@Builder.Default
+	@Column(name = "delivery_is_deleted")
+	private Boolean isDeleted = Boolean.FALSE;
+
+	public void isDeleted() {
+		this.isDeleted = Boolean.TRUE;
+		this.setDeletedAt(LocalDateTime.now());
+	}
+
+	public void updateDeliveryStartTime(Order order) {
+		this.deliveryStartTime = order.getCreatedAt();
+	}
+
+	public void updateDeliveryEstimatedTime(Order foundOrder) {
+		int orderCookingTime = foundOrder.getOrderCookingTime();
+		int estimatedDeliveryTime = foundOrder.getEstimatedDeliveryTime();
+		this.deliveryArrivalTime = orderCookingTime + estimatedDeliveryTime;
+	}
 }
