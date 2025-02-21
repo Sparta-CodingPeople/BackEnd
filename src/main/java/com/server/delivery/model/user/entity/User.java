@@ -12,7 +12,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.server.delivery.common.BaseEntity;
 import com.server.delivery.model.manager.entity.Manager;
 import com.server.delivery.model.master.entity.Master;
+import com.server.delivery.model.order.entity.Order;
 import com.server.delivery.model.owner.entity.Owner;
+import com.server.delivery.model.payment.Payment;
 import com.server.delivery.model.review.entity.Review;
 import com.server.delivery.model.user.entity.constant.UserGender;
 import com.server.delivery.model.user.entity.constant.UserRole;
@@ -112,6 +114,14 @@ public class User extends BaseEntity {
 	@Builder.Default
 	@OneToMany(mappedBy = "user")
 	private List<Review> reviews = new ArrayList<>();
+
+	@Builder.Default
+	@OneToMany(mappedBy = "user")
+	private List<Order> orders = new ArrayList<>();
+
+	@Builder.Default
+	@OneToMany(mappedBy = "user")
+	private List<Payment> payments = new ArrayList<>();
 
 	public void updateTokenIssuedAt() {
 		this.tokenIssuedAt = LocalDateTime.now();
