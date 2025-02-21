@@ -27,9 +27,12 @@ public class StoreController {
 
     // 매장 등록
     @PostMapping
-    public CustomResponse<Void> registerStore(@RequestBody StoreRegisterRequestDto requestDto) {
+    public CustomResponse<Void> registerStore(
+            @RequestBody StoreRegisterRequestDto requestDto,
+            @AuthenticationPrincipal CustomUserDetail userDetail
+    ) {
 
-        storeService.registerStore(requestDto);
+        storeService.registerStore(userDetail.getUserId(), requestDto);
 
         return CustomResponse.success("매장 등록 요청 성공");
     }
@@ -49,46 +52,48 @@ public class StoreController {
     }
 
     // 매장 정보 수정
-    @PatchMapping("/{id}")
+    @PatchMapping("/{storeUuid}")
     public CustomResponse<Void> updateStore(
-            @PathVariable UUID id,
-            @RequestBody StoreUpdateRequestDto requestDto) {
+            @PathVariable UUID storeUuid,
+            @RequestBody StoreUpdateRequestDto requestDto,
+            @AuthenticationPrincipal CustomUserDetail userDetail) {
 
-        storeService.updateStore(id, requestDto);
+        storeService.updateStore(userDetail.getUserId(), storeUuid, requestDto);
 
         return CustomResponse.success("매장 정보 수정 성공");
 
     }
 
     // 매장 단일 조회
-    @GetMapping("/{id}")
-    public CustomResponse<StoreResponseDto> getStore(@PathVariable UUID id) {
+    @GetMapping("/{storeUuid}")
+    public CustomResponse<StoreResponseDto> getStore(
+            @PathVariable UUID storeUuid) {
 
-        StoreResponseDto storeData = storeService.getStore(id);
+        StoreResponseDto responseDto = storeService.findStore(storeUuid);
 
-        return CustomResponse.success("매장 단일 조회 성공", storeData);
+        return CustomResponse.success("매장 단일 조회 성공", responseDto);
 
     }
 
     // 매장 위치 수정
-    @PatchMapping("/{id}/location")
+    @PatchMapping("/{storeUuid}/location")
     public CustomResponse<Void> updateStoreLocation(
-            @PathVariable UUID id,
+            @PathVariable UUID storeUuid,
             @RequestBody StoreLocationRequestDto requestDto) {
 
-        storeService.updateStoreLocation(id, requestDto);
+        storeService.updateStoreLocation(storeUuid, requestDto);
 
         return CustomResponse.success("매장 위치 수정 성공");
 
     }
 
     // 매장 영업 시간 수정
-    @PatchMapping("/{id}/time")
+    @PatchMapping("/{storeUuid}/operationTime")
     public CustomResponse<Void> updateStoreOperatingHours(
-            @PathVariable UUID id,
+            @PathVariable UUID storeUuid,
             @RequestBody List<StoreOperatingHoursRequestDto> requestDto) {
 
-        storeService.updateStoreOperatingHours(id, requestDto);
+        storeService.updateStoreOperatingHours(storeUuid, requestDto);
 
         return CustomResponse.success("매장 운영 시간 수정 성공");
 
@@ -98,15 +103,11 @@ public class StoreController {
     @GetMapping
     public CustomResponse<PageCustom<StoreResponseDto>> searchStores(
             @RequestParam("search") String search,
-            @PageableDefault Pageable pageable
+            @PageableDefault Pageable pageable,
+            @AuthenticationPrincipal CustomUserDetail userDetail
     ) {
+        PageCustom<StoreResponseDto> storeList = storeService.searchStores(search, pageable);
 
-        List<StoreResponseDto> storeList = storeService.searchStores(search, pageable);
-
-        Long totalStores = storeService.getTotalStores(search);
-
-        PageCustom<StoreResponseDto> pageResultList = new PageCustom<>(storeList, pageable, totalStores);
-
-        return CustomResponse.success("매장 검색 결과", pageResultList);
+        return CustomResponse.success("매장 검색 결과", storeList);
     }
 }
