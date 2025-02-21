@@ -7,6 +7,7 @@ import com.server.delivery.model.delivery.entity.DeliveryStatus;
 import com.server.delivery.model.payment.Payment;
 import com.server.delivery.model.user.entity.User;
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -15,14 +16,9 @@ import com.server.delivery.model.delivery.entity.Delivery;
 import com.server.delivery.model.review.entity.Review;
 import com.server.delivery.model.store.entity.Store;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 @Entity
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
