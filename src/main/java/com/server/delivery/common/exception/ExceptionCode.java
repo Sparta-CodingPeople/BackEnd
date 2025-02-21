@@ -41,10 +41,24 @@ public enum ExceptionCode {
     // 예기치 않은 예외 (디폴트),
     NOT_HANDLED_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "Unhandled exception.", 9999),
 
-    //유저 - 6000
+    // 유저 - 6000
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "User Not Found.", 6000),
-    USERNAME_IS_EXIST(HttpStatus.BAD_REQUEST, "Username is exist.", 6001);
+    USERNAME_IS_EXIST(HttpStatus.BAD_REQUEST, "Username is exist.", 6001),
 
+    // 주문 - 7000
+    ORDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "Order Not Found.", 7000),
+
+    // 리뷰 - 8000
+    REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "Review Not Found.", 8001),
+    REVIEW_UPDATE_EXPIRED(HttpStatus.BAD_REQUEST, "Review Update Expired.", 8002),
+
+    //카트 - 9000
+    CARTS_ORDER_ITEM_EXIST(HttpStatus.BAD_REQUEST, "Carts Order Item Exist.", 9001),
+    CARTS_NOT_FOUND(HttpStatus.BAD_REQUEST, "Carts Not Found.", 9002),
+    //메뉴 - 10000
+    MENU_NOT_FOUND(HttpStatus.BAD_REQUEST, "Menu Not Found.", 10001),
+    MENU_CART_NOT_FOUND(HttpStatus.BAD_REQUEST, "Menu Cart Not Found.", 10002),
+    ;
 
     private final HttpStatus httpStatus;
     private final String message;
