@@ -44,6 +44,7 @@ public enum ExceptionCode {
     // 유저 - 6000
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "User Not Found.", 6000),
     USERNAME_IS_EXIST(HttpStatus.BAD_REQUEST, "Username is exist.", 6001),
+    OWNER_NOT_FOUND(HttpStatus.BAD_REQUEST, "Owner Not Found.", 6002),
 
     // 주문 - 7000
     ORDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "Order Not Found.", 7000),
@@ -63,17 +64,20 @@ public enum ExceptionCode {
     //매점 - 11000
     STORE_NOT_FOUND(HttpStatus.BAD_REQUEST, "Store Not Found.", 11003),
     STORE_NOT_MATCH(HttpStatus.BAD_REQUEST, "Store Not Match.", 11004),
+    STORE_IS_EXIST(HttpStatus.BAD_REQUEST, "Store is exist.", 11005),
+    STORE_NOT_GRANTED(HttpStatus.BAD_REQUEST, "Store is not granted.", 11006),
 
-	// 결제 - 3000
-	PAYMENT_SESSION_NOT_FOUND(HttpStatus.BAD_REQUEST, "Payment Session Not Found.", 3000),
-	PAYMENT_INVALID_AMOUNT(HttpStatus.BAD_REQUEST, "Payment Invalid Amount", 3001),
-	PAYMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "Payment Not Found.", 3002),
-	PAYMENT_REQUEST_ALREADY_DONE(HttpStatus.BAD_REQUEST, "Payment Request Already Done", 3003),
-	PAYMENT_ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "Payment Already Canceled", 3004),
-	PAYMENT_REQUEST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Request Error.", 3331),
-	PAYMENT_CONFIRM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Confirm Error.", 3332),
-	PAYMENT_CANCEL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Error.", 3333),
-	PAYMENT_CANCEL_REASON_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Reason Not Found.", 3334);
+    // 결제 - 3000
+    PAYMENT_SESSION_NOT_FOUND(HttpStatus.BAD_REQUEST, "Payment Session Not Found.", 3000),
+    PAYMENT_INVALID_AMOUNT(HttpStatus.BAD_REQUEST, "Payment Invalid Amount", 3001),
+    PAYMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "Payment Not Found.", 3002),
+    PAYMENT_REQUEST_ALREADY_DONE(HttpStatus.BAD_REQUEST, "Payment Request Already Done", 3003),
+    PAYMENT_ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "Payment Already Canceled", 3004),
+    PAYMENT_REQUEST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Request Error.", 3331),
+    PAYMENT_CONFIRM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Confirm Error.", 3332),
+    PAYMENT_CANCEL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Error.", 3333),
+    PAYMENT_CANCEL_REASON_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Reason Not Found.", 3334),
+    ;
 
     private final HttpStatus httpStatus;
     private final String message;
