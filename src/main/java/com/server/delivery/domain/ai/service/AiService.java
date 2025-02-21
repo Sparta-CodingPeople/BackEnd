@@ -1,8 +1,9 @@
 package com.server.delivery.domain.ai.service;
 
-import org.springframework.stereotype.Service;
 
+import com.server.delivery.model.user.entity.User;
 
 public interface AiService {
-    String generateContent(String content);
+
+    String generateContent(String content, User user);
 }

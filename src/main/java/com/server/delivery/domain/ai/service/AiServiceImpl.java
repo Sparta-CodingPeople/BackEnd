@@ -2,6 +2,7 @@ package com.server.delivery.domain.ai.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.server.delivery.model.ai.entity.AiResponse;
+import com.server.delivery.model.user.entity.User;
 import com.server.delivery.model.ai.repository.AiResponseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +25,10 @@ public class AiServiceImpl implements AiService {
 
     private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
 
-    public String generateContent(String content) {
+    public String generateContent(String content,
+                                  User user) {
+
+
         Map<String, Object> request = new HashMap<>();
         List<Map<String, Object>> contents = new ArrayList<>();
         Map<String, Object> parts = new HashMap<>();
@@ -42,7 +46,9 @@ public class AiServiceImpl implements AiService {
 
         String responseText = extractResponseText(response.getBody());
 
+
         AiResponse aiResponse = AiResponse.builder()
+                .user(user)
                 .responseText(responseText)
                 .build();
 
@@ -71,6 +77,7 @@ public class AiServiceImpl implements AiService {
         }
         return "응답을 처리할 수 없습니다.";
     }
+
 
 
 }

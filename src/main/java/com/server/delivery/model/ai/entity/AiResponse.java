@@ -1,6 +1,7 @@
 package com.server.delivery.model.ai.entity;
 
 import com.server.delivery.common.BaseEntity;
+import com.server.delivery.model.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,5 +26,8 @@ public class AiResponse extends BaseEntity {
     @Column(name ="ai_response_text", nullable = false, length = 150)
     private String responseText;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }
