@@ -1,5 +1,6 @@
 package com.server.delivery.common.filter;
 
+import com.server.delivery.common.exception.ExceptionCode;
 import com.server.delivery.common.exception.customException.CustomJwtException;
 import com.server.delivery.common.jwt.JwtHelper;
 import jakarta.servlet.FilterChain;
@@ -47,6 +48,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                     filterChain.doFilter(request, response);
                     return;
                 }
+            } else {
+                throw new CustomJwtException(ExceptionCode.NOT_FOUND_TOKEN);
             }
         } catch (CustomJwtException e) {
             log.error("JWT validation failed: {}", e.getMessage());
