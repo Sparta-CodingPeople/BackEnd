@@ -13,8 +13,10 @@ import org.hibernate.annotations.SQLRestriction;
 
 import com.server.delivery.common.BaseEntity;
 import com.server.delivery.model.delivery.entity.Delivery;
+import com.server.delivery.model.payment.Payment;
 import com.server.delivery.model.review.entity.Review;
 import com.server.delivery.model.store.entity.Store;
+import com.server.delivery.model.user.entity.User;
 
 @Entity
 @Getter
@@ -57,15 +59,22 @@ public class Order extends BaseEntity {
 	private User user;
 
 	@OneToOne
-	@JoinColumn(name = "delivery_id")
+	@JoinColumn(name = "delivery_uuid")
 	private Delivery delivery;
 
 	@ManyToOne
-	@JoinColumn(name = "store_id")  // Store 엔티티와의 관계 설정
+	@JoinColumn(name = "store_uuid")  // Store 엔티티와의 관계 설정
 	private Store store;
 
 	@OneToOne(mappedBy = "order")
 	private Review review;
+
+	@OneToOne(mappedBy = "order")
+	private Payment payment;
+
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	@Builder.Default
 	@Column(name = "order_is_Deleted")

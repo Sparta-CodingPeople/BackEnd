@@ -1,21 +1,23 @@
 package com.server.delivery.model.payment;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
-
+import com.server.delivery.domain.payment.client.dto.PaymentCancelOutput;
 import com.server.delivery.model.order.entity.Order;
+import com.server.delivery.model.user.entity.User;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -29,8 +31,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE p_payment SET payment_is_deleted = true WHERE payment_id = ?")
-@SQLRestriction("payment_is_deleted = false")
 @Table(name = "p_payment")
 public class Payment {
 	@Id
@@ -47,21 +47,43 @@ public class Payment {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "payment_status")
-	private PaymentStatus status;
+	private PaymentStatus status = PaymentStatus.PENDING;
 
-	@Column(name = "payment_transaction_id")
-	private String transactionId;
+	@Column(name = "payment_transaction_id", unique = true)
+	private String transactionKey;
+
+	@Column(unique = true)
+	private String paymentKey;
 
 	@OneToOne
+	@JoinColumn(name = "order_uuid")
 	private Order order;
 
-	@Column(name = "payment_is_deleted")
-	@Builder.Default
-	private Boolean isDeleted = Boolean.FALSE;
+	@ManyToOne
+	@JoinColumn(name = "user_uuid")
+	private User user;
 
-	@Column(name = "paid_at")
-	private LocalDateTime paidAt;
-    
-	@Column(name = "canceled_at")
-	private LocalDateTime canceledAt;
+	@Column(name = "payment_request_at")
+	private ZonedDateTime requestedAt;
+
+	@Column(name = "payment_paid_at")
+	private ZonedDateTime paidAt;
+
+	@Embedded
+	private PaymentCancelDetails cancelDetails;
+
+	public void changeCancelStatus(PaymentCancelOutput paymentCancelOutput) {
+		this.paymentKey = paymentCancelOutput.paymentKey();
+		this.transactionKey = paymentCancelOutput.lastTransactionKey();
+		this.status = paymentCancelOutput.status();
+		this.cancelDetails = PaymentCancelDetails.builder()
+			.canceledAt(paymentCancelOutput.cancels().canceledAt())
+			.cancelReason(paymentCancelOutput.cancels().cancelReason())
+			.cancelTransactionKey(paymentCancelOutput.cancels().cancelTransactionKey())
+			.build();
+	}
+
+	public boolean isCanceled() {
+		return cancelDetails.getCancelTransactionKey() != null;
+	}
 }

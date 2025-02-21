@@ -55,10 +55,25 @@ public enum ExceptionCode {
     //카트 - 9000
     CARTS_ORDER_ITEM_EXIST(HttpStatus.BAD_REQUEST, "Carts Order Item Exist.", 9001),
     CARTS_NOT_FOUND(HttpStatus.BAD_REQUEST, "Carts Not Found.", 9002),
+
     //메뉴 - 10000
     MENU_NOT_FOUND(HttpStatus.BAD_REQUEST, "Menu Not Found.", 10001),
     MENU_CART_NOT_FOUND(HttpStatus.BAD_REQUEST, "Menu Cart Not Found.", 10002),
-    ;
+
+    //매점 - 11000
+    STORE_NOT_FOUND(HttpStatus.BAD_REQUEST, "Store Not Found.", 11003),
+    STORE_NOT_MATCH(HttpStatus.BAD_REQUEST, "Store Not Match.", 11004),
+
+	// 결제 - 3000
+	PAYMENT_SESSION_NOT_FOUND(HttpStatus.BAD_REQUEST, "Payment Session Not Found.", 3000),
+	PAYMENT_INVALID_AMOUNT(HttpStatus.BAD_REQUEST, "Payment Invalid Amount", 3001),
+	PAYMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "Payment Not Found.", 3002),
+	PAYMENT_REQUEST_ALREADY_DONE(HttpStatus.BAD_REQUEST, "Payment Request Already Done", 3003),
+	PAYMENT_ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "Payment Already Canceled", 3004),
+	PAYMENT_REQUEST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Request Error.", 3331),
+	PAYMENT_CONFIRM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Confirm Error.", 3332),
+	PAYMENT_CANCEL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Error.", 3333),
+	PAYMENT_CANCEL_REASON_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Reason Not Found.", 3334);
 
     private final HttpStatus httpStatus;
     private final String message;
