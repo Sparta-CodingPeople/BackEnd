@@ -25,7 +25,7 @@ public record PaymentSearchResponseDto(
 		PaymentCancelDetails cancelDetails = payment.getCancelDetails();
 		return new PaymentSearchResponseDto(
 			payment.getId(),
-			payment.getOrder().getOrderId(), // todo. n + 1
+			payment.getOrder().getId(), // todo. n + 1
 			payment.getTransactionKey(),
 			payment.getAmount(),
 			payment.getPaymentMethod(),
