@@ -1,14 +1,5 @@
 package com.server.delivery.model.user.entity;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import com.server.delivery.common.BaseEntity;
 import com.server.delivery.model.manager.entity.Manager;
 import com.server.delivery.model.master.entity.Master;
@@ -18,26 +9,16 @@ import com.server.delivery.model.payment.Payment;
 import com.server.delivery.model.review.entity.Review;
 import com.server.delivery.model.user.entity.constant.UserGender;
 import com.server.delivery.model.user.entity.constant.UserRole;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PreRemove;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -55,8 +36,8 @@ public class User extends BaseEntity {
 	@Column(name = "user_id", nullable = false, updatable = false)
 	private Long id;
 
-	@Column(name = "user_username", nullable = false, unique = true)
-	private String username;
+    @Column(name = "user_username", nullable = false, unique = true)
+    private String username;
 
 	@Column(name = "user_password", nullable = false)
 	private String password;
@@ -127,9 +108,8 @@ public class User extends BaseEntity {
 		this.tokenIssuedAt = LocalDateTime.now();
 	}
 
-	@PreRemove
-	public void softDelete() {
-		this.setDeletedAt(LocalDateTime.now());
-		this.setDeletedBy(SecurityContextHolder.getContext().getAuthentication().getName());
-	}
+    public void softDelete() {
+        this.setDeletedAt(LocalDateTime.now());
+        this.setDeletedBy(SecurityContextHolder.getContext().getAuthentication().getName());
+    }
 }

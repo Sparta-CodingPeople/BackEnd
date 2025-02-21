@@ -1,8 +1,10 @@
-package com.server.delivery.model.menu.entity;
+package com.server.delivery.model.cart.entity;
 
-import com.server.delivery.model.cart.entity.Cart;
+import com.server.delivery.model.menu.entity.Menu;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -14,7 +16,8 @@ public class MenuCart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String uuid;
+    @Column(name = "menu_cart_uuid")
+    private UUID menuCartUuid;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Menu menu;

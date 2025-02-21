@@ -15,5 +15,17 @@ public class SearchCartResponseDto {
     private UUID cartId;
     private List<CartItemDto> items;
     private int totalPrice;
+    private int totalQuantity;
+
+    public static SearchCartResponseDto from(int totalPrice, int totalQuantity, List<CartItemDto> items, UUID cartUuid) {
+        return SearchCartResponseDto.builder()
+                .cartId(cartUuid)
+                .items(items)
+                .totalPrice(totalPrice)
+                .totalQuantity(totalQuantity)
+                .build();
+
+
+    }
 
 }

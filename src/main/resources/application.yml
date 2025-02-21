@@ -1,3 +1,5 @@
 spring:
   config:
-    import: classpath:delivery-submodule/config/application-local.yml
+    import: optional:classpath:delivery-submodule/config-yml/application-${spring.profiles.active}.yml
+  profiles:
+    active: local  # 기본값: local (EC2 배포 시 override됨)

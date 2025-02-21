@@ -1,87 +1,64 @@
 package com.server.delivery.domain.cart.controller;
 
 import com.server.delivery.common.jwt.CustomUserDetail;
-import com.server.delivery.domain.cart.dto.CartItemDto;
+import com.server.delivery.common.response.CustomResponse;
 import com.server.delivery.domain.cart.dto.request.CreateCartRequestDto;
 import com.server.delivery.domain.cart.dto.request.UpdateCartRequestDto;
 import com.server.delivery.domain.cart.dto.response.SearchCartResponseDto;
+import com.server.delivery.domain.cart.service.CartService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/cart")
 public class CartController {
-
+    private final CartService cartService;
 
     //장바구니 등록
     @PostMapping
-    public ResponseEntity<?> createCart(
+    public CustomResponse<Void> createCart(
             @RequestBody CreateCartRequestDto createCartRequestDto,
             @AuthenticationPrincipal CustomUserDetail userDetail
-    )
-    {
-        Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("status", 200);
-        responseBody.put("message", "상품이 장바구니에 추가되었습니다");
-        responseBody.put("data", null);
-        return ResponseEntity.ok(responseBody);
+    ) {
+        cartService.createCart(userDetail.getUserId(), createCartRequestDto);
+
+        return CustomResponse.success("상품이 장바구니에 추가되었습니다.");
     }
 
     //장바구니 조회
     @GetMapping
-    public ResponseEntity<SearchCartResponseDto> SearchCart(){
+    public CustomResponse<SearchCartResponseDto> searchCart(
+            @AuthenticationPrincipal CustomUserDetail userDetail) {
 
-        CartItemDto item1 = CartItemDto.builder()
-                .productId(UUID.fromString("00000000-0000-0000-0000-000000000123"))
-                .productName("김치찌개")
-                .quantity(3)
-                .price(10000)
-                .build();
-        CartItemDto item2= CartItemDto.builder()
-                .productId(UUID.fromString("00000000-0000-0000-0000-000000000124"))
-                .productName("된장찌개")
-                .quantity(2)
-                .price(11000)
-                .build();
-        List<CartItemDto> dummyItems = new ArrayList<>();
-        dummyItems.add(item1);
-        dummyItems.add(item2);
+        SearchCartResponseDto cartResponseDtos = cartService.searchCart(userDetail.getUserId());
 
-        SearchCartResponseDto dummyResponse = SearchCartResponseDto.builder()
-                .cartId(UUID.fromString("00000000-0000-0000-0000-000000000123"))
-                .items(dummyItems)
-                .totalPrice(3500)
-                .build();
-        return ResponseEntity.ok(dummyResponse);
+        return CustomResponse.success("장바구니 조회 성공", cartResponseDtos);
 
     }
 
     //장바구니 삭제
     @DeleteMapping
-    public ResponseEntity<?> deleteCart(){
-        Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("status", 200);
-        responseBody.put("message", "상품이 장바구니에서 삭제되었습니다");
-        responseBody.put("data", null);
-        return ResponseEntity.ok(responseBody);
+    public CustomResponse<Void> deleteCart(
+            @AuthenticationPrincipal CustomUserDetail userDetail
+    ) {
+        cartService.deleteCart(userDetail.getUserId());
+
+        return CustomResponse.success("상품이 장바구니에서 삭제되었습니다.");
     }
 
     //장바구니 수정
     @PatchMapping("/{productId}")
-    public ResponseEntity<Map<String, Object>> updateCart(
+    public CustomResponse<Void> updateCart(
+            @AuthenticationPrincipal CustomUserDetail userDetail,
             @RequestBody UpdateCartRequestDto updateCartRequestDto,
             @PathVariable UUID productId
-    ){
-        Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("status", 200);
-        responseBody.put("message", "장바구니 상품 수량이 수정되었습니다");
-        responseBody.put("data", null);
-        return ResponseEntity.ok(responseBody);
+    ) {
+        cartService.updateCart(userDetail.getUserId(), updateCartRequestDto, productId);
+        return CustomResponse.success("장바구니 수정이 완료되었습니다.");
     }
 
 }

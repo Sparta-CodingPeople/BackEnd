@@ -1,54 +1,38 @@
 package com.server.delivery.domain.menu.service;
 
+import com.server.delivery.common.PageCustom;
 import com.server.delivery.domain.menu.dto.request.MenuCreateRequestDto;
 import com.server.delivery.domain.menu.dto.request.MenuUpdateRequestDto;
 import com.server.delivery.domain.menu.dto.response.MenuResponseDto;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.UUID;
 
-@Service
-public class MenuService {
+public interface MenuService {
 
-    public int registerMenu(
-            UUID restaurantId,
+    void registerMenu(
+            Long userId,
+            UUID storeUuid,
             MenuCreateRequestDto requestDto,
-            MultipartFile foodImage) {
-        return 0;
-    }
+            MultipartFile foodImage);
 
-    public int updateMenu(
-            UUID restaurantId,
-            UUID menuId,
-            MenuUpdateRequestDto requestDto) {
-        return 0;
-    }
+    void updateMenu(
+            Long userId, UUID menuUuid,
+            MenuUpdateRequestDto requestDto,
+            MultipartFile foodImage);
 
-    public int deleteMenu(
-            UUID restaurantId,
-            UUID menuId) {
-        return 0;
-    }
+    void deleteMenu(
+            Long userId, UUID menuUuid);
 
-    public MenuResponseDto getMenu(
-            UUID restaurantId,
-            UUID menuId) {
-        return null;
-    }
+    MenuResponseDto getMenu(
+            Long userId, UUID menuUuid);
 
-    public List<MenuResponseDto> searchMenus(
-            UUID restaurantId,
-            String search,
-            Pageable pageable) {
-        return null;
-    }
+    PageCustom<MenuResponseDto> searchMenus(
+            Long userId,
+            UUID storeUuid, String keyword,
+            Pageable pageable
+    );
 
-    public Long getTotalMenus(
-            UUID restaurantId,
-            String search) {
-        return null;
-    }
+
 }
