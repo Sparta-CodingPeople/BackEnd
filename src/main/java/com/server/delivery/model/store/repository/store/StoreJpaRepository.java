@@ -14,4 +14,6 @@ public interface StoreJpaRepository extends JpaRepository<Store, Long> {
     boolean existsStoreByStoreName(String storeName);
 
     Page<Store> findByStoreNameContainingAndStoreIsGrantedTrue(String keyword, Pageable sortedPageable);
+
+    Page<Store> findByStoreIsGrantedFalse(Pageable sortedPageable);
 }

@@ -1,6 +1,7 @@
 package com.server.delivery.model.store.entity;
 
 import com.server.delivery.common.BaseEntity;
+import com.server.delivery.model.manager.entity.Manager;
 import com.server.delivery.model.menu.entity.Menu;
 import com.server.delivery.model.order.entity.Order;
 import com.server.delivery.model.owner.entity.OwnerStore;
@@ -72,4 +73,7 @@ public class Store extends BaseEntity {
 
     @OneToMany(mappedBy = "store")
     private List<OwnerStore> ownerStore;
+
+    @OneToOne(mappedBy = "store")  // 매장에 매니저 한 명만 가능
+    private Manager manager;  // 추가된 부분
 }

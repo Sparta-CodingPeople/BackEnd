@@ -15,4 +15,6 @@ public interface StoreRepository {
     boolean existsStoreByStoreName(String storeName);
 
     Page<Store> findByStoreNameContainingAndStoreIsGrantedTrue(String keyword, Pageable sortedPageable);
+
+    Page<Store> findByStoreIsGrantedFalse(Pageable sortedPageable);
 }

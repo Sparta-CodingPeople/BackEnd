@@ -13,6 +13,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/master/v1")
@@ -40,12 +42,12 @@ public class MasterController {
         return CustomResponse.success("입점 요청 매장 출력 성공", storeList);
     }
 
-    @PostMapping("/stores/{storeId}/approve")
+    @PostMapping("/stores/{storeUuid}/approve")
     public CustomResponse<Void> approveStore(
             @AuthenticationPrincipal CustomUserDetail customUserDetail,
-            @PathVariable("storeId") String storeId
+            @PathVariable("storeUuid") UUID storeUuid
     ) {
-        masterService.approveStore(customUserDetail.getUserId(), storeId);
+        masterService.approveStore(customUserDetail.getUserId(), storeUuid);
 
         return CustomResponse.success("입점 승인 성공");
     }

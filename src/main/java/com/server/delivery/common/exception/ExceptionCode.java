@@ -67,6 +67,8 @@ public enum ExceptionCode {
     STORE_NOT_MATCH(HttpStatus.BAD_REQUEST, "Store Not Match.", 11004),
     STORE_IS_EXIST(HttpStatus.BAD_REQUEST, "Store is exist.", 11005),
     STORE_NOT_GRANTED(HttpStatus.BAD_REQUEST, "Store is not granted.", 11006),
+    MANAGER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "Manager Already Exist.", 3335),
+    OWNER_IS_NOT_MATCHED(HttpStatus.BAD_REQUEST, "Owner Is Not Matched.", 3336),
 
     // 결제 - 3000
     PAYMENT_SESSION_NOT_FOUND(HttpStatus.BAD_REQUEST, "Payment Session Not Found.", 3000),
