@@ -70,6 +70,7 @@ public class MenuServiceImpl implements MenuService {
         menu.setMenuName(requestDto.getFoodName());
         menu.setMenuAvailability(requestDto.isAvailability());
         menu.setMenuPrice(requestDto.getPrice());
+        menu.setMenuDescription(requestDto.getDescription());
         menu.setFoodImage(uploadedImageToS3);
 
         menuRepository.save(menu);
