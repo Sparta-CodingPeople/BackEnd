@@ -1,11 +1,14 @@
 package com.server.delivery.model.menu.entity;
 
+import com.server.delivery.common.BaseEntity;
 import com.server.delivery.model.cart.entity.MenuCart;
 import com.server.delivery.model.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,9 +18,9 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE p_menus SET menuAvailability = FALSE WHERE menu_uuid = ?")
+@SQLDelete(sql = "UPDATE p_menus SET menu_availability = FALSE WHERE menu_uuid = ?")
 @Table(name = "p_menus")
-public class Menu {
+public class Menu extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -49,4 +52,9 @@ public class Menu {
 
     @OneToMany(mappedBy = "menu")
     private List<MenuCart> menuCarts;
+
+    public void softDelete() {
+        this.setDeletedAt(LocalDateTime.now());
+        this.setDeletedBy(SecurityContextHolder.getContext().getAuthentication().getName());
+    }
 }
