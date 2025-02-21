@@ -1,7 +1,13 @@
 package com.server.delivery.model.order.entity;
 
+import java.util.List;
 import java.util.UUID;
 
+import com.server.delivery.model.delivery.entity.DeliveryStatus;
+import com.server.delivery.model.payment.Payment;
+import com.server.delivery.model.user.entity.User;
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -12,25 +18,9 @@ import com.server.delivery.model.review.entity.Review;
 import com.server.delivery.model.store.entity.Store;
 import com.server.delivery.model.user.entity.User;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 @Entity
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -47,15 +37,26 @@ public class Order extends BaseEntity {
 	private int totalPrice;
 
 	@Column(name = "order_total_quantity")
-	private int totalQuantity;
+	private int totalQuantity; //주문총수량 //item의 개수? 주문한 수량의 합?
+
+	@Column(name = "order_order_message")
+	private String OrderMessage;
 
 	@Column(name = "order_order_type")
 	@Enumerated(EnumType.STRING)
-	private OrderType orderType;
+	private OrderType orderType;  //온라인,오프라인
 
 	@Column(name = "order_order_status")
 	@Enumerated(EnumType.STRING)
-	private OrderStatus status;
+	private OrderStatus orderStatus; // 준비중/배달중/배달완료 !==딜리버리스테이터스
+
+	@OneToOne
+	@JoinColumn(name = "payment_id")
+	private Payment payment;
+
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	@OneToOne
 	@JoinColumn(name = "delivery_uuid")
@@ -78,4 +79,8 @@ public class Order extends BaseEntity {
 	@Builder.Default
 	@Column(name = "order_is_Deleted")
 	private Boolean isDeleted = Boolean.FALSE;
+
+	@OneToMany(mappedBy="order",fetch=FetchType.LAZY)
+	private List<OrderMenu> orderMenus;
+
 }

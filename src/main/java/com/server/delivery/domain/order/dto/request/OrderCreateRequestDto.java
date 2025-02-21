@@ -24,13 +24,18 @@ public class OrderCreateRequestDto {
     private String deliveryAddress;
     private String messageForRider;
     private String messageForStore;
-    private String orderType;
-    private String payType;
+    private String orderType;  //온라인주문
+    private String payType;  //신용카드
 
     private LocalDateTime orderTime;
 
     private String userPhoneNum;
-    private String deliveryStatus;
-    private String payStatus;
+//    private String deliveryStatus; //배달: 준비중/배달중/배달완료
+    private String orderStatus;  //주문: 완료/배송중/취소
+    private String payStatus;//결제완료
+
+
+
+
 }
 
