@@ -15,12 +15,12 @@ import lombok.Builder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "p_ai_response")
-public class AiResponse extends BaseEntity {
+@Table(name = "p_ai")
+public class Ai extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ai_response_id")
+    @Column(name = "ai_id")
     private Long id;
 
     @Column(name ="ai_response_text", nullable = false, length = 150)

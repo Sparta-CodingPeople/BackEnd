@@ -1,9 +1,9 @@
 package com.server.delivery.domain.ai.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.server.delivery.model.ai.entity.AiResponse;
+import com.server.delivery.model.ai.entity.Ai;
 import com.server.delivery.model.user.entity.User;
-import com.server.delivery.model.ai.repository.AiResponseRepository;
+import com.server.delivery.model.ai.repository.AiRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -17,7 +17,7 @@ import java.util.*;
 public class AiServiceImpl implements AiService {
 
     private final RestTemplate restTemplate;
-    private final AiResponseRepository aiResponseRepository;
+    private final AiRepository aiRepository;
 
     @Value("${google.ai.api.key}")
     private String apiKey;
@@ -27,7 +27,6 @@ public class AiServiceImpl implements AiService {
 
     public String generateContent(String content,
                                   User user) {
-
 
         Map<String, Object> request = new HashMap<>();
         List<Map<String, Object>> contents = new ArrayList<>();
@@ -47,12 +46,12 @@ public class AiServiceImpl implements AiService {
         String responseText = extractResponseText(response.getBody());
 
 
-        AiResponse aiResponse = AiResponse.builder()
+        Ai ai = Ai.builder()
                 .user(user)
                 .responseText(responseText)
                 .build();
 
-        aiResponseRepository.save(aiResponse);
+        aiRepository.save(ai);
 
         return responseText;
 
