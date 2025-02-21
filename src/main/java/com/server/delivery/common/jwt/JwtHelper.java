@@ -38,7 +38,6 @@ public class JwtHelper {
     private final UserJpaRepository userRepository;
     private final UserHelper userHelper;
 
-    // 어세스 토큰 만료 시간
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
     private String secretKey;
 
