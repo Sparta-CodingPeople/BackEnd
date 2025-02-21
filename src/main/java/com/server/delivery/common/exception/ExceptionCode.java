@@ -51,7 +51,18 @@ public enum ExceptionCode {
 
 	// 리뷰 - 8000
 	REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "Review Not Found.", 8001),
-	REVIEW_UPDATE_EXPIRED(HttpStatus.BAD_REQUEST, "Review Update Expired.", 8002);
+	REVIEW_UPDATE_EXPIRED(HttpStatus.BAD_REQUEST, "Review Update Expired.", 8002),
+
+	// 결제 - 3000
+	PAYMENT_SESSION_NOT_FOUND(HttpStatus.BAD_REQUEST, "Payment Session Not Found.", 3000),
+	PAYMENT_INVALID_AMOUNT(HttpStatus.BAD_REQUEST, "Payment Invalid Amount", 3001),
+	PAYMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "Payment Not Found.", 3002),
+	PAYMENT_REQUEST_ALREADY_DONE(HttpStatus.BAD_REQUEST, "Payment Request Already Done", 3003),
+	PAYMENT_ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "Payment Already Canceled", 3004),
+	PAYMENT_REQUEST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Request Error.", 3331),
+	PAYMENT_CONFIRM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Confirm Error.", 3332),
+	PAYMENT_CANCEL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Error.", 3333),
+	PAYMENT_CANCEL_REASON_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Reason Not Found.", 3334);
 
 	private final HttpStatus httpStatus;
 	private final String message;
