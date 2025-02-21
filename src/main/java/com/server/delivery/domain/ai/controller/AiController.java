@@ -1,9 +1,7 @@
 package com.server.delivery.domain.ai.controller;
 
 import com.server.delivery.domain.ai.service.AiService;
-import com.server.delivery.domain.ai.service.AiServiceImpl;
 import com.server.delivery.model.user.entity.User;
-import com.server.delivery.model.user.repository.UserJpaRepository;
 import com.server.delivery.util.helper.UserHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
