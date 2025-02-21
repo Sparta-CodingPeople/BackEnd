@@ -29,9 +29,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class S3ImageUtilImpl implements S3ImageUtil {
 
-    private final AmazonS3 amazonS3Client;
     static List<String> allowedExtensionList = Arrays.asList("jpg", "jpeg", "png", "gif");
-
+    private final AmazonS3 amazonS3Client;
     @Value("${cloud.aws.s3.bucketName}")
     private String bucket;
 
@@ -56,12 +55,13 @@ public class S3ImageUtilImpl implements S3ImageUtil {
             metadata.setContentLength(bytes.length);
 
             try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes)) {
-                log.info("Uploading file to S3 bucket: {}, file name: {}", bucket, createdUUIDName);
+                log.debug("Uploading file to S3 bucket: {}, file name: {}", bucket, createdUUIDName);
                 PutObjectRequest putObjectRequest =
                         new PutObjectRequest(bucket, createdUUIDName, byteArrayInputStream, metadata)
                                 .withCannedAcl(CannedAccessControlList.PublicRead);
                 amazonS3Client.putObject(putObjectRequest);
-                log.info("File successfully uploaded to S3: {}", createdUUIDName);            } catch (IOException e) {
+                log.debug("File successfully uploaded to S3: {}", createdUUIDName);
+            } catch (IOException e) {
                 log.error("S3 Upload Image Failed (ByteArrayInputStream) : {}", e.getMessage());
                 throw new S3Exception(ExceptionCode.PUT_OBJECT_EXCEPTION);
             }
@@ -71,15 +71,16 @@ public class S3ImageUtilImpl implements S3ImageUtil {
             throw new S3Exception(ExceptionCode.FILE_READ_FAILED);
         }
 
-        return amazonS3Client.getUrl(bucket,createdUUIDName).toString();
+        return amazonS3Client.getUrl(bucket, createdUUIDName).toString();
     }
 
     @Override
     public void deleteImageFromS3(String imageAddress) {
         String decodkingKey = getKeyFromImageAddress(imageAddress);
-        try{
+        try {
             amazonS3Client.deleteObject(bucket, decodkingKey);
-        }catch (Exception e){
+        } catch (Exception e) {
+            log.error(e.getMessage());
             throw new S3Exception(ExceptionCode.FILE_ON_IMAGE_DELETE);
         }
     }

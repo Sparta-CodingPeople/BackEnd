@@ -6,6 +6,7 @@ import com.server.delivery.model.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE p_menus SET menu_availability = FALSE WHERE menu_uuid = ?")
+@SQLRestriction("menu_availability = true")
 @Table(name = "p_menus")
 public class Menu extends BaseEntity {
 
