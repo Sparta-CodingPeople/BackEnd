@@ -83,8 +83,9 @@ public class MenuServiceImpl implements MenuService {
             Long userId, UUID menuUuid) {
         Menu menu = getMenuByMenuUuid(menuUuid);
         validateIsUsersStore(userId, menu.getStore());
+        menu.setMenuAvailability(false);
         menu.softDelete();
-        menuRepository.delete(menu);
+        menuRepository.save(menu);
     }
 
     @Transactional(readOnly = true)
