@@ -11,7 +11,7 @@ import com.server.delivery.domain.menu.dto.response.MenuResponseDto;
 import com.server.delivery.model.menu.entity.Menu;
 import com.server.delivery.model.menu.repository.MenuRepository;
 import com.server.delivery.model.store.entity.Store;
-import com.server.delivery.model.store.repository.StoreRepository;
+import com.server.delivery.model.store.repository.store.StoreRepository;
 import com.server.delivery.model.user.entity.User;
 import com.server.delivery.util.helper.UserHelper;
 import com.server.delivery.util.s3image.S3ImageUtil;
