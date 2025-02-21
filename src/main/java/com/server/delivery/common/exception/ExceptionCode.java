@@ -60,6 +60,7 @@ public enum ExceptionCode {
     //메뉴 - 10000
     MENU_NOT_FOUND(HttpStatus.BAD_REQUEST, "Menu Not Found.", 10001),
     MENU_CART_NOT_FOUND(HttpStatus.BAD_REQUEST, "Menu Cart Not Found.", 10002),
+    MENU_IS_EXIST(HttpStatus.BAD_REQUEST, "Menu Is Exist.", 10003),
 
     //매점 - 11000
     STORE_NOT_FOUND(HttpStatus.BAD_REQUEST, "Store Not Found.", 11003),

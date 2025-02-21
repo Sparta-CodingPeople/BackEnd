@@ -45,6 +45,7 @@ public class MenuServiceImpl implements MenuService {
 
         Store store = getStore(storeUuid);
         validateIsUsersStore(userId, store);
+        validateIsMenuExist(store, requestDto.getFoodName());
 
         String uploadedImageToS3 = s3ImageUtil.uploadImageToS3(foodImage);
 
@@ -62,6 +63,8 @@ public class MenuServiceImpl implements MenuService {
 
         Menu menu = getMenuByMenuUuid(menuUuid);
         validateIsUsersStore(userId, menu.getStore());
+        validateIsMenuExist(menu, requestDto.getFoodName());
+
         if (!menu.getFoodImage().isEmpty()) {
             s3ImageUtil.deleteImageFromS3(menu.getFoodImage());
         }
@@ -111,7 +114,7 @@ public class MenuServiceImpl implements MenuService {
 
         Store store = getStore(storeUuid);
 
-        Page<Menu> menuList = menuRepository.findByStoreAndMenuNameContaining(store, keyword, pageable);
+        Page<Menu> menuList = menuRepository.findByStoreAndMenuNameContainingAndMenuAvailabilityTrue(store, keyword, pageable);
 
         List<MenuResponseDto> userDtoList = menuList.getContent().stream()
                 .map(MenuResponseDto::from) // UserResponseDto 변환 메서드 필요
@@ -143,5 +146,21 @@ public class MenuServiceImpl implements MenuService {
                 throw new CustomUserException(ExceptionCode.STORE_NOT_MATCH);
             }
         }
+    }
+
+    private void validateIsMenuExist(Store store, String foodName) {
+        boolean isMenuExist = store.getMenus().stream().anyMatch(
+                menu -> menu.getMenuName().equals(foodName)
+        );
+        if (isMenuExist) {
+            throw new CustomMenuException(ExceptionCode.MENU_IS_EXIST);
+        }
+    }
+
+    private void validateIsMenuExist(Menu menu, String foodName) {
+        if (menu.getMenuName().equals(foodName)) {
+            throw new CustomMenuException(ExceptionCode.MENU_IS_EXIST);
+        }
+
     }
 }
