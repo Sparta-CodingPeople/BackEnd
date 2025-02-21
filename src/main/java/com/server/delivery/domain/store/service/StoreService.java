@@ -1,59 +1,30 @@
 package com.server.delivery.domain.store.service;
 
+import com.server.delivery.common.PageCustom;
 import com.server.delivery.domain.store.dto.request.StoreLocationRequestDto;
 import com.server.delivery.domain.store.dto.request.StoreOperatingHoursRequestDto;
 import com.server.delivery.domain.store.dto.request.StoreRegisterRequestDto;
 import com.server.delivery.domain.store.dto.request.StoreUpdateRequestDto;
 import com.server.delivery.domain.store.dto.response.StoreResponseDto;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
-@Service
-public class StoreService {
+public interface StoreService {
 
-    public int deleteStore(
-            UUID id,
-            String password) {
-        return 0;
-    }
+    void registerStore(Long userId, StoreRegisterRequestDto requestDto);
 
-    public int updateStore(
-            UUID id,
-            StoreUpdateRequestDto requestDto) {
-        return 0;
-    }
+    void deleteStore(UUID id, String userPassword);
 
-    public StoreResponseDto getStore(UUID id) {
+    void updateStore(Long userId, UUID storeUuid, StoreUpdateRequestDto requestDto);
 
-        return null;
-    }
+    StoreResponseDto findStore(UUID storeUuid);
 
-    public int updateStoreLocation(
-            UUID id,
-            StoreLocationRequestDto requestDto) {
-        return 0;
-    }
+    void updateStoreLocation(UUID storeUuid, StoreLocationRequestDto requestDto);
 
-    public int updateStoreOperatingHours(
-            UUID id,
-            List<StoreOperatingHoursRequestDto> requestDto) {
-        return 0;
-    }
+    void updateStoreOperatingHours(UUID storeUuid, List<StoreOperatingHoursRequestDto> requestDto);
 
-    public List<StoreResponseDto> searchStores(
-            String search,
-            Pageable pageable) {
-        return null;
-    }
+    PageCustom<StoreResponseDto> searchStores(String search, Pageable pageable);
 
-    public Long getTotalStores(String search) {
-        return null;
-    }
-
-    public int registerStore(StoreRegisterRequestDto requestDto) {
-        return 0;
-    }
 }

@@ -6,9 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,8 +41,4 @@ public class Cart extends BaseEntity {
     @Column(name = "cart_is_deleted")
     private Boolean isDeleted = Boolean.FALSE;
 
-    public void softDelete() {
-        this.setDeletedAt(LocalDateTime.now());
-        this.setDeletedBy(SecurityContextHolder.getContext().getAuthentication().getName());
-    }
 }

@@ -6,9 +6,7 @@ import com.server.delivery.model.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,8 +51,4 @@ public class Menu extends BaseEntity {
     @OneToMany(mappedBy = "menu")
     private List<MenuCart> menuCarts;
 
-    public void softDelete() {
-        this.setDeletedAt(LocalDateTime.now());
-        this.setDeletedBy(SecurityContextHolder.getContext().getAuthentication().getName());
-    }
 }

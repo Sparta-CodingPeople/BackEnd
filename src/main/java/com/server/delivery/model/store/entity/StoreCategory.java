@@ -1,24 +1,33 @@
 package com.server.delivery.model.store.entity;
 
 import com.server.delivery.common.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.server.delivery.model.store.constant.StoreType;
+import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
+
+import java.util.UUID;
 
 @Entity
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@SQLRestriction("store_category_is_deleted = false")
 @Table(name = "p_store_category")
 public class StoreCategory extends BaseEntity {
 
     @Id
     @Column(name = "store_category_id")
-    private int storeCategoryId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID storeCategoryId;
 
-    @Column(name = "store_category", nullable = false)
-    private String storeCategory;
+    @Column(name = "store_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private StoreType storeType;
+
+    @Builder.Default
+    @Column(name = "store_category_is_deleted")
+    private boolean isDeleted = Boolean.FALSE;
 }

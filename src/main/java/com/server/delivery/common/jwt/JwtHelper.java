@@ -80,8 +80,6 @@ public class JwtHelper {
 
             // JWT 발급 시간과 token_issued_at 비교
             LocalDateTime tokenIssuedAt = LocalDateTime.parse(claims.getBody().get("tokenIssuedAt").toString());
-            log.info(tokenIssuedAt.truncatedTo(ChronoUnit.SECONDS).toString());
-            log.info(user.getTokenIssuedAt().truncatedTo(ChronoUnit.SECONDS).toString());
             if (tokenIssuedAt != null && tokenIssuedAt.truncatedTo(ChronoUnit.SECONDS).isEqual(user.getTokenIssuedAt().truncatedTo(ChronoUnit.SECONDS))) {
                 return true;
             } else {

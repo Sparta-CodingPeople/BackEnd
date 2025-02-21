@@ -6,8 +6,8 @@ import java.util.List;
 
 @Getter
 public class StoreRegisterRequestDto {
+    private List<Integer> storeCategoryId;
     private String storeName;
-    private int storeCategoryId;
     private String phoneNumber;
     private String storeDescription;
     private StoreLocationRequestDto storeLocation;

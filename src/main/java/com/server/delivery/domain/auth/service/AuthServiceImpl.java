@@ -7,6 +7,8 @@ import com.server.delivery.domain.auth.dto.request.CustomerCreateRequestDto;
 import com.server.delivery.domain.auth.dto.request.OwnerCreateRequestDto;
 import com.server.delivery.domain.auth.dto.request.SignInRequestDto;
 import com.server.delivery.domain.master.dto.request.MasterSignInRequestDto;
+import com.server.delivery.model.owner.entity.Owner;
+import com.server.delivery.model.owner.repository.OwnerRepository;
 import com.server.delivery.model.user.entity.User;
 import com.server.delivery.model.user.repository.UserJpaRepository;
 import com.server.delivery.util.helper.UserHelper;
@@ -35,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final S3ImageUtilImpl s3ImageUtilImpl;
     private final UserJpaRepository userRepository;
+    private final OwnerRepository ownerRepository;
     private final UserHelper userHelper;
     private final JwtHelper jwtHelper;
 
@@ -85,7 +88,11 @@ public class AuthServiceImpl implements AuthService {
         //dto -> User
         User user = OwnerCreateRequestDto.from(requestDto, uploadedImage);
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        Owner owner = Owner.builder().user(savedUser).businessNumber(requestDto.getBusinessNumber()).build();
+
+        ownerRepository.save(owner);
+
     }
 
     @Transactional
@@ -106,6 +113,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userHelper.getUser(masterSignInRequestDto.getUsername());
 
+        //TODO::masterCode 해싱처리하고 비교하기
         if (passwordEncoder.matches(masterSignInRequestDto.getPassword(), user.getPassword())) {
             user.updateTokenIssuedAt();
             return generateToken(user, secretKey);

@@ -2,13 +2,10 @@ package com.server.delivery.model.order.entity;
 
 
 import com.server.delivery.common.BaseEntity;
-import com.server.delivery.model.menu.entity.Menu;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -33,11 +30,7 @@ public class OrderMenu extends BaseEntity {
     private int totalPrice;
 
     @ManyToOne
-    @JoinColumn(name="order_id")
-    private Order order;
-
-    @ManyToOne
-    @JoinColumn(name="order_id")
+    @JoinColumn(name = "order_id")
     private Order order;
 
     @Builder.Default

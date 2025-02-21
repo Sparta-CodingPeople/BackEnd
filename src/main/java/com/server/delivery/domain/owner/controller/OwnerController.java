@@ -6,10 +6,7 @@ import com.server.delivery.domain.owner.service.OwnerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,11 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class OwnerController {
     private final OwnerService ownerService;
 
-    @PatchMapping
+    @PutMapping("/{userId}")
     public ResponseEntity<Void> updateManager(
+            @PathVariable Long userId,
             @RequestBody UpdateManagerRequestDto updateManagerRequestDto,
             @AuthenticationPrincipal CustomUserDetail customUserDetail
     ) {
+        ownerService.updateManager(userId, updateManagerRequestDto, customUserDetail);
         return ResponseEntity.ok().build();
     }
 

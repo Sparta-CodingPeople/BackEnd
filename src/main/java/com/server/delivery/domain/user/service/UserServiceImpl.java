@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public UserResponseDto findUserById(Long userId, CustomUserDetail customUserDetail) {
         //검색할 유저 조회
-        User user = userHelper.getUser(customUserDetail.getUsername());
+        User user = userHelper.getUserById(userId);
 
         return UserResponseDto.from(user);
     }
@@ -77,8 +77,6 @@ public class UserServiceImpl implements UserService {
         List<UserResponseDto> userDtoList = userPage.getContent().stream()
                 .map(UserResponseDto::from) // UserResponseDto 변환 메서드 필요
                 .toList();
-        log.info("keyword ={}", keyword);
-        log.info("userDtoList ={}", userDtoList);
 
         return new PageCustom<>(userDtoList, sortedPageable, userPage.getTotalElements());
     }
