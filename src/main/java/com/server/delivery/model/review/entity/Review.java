@@ -41,8 +41,10 @@ public class Review extends BaseEntity {
 	@Column(name = "review_id")
 	private UUID id;
 
+	@Column(name = "review_content")
 	private String content;
 
+	@Column(name = "review_rating")
 	private Double rating;
 
 	@ManyToOne
