@@ -248,6 +248,8 @@ public class StoreServiceImpl implements StoreService {
         Store store = getStore(storeUuid);
 
         store.softDelete();
+        store.setStoreIsDeleted(true);
+        storeRepository.save(store);
     }
 
     private Store getStore(UUID storeUuid) {
