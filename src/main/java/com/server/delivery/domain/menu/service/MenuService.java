@@ -23,14 +23,19 @@ public interface MenuService {
             MultipartFile foodImage);
 
     void deleteMenu(
-            Long userId, UUID menuUuid);
+            Long userId,
+            UUID menuUuid
+    );
 
     MenuResponseDto getMenu(
-            Long userId, UUID menuUuid);
+            Long userId,
+            UUID menuUuid
+    );
 
     PageCustom<MenuResponseDto> searchMenus(
             Long userId,
-            UUID storeUuid, String keyword,
+            UUID storeUuid,
+            String keyword,
             Pageable pageable
     );
 

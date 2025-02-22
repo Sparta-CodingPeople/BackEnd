@@ -10,6 +10,7 @@ import com.server.delivery.domain.menu.dto.request.MenuUpdateRequestDto;
 import com.server.delivery.domain.menu.dto.response.MenuResponseDto;
 import com.server.delivery.model.menu.entity.Menu;
 import com.server.delivery.model.menu.repository.MenuRepository;
+import com.server.delivery.model.order.repository.OrderMenuRepository;
 import com.server.delivery.model.store.entity.Store;
 import com.server.delivery.model.store.repository.store.StoreRepository;
 import com.server.delivery.model.user.entity.User;
@@ -32,6 +33,7 @@ import java.util.UUID;
 public class MenuServiceImpl implements MenuService {
     private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
+    private final OrderMenuRepository orderMenuRepository;
     private final S3ImageUtil s3ImageUtil;
     private final UserHelper userHelper;
 
@@ -40,7 +42,8 @@ public class MenuServiceImpl implements MenuService {
             Long userId,
             UUID storeUuid,
             MenuCreateRequestDto requestDto,
-            MultipartFile foodImage) {
+            MultipartFile foodImage
+    ) {
         userHelper.getUserById(userId);
 
         Store store = getStore(storeUuid);
@@ -57,9 +60,11 @@ public class MenuServiceImpl implements MenuService {
 
     @Transactional
     public void updateMenu(
-            Long userId, UUID menuUuid,
+            Long userId,
+            UUID menuUuid,
             MenuUpdateRequestDto requestDto,
-            MultipartFile foodImage) {
+            MultipartFile foodImage
+    ) {
 
         Menu menu = getMenuByMenuUuid(menuUuid);
         validateIsUsersStore(userId, menu.getStore());
@@ -83,9 +88,20 @@ public class MenuServiceImpl implements MenuService {
 
     @Transactional
     public void deleteMenu(
-            Long userId, UUID menuUuid) {
+            Long userId,
+            UUID menuUuid
+    ) {
         Menu menu = getMenuByMenuUuid(menuUuid);
+
+        //사용자의 매장인지 체크
         validateIsUsersStore(userId, menu.getStore());
+
+        //메뉴가 주문에 있다면 예외 발생
+        if (orderMenuRepository.isExistMenu(menu)) {
+            throw new CustomMenuException(ExceptionCode.MENU_ORDER_IS_EXIST);
+        }
+        ;
+
         menu.setMenuAvailability(false);
         menu.softDelete();
         menuRepository.save(menu);
@@ -93,7 +109,8 @@ public class MenuServiceImpl implements MenuService {
 
     @Transactional(readOnly = true)
     public MenuResponseDto getMenu(
-            Long userId, UUID menuUuid) {
+            Long userId, UUID menuUuid
+    ) {
         Menu menu = getMenuByMenuUuid(menuUuid);
 
         validateIsUsersStore(userId, menu.getStore());

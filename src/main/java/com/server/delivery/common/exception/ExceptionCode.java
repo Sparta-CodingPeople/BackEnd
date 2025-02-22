@@ -68,6 +68,7 @@ public enum ExceptionCode {
     MENU_NOT_FOUND(HttpStatus.BAD_REQUEST, "Menu Not Found.", 10001),
     MENU_CART_NOT_FOUND(HttpStatus.BAD_REQUEST, "Menu Cart Not Found.", 10002),
     MENU_IS_EXIST(HttpStatus.BAD_REQUEST, "Menu Is Exist.", 10003),
+    MENU_ORDER_IS_EXIST(HttpStatus.BAD_REQUEST, "Menu Order Is Exist.", 10004),
 
     //매점 - 11000
     STORE_NOT_FOUND(HttpStatus.BAD_REQUEST, "Store Not Found.", 11003),
@@ -88,7 +89,8 @@ public enum ExceptionCode {
     PAYMENT_CONFIRM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Confirm Error.", 3332),
     PAYMENT_CANCEL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Error.", 3333),
     PAYMENT_CANCEL_REASON_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Reason Not Found.", 3334),
-    ORDER_ALREADY_DELIVERING(HttpStatus.BAD_REQUEST, "Order Already Delivering", 3335);
+    ORDER_ALREADY_DELIVERING(HttpStatus.BAD_REQUEST, "Order Already Delivering", 3335),
+    ;
 
     private final HttpStatus httpStatus;
     private final String message;

@@ -1,5 +1,6 @@
 package com.server.delivery.model.order.repository;
 
+import com.server.delivery.model.menu.entity.Menu;
 import com.server.delivery.model.order.entity.OrderMenu;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -31,6 +32,11 @@ public class OrderMenuRepositoryImpl implements OrderMenuRepository {
     @Override
     public List<OrderMenu> saveAll(List<OrderMenu> orderMenuList) {
         return jpaRepository.saveAll(orderMenuList);
+    }
+
+    @Override
+    public boolean isExistMenu(Menu menu) {
+        return jpaRepository.existsByMenu(menu);
     }
 
 
