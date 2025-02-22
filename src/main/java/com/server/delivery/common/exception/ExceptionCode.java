@@ -76,8 +76,9 @@ public enum ExceptionCode {
     STORE_NOT_GRANTED(HttpStatus.BAD_REQUEST, "Store is not granted.", 11006),
     MANAGER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "Manager Already Exist.", 3335),
     OWNER_IS_NOT_MATCHED(HttpStatus.BAD_REQUEST, "Owner Is Not Matched.", 3336),
+    STORE_ORDER_IS_EXIST(HttpStatus.BAD_REQUEST, "Store Order Is Exist.", 3337),
 
-    // 결제 - 3000
+    // 결제 - 3000,
     PAYMENT_SESSION_NOT_FOUND(HttpStatus.BAD_REQUEST, "Payment Session Not Found.", 3000),
     PAYMENT_INVALID_AMOUNT(HttpStatus.BAD_REQUEST, "Payment Invalid Amount", 3001),
     PAYMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "Payment Not Found.", 3002),
@@ -87,8 +88,7 @@ public enum ExceptionCode {
     PAYMENT_CONFIRM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Confirm Error.", 3332),
     PAYMENT_CANCEL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Error.", 3333),
     PAYMENT_CANCEL_REASON_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Reason Not Found.", 3334),
-    ORDER_ALREADY_DELIVERING(HttpStatus.BAD_REQUEST, "Order Already Delivering", 3335),
-    ;
+    ORDER_ALREADY_DELIVERING(HttpStatus.BAD_REQUEST, "Order Already Delivering", 3335);
 
     private final HttpStatus httpStatus;
     private final String message;
