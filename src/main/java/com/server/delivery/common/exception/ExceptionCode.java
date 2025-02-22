@@ -48,6 +48,11 @@ public enum ExceptionCode {
 
     // 주문 - 7000
     ORDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "Order Not Found.", 7000),
+    ORDER_CAN_NOT_UPDATE(HttpStatus.BAD_REQUEST, "Order Can Not Update.", 7001),
+    ORDER_IS_CANCLED(HttpStatus.BAD_REQUEST, "Order Is Cancled", 7002),
+    ORDER_IS_ACCEPTED(HttpStatus.BAD_REQUEST, "Order Is Accepted", 7003),
+    ORDER_IS_REJECTED(HttpStatus.BAD_REQUEST, "Order Is Rejected", 7004),
+
 
     // 리뷰 - 8000
     REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "Review Not Found.", 8001),
@@ -56,6 +61,8 @@ public enum ExceptionCode {
     //카트 - 9000
     CARTS_ORDER_ITEM_EXIST(HttpStatus.BAD_REQUEST, "Carts Order Item Exist.", 9001),
     CARTS_NOT_FOUND(HttpStatus.BAD_REQUEST, "Carts Not Found.", 9002),
+    CARTS_ITEM_NOT_MATCHED_TO_STORE(HttpStatus.BAD_REQUEST, "Carts Item Not Matched To Store", 9003),
+
 
     //메뉴 - 10000
     MENU_NOT_FOUND(HttpStatus.BAD_REQUEST, "Menu Not Found.", 10001),
@@ -80,6 +87,7 @@ public enum ExceptionCode {
     PAYMENT_CONFIRM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Confirm Error.", 3332),
     PAYMENT_CANCEL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Error.", 3333),
     PAYMENT_CANCEL_REASON_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Reason Not Found.", 3334),
+    ORDER_ALREADY_DELIVERING(HttpStatus.BAD_REQUEST, "Order Already Delivering", 3335),
     ;
 
     private final HttpStatus httpStatus;

@@ -5,28 +5,19 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Setter
 @Builder
 public class OrderUpdateRequestDto {
-//    private Long userId;
-//    private String userName;
-//    private UUID storeId;
-//    private String storeName;
+
     private List<OrderItemDto> items;
-//    private int deliveryTip;
+    private int deliveryTip;
     private int totalprice;
     private String deliveryAddress;
     private String messageForRider;
     private String messageForStore;
-//    private String orderType;
-//    private String payType;
-//    private LocalDateTime orderTime;
     private String userPhoneNum;
-//    private String deliveryStatus;
-//    private LocalDateTime deliveryStartTime;
-//    private String payStatus;
+
 }

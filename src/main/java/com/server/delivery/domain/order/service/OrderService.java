@@ -1,21 +1,24 @@
 package com.server.delivery.domain.order.service;
 
-import java.util.UUID;
-
 import com.server.delivery.domain.order.dto.request.OrderAcceptRequestDto;
 import com.server.delivery.domain.order.dto.request.OrderCreateRequestDto;
 import com.server.delivery.domain.order.dto.request.OrderRejectRequestDto;
+import com.server.delivery.domain.order.dto.request.OrderUpdateRequestDto;
 import com.server.delivery.domain.order.dto.response.OrderGetResponseDto;
+
+import java.util.UUID;
 
 public interface OrderService {
 
-	UUID createOrder(Long userId, OrderCreateRequestDto requestDto);
+    void createOrder(Long userId, OrderCreateRequestDto requestDto);
 
-	OrderGetResponseDto getOrder(UUID orderId);
+    OrderGetResponseDto findOrder(UUID orderUuid);
 
-	void deleteOrder(UUID orderId);
+    void deleteOrder(UUID orderUuid);
 
-	UUID acceptOrder(UUID orderId, OrderAcceptRequestDto acceptDto);
+    void acceptOrder(UUID orderUuid, OrderAcceptRequestDto acceptDto);
 
-	void rejectOrder(UUID orderId, OrderRejectRequestDto orderRejectRequestDto);
+    void rejectOrder(UUID orderUuid, OrderRejectRequestDto orderRejectRequestDto);
+
+    void updateOrder(UUID orderUuid, OrderUpdateRequestDto orderUpdateRequestDto);
 }

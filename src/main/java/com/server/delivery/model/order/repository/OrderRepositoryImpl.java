@@ -13,16 +13,19 @@ public class OrderRepositoryImpl implements OrderRepository {
     private final OrderJpaRepository jpaRepository;
 
     @Override
-    public Order save(Order order) {return jpaRepository.save(order);}
-
-    @Override
-    public Optional<Order> findById(UUID OrderId) {return jpaRepository.findById(OrderId);    }
-
-    @Override
-    public void delete(Order order){
-        jpaRepository.delete(order);
+    public Order save(Order order) {
+        return jpaRepository.save(order);
     }
 
+    @Override
+    public Optional<Order> findByOrderUuid(UUID OrderId) {
+        return jpaRepository.findById(OrderId);
+    }
+
+    @Override
+    public void delete(Order order) {
+        jpaRepository.delete(order);
+    }
 
 
 }

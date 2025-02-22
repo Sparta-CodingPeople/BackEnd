@@ -1,26 +1,13 @@
 package com.server.delivery.model.order.entity;
 
-import java.util.UUID;
-
+import com.server.delivery.common.BaseEntity;
+import com.server.delivery.model.menu.entity.Menu;
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import com.server.delivery.common.BaseEntity;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -32,23 +19,27 @@ import lombok.Setter;
 @SQLRestriction("order_menu_is_deleted = false")
 @Table(name = "p_order_menu")
 public class OrderMenu extends BaseEntity {
-	@Id
-	@Column(name = "orders_menus_uuid")
-	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID id;
+    @Id
+    @Column(name = "orders_menus_uuid")
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-	@Column(name = "order_menu_quantity")
-	private int quantity;
+    @Column(name = "order_menu_quantity")
+    private int quantity;
 
-	@Column(name = "order_menu_total_price")
-	private int totalPrice;
+    @Column(name = "order_menu_total_price")
+    private int totalPrice;
 
-	@ManyToOne
-	@JoinColumn(name = "order_id")
-	private Order order;
+    @ManyToOne
+    @JoinColumn(name = "order_uuid")
+    private Order order;
 
-	@Builder.Default
-	@Column(name = "order_menu_is_Deleted")
-	private Boolean isDeleted = Boolean.FALSE;
+    @ManyToOne
+    @JoinColumn(name = "menu_uuid")
+    private Menu menu;
+
+    @Builder.Default
+    @Column(name = "order_menu_is_Deleted")
+    private Boolean isDeleted = Boolean.FALSE;
 
 }

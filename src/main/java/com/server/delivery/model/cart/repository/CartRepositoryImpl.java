@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Repository
@@ -25,5 +26,10 @@ public class CartRepositoryImpl implements CartRepository {
     @Override
     public void delete(Cart cart) {
         cartJpaRepository.delete(cart);
+    }
+
+    @Override
+    public Optional<Cart> findByCartUuid(UUID cartUuid) {
+        return cartJpaRepository.findByCartUuid(cartUuid);
     }
 }

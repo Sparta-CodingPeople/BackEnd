@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE p_cart SET cart_is_deleted = true WHERE cart_uuid = ?")
-@SQLRestriction("where cart_is_deleted = false")
+@SQLRestriction("cart_is_deleted = false")
 @Table(name = "p_cart")
 public class Cart extends BaseEntity {
     @Id
@@ -39,6 +39,7 @@ public class Cart extends BaseEntity {
     private User user;
 
     @Column(name = "cart_is_deleted")
+    @Builder.Default
     private Boolean isDeleted = Boolean.FALSE;
 
 }
