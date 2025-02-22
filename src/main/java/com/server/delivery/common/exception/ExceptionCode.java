@@ -48,6 +48,11 @@ public enum ExceptionCode {
 
     // 주문 - 7000
     ORDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "Order Not Found.", 7000),
+    ORDER_CAN_NOT_UPDATE(HttpStatus.BAD_REQUEST, "Order Can Not Update.", 7001),
+    ORDER_IS_CANCLED(HttpStatus.BAD_REQUEST, "Order Is Cancled", 7002),
+    ORDER_IS_ACCEPTED(HttpStatus.BAD_REQUEST, "Order Is Accepted", 7003),
+    ORDER_IS_REJECTED(HttpStatus.BAD_REQUEST, "Order Is Rejected", 7004),
+
 
     // 리뷰 - 8000
     REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "Review Not Found.", 8001),
@@ -80,7 +85,7 @@ public enum ExceptionCode {
     PAYMENT_CONFIRM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Confirm Error.", 3332),
     PAYMENT_CANCEL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Error.", 3333),
     PAYMENT_CANCEL_REASON_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Reason Not Found.", 3334),
-    ;
+    ORDER_ALREADY_DELIVERING(HttpStatus.BAD_REQUEST, "Order Already Delivering", 3335);
 
     private final HttpStatus httpStatus;
     private final String message;
