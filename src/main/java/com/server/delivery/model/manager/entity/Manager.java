@@ -16,6 +16,7 @@ public class Manager {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "manager_id")
     private Long id;
 
     @ManyToOne

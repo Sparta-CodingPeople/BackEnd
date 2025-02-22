@@ -25,10 +25,10 @@ public class Cart extends BaseEntity {
     @Column(name = "cart_uuid")
     private UUID cartUuid;
 
-    @Column(name = "total_quantity")
+    @Column(name = "cart_total_quantity")
     private int totalQuantity;
 
-    @Column(name = "total_price")
+    @Column(name = "cart_total_price")
     private int totalPrice;
 
     @OneToMany(mappedBy = "cart")

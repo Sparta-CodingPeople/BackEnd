@@ -14,6 +14,7 @@ public class UserStore {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "user_store_uuid")
     private String uuid;
 
     @ManyToOne(fetch = FetchType.LAZY)
