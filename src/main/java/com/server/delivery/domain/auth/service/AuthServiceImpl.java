@@ -109,6 +109,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public String signInMaster(MasterSignInRequestDto masterSignInRequestDto) {
 
         User user = userHelper.getUser(masterSignInRequestDto.getUsername());
