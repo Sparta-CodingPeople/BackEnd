@@ -41,4 +41,10 @@ public class StoreRepositoryImpl implements StoreRepository {
 
         return storeJpaRepository.findByStoreIsGrantedFalse(sortedPageable);
     }
+
+    @Override
+    public Store findStoreWithReviews(UUID storeUuid) {
+
+        return storeJpaRepository.findStoreWithReviews(storeUuid);
+    }
 }
