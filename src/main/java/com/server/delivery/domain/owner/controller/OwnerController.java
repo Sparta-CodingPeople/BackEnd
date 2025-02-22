@@ -14,13 +14,24 @@ import org.springframework.web.bind.annotation.*;
 public class OwnerController {
     private final OwnerService ownerService;
 
-    @PutMapping("/{userId}")
-    public ResponseEntity<Void> updateManager(
-            @PathVariable Long userId,
+    //TODO :: 매니저 수정하는 엔티티도 필요
+    @PutMapping("/{toBeManagerUserId}/toBeManagerUser")
+    public ResponseEntity<Void> setManager(
+            @PathVariable Long toBeManagerUserId,
             @RequestBody UpdateManagerRequestDto updateManagerRequestDto,
             @AuthenticationPrincipal CustomUserDetail customUserDetail
     ) {
-        ownerService.updateManager(userId, updateManagerRequestDto, customUserDetail);
+        ownerService.setManager(toBeManagerUserId, updateManagerRequestDto, customUserDetail.getUserId());
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{ChangedUser}/ChangedUser")
+    public ResponseEntity<Void> updateManager(
+            @PathVariable Long ChangedUser,
+            @RequestBody UpdateManagerRequestDto updateManagerRequestDto,
+            @AuthenticationPrincipal CustomUserDetail customUserDetail
+    ) {
+        ownerService.updateManager(ChangedUser, updateManagerRequestDto, customUserDetail.getUserId());
         return ResponseEntity.ok().build();
     }
 

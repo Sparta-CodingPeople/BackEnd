@@ -35,4 +35,10 @@ public class StoreRepositoryImpl implements StoreRepository {
         return storeJpaRepository.findByStoreNameContainingAndStoreIsGrantedTrue(keyword, sortedPageable);
 
     }
+
+    @Override
+    public Page<Store> findByStoreIsGrantedFalse(Pageable sortedPageable) {
+
+        return storeJpaRepository.findByStoreIsGrantedFalse(sortedPageable);
+    }
 }

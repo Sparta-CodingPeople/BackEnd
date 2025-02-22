@@ -20,9 +20,10 @@ public class Manager {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User user;  // 매니저가 될 유저
 
     @ManyToOne
     @JoinColumn(name = "store_uuid")
-    private Store store;
+    private Store store;  // 매니저가 속한 매장
+
 }
