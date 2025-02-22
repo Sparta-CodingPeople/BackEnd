@@ -12,6 +12,6 @@ import com.server.delivery.model.order.entity.Order;
 @Repository
 public interface OrderJpaRepository extends JpaRepository<Order, UUID> {
 
-	@Query("select o from Order o where o.orderId = :orderId")
+	@Query("select o from Order o where o.id = :orderId")
 	Optional<Order> findByUuid(UUID orderId);
 }

@@ -1,10 +1,12 @@
 package com.server.delivery.model.delivery.entity;
 
+import lombok.Getter;
+
+@Getter
 public enum DeliveryStatus {
-	WAITING,
-	ASSIGNED,
-	PICKUP,
-	DELIVERING,
-	COMPLETED,
-	CANCELED
+	WAITING, // 배달 기사가 픽업하기 위해 대기 중인 상태
+	PICKUP, // 배달 기사가 음식점에서 음식을 픽업한 상태
+	DELIVERING, // 배달 기사가 음식을 고객에게 배달 중인 상태
+	COMPLETED, // 배달 기사가 음식을 고객에게 전달한 상태
+	CANCELED; // 고객의 사유로 인해 배달이 취소된 상태
 }
