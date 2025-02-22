@@ -32,4 +32,9 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findById(Long userId) {
         return jpaRepository.findById(userId);
     }
+
+    @Override
+    public Optional<User> findByUsername(String username) {
+        return jpaRepository.findByUsername(username);
+    }
 }

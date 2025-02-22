@@ -10,6 +10,7 @@ import com.server.delivery.model.store.entity.Store;
 import com.server.delivery.model.store.repository.store.StoreRepository;
 import com.server.delivery.model.user.entity.User;
 import com.server.delivery.util.helper.UserHelper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,18 +18,20 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class OwnerServiceImpl implements OwnerService {
 
-    private UserHelper userHelper;
-    private StoreRepository storeRepository;
-    private ManagerRepository managerRepository;
+    private final UserHelper userHelper;
+    private final StoreRepository storeRepository;
+    private final ManagerRepository managerRepository;
 
 
     @Override
+    @Transactional
     public void setManager(Long toBeManagerUserId, UpdateManagerRequestDto updateManagerRequestDto, Long ownerUserId) {
+        System.out.println("ownerUserId ={} " + ownerUserId);
         User ownerUser = userHelper.getUserById(ownerUserId);
         User toBeManagerUser = userHelper.getUserById(toBeManagerUserId);
 
         Store store = getStore(updateManagerRequestDto);
-        if (!store.getUserStore().stream().anyMatch(
+        if (store.getUserStore() != null && !store.getUserStore().stream().anyMatch(
                 userStore -> userStore.getUser().equals(ownerUser)
         )) {
             throw new CustomUserException(ExceptionCode.OWNER_IS_NOT_MATCHED);
@@ -56,9 +59,14 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
+    @Transactional
     public void updateManager(Long changedUserId, UpdateManagerRequestDto updateManagerRequestDto, Long userId) {
         Store store = getStore(updateManagerRequestDto);
         User changedUser = userHelper.getUserById(changedUserId);
+        Manager oldManager = store.getManager();
+        oldManager.setDeleted(true);
+        oldManager.softDelete();
+        managerRepository.save(oldManager);
         store.setManager(null);
 
         storeRepository.save(store);
