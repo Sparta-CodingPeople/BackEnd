@@ -20,7 +20,10 @@ public enum ResponseMessage {
 	PAYMENT_REQUEST("결제 요청 성공"),
 	PAYMENT_CANCEL("결제 취소 성공"),
 	PAYMENT_SEARCH("결제 단일 내역 조회 성공"),
-	PAYMENT_SEARCH_ALL("결제 내역 목록 조회 성공");
+	PAYMENT_SEARCH_ALL("결제 내역 목록 조회 성공"),
+
+	// 주문
+	ORDER_REQUEST("주문하기 성공");
 
 	private final String message;
 }

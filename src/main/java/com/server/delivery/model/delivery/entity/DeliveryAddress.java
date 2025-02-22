@@ -1,4 +1,4 @@
-package com.server.delivery.model.order.entity;
+package com.server.delivery.model.delivery.entity;
 
 import java.util.UUID;
 
@@ -6,6 +6,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import com.server.delivery.common.BaseEntity;
+import com.server.delivery.model.user.entity.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,27 +29,29 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE p_order_menu SET order_menu_is_deleted = true WHERE orders_menus_uuid = ?")
-@SQLRestriction("order_menu_is_deleted = false")
-@Table(name = "p_order_menu")
-public class OrderMenu extends BaseEntity {
+@SQLDelete(sql = "UPDATE p_delivery SET delivery_address_is_deleted = true WHERE delivery_address_id = ?")
+@SQLRestriction("delivery_address_is_deleted = false")
+@Table(name = "p_delivery_address")
+public class DeliveryAddress extends BaseEntity {
 	@Id
-	@Column(name = "orders_menus_uuid")
 	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(name = "delivery_address_id")
 	private UUID id;
 
-	@Column(name = "order_menu_quantity")
-	private int quantity;
+	@Column(name = "delivery_zipcode")
+	private String zipcode;
 
-	@Column(name = "order_menu_total_price")
-	private int totalPrice;
+	@Column(name = "delivery_city")
+	private String city;
+
+	@Column(name = "delivery_detail_address")
+	private String detailAddress;
 
 	@ManyToOne
-	@JoinColumn(name = "order_id")
-	private Order order;
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	@Builder.Default
-	@Column(name = "order_menu_is_Deleted")
+	@Column(name = "delivery_address_is_deleted")
 	private Boolean isDeleted = Boolean.FALSE;
-
 }

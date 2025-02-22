@@ -32,33 +32,62 @@ public class CartServiceImpl implements CartService {
     private final MenuCartRepository menuCartRepository;
     private final UserHelper userHelper;
 
+    private static boolean isCartMenuEqualsRequestMenuStore(Cart cart, Menu menu) {
+        boolean isCartMenuEqualsRequestMenuStore = cart.getMenuCarts().stream().anyMatch(
+                menucart -> menucart.getMenu().getStore().getStoreUuid().equals(menu.getStore().getStoreUuid())
+        );
+        if (isCartMenuEqualsRequestMenuStore) {
+        }
+        return isCartMenuEqualsRequestMenuStore;
+    }
+    
     @Override
     @Transactional
     public void createCart(Long userId, CreateCartRequestDto createCartRequestDto) {
-        //장바구니는 누구 것?
+        // 장바구니는 누구 것?
         User user = userHelper.getUserById(userId);
 
         int quantity = createCartRequestDto.getQuantity();
+        Menu menu = getMenu(createCartRequestDto);
+
+
         cartRepository.findByUser(user).ifPresentOrElse(cart -> {
-                    // 1. 이미 장바구니에 내용이 있다면 예외 반환 ->  클라이언트에서 알림 -> 장바구니 비우는 API 호출하는 시나리오
-                    if (!cart.getMenuCarts().isEmpty()) throw new CustomCartException(ExceptionCode.CARTS_ORDER_ITEM_EXIST);
-                        // 장바구니에 내용이 없으면 새로 메뉴 추가
-                        // createCartRequestDto에서 메뉴와 수량 등을 받아서 처리
-                    else {
-                        Menu menu = getMenu(createCartRequestDto);
-                        MenuCart newMenuCart = createCartRequestDto.to(menu, cart, quantity);
+                    // 1. 이미 장바구니에 내용이 있고 현재 주문하는 메뉴와 장바구니의 메뉴가 다른 Store것이라면 예외 반환 -> 클라이언트에서 알림 -> 장바구니 비우는 API 호출하는 시나리오
+                    // 장바구니에 내용은 있으나 동일한 스토어인 경우 같은 제품인지 확인
+                    if (!cart.getMenuCarts().isEmpty() && !isCartMenuEqualsRequestMenuStore(cart, menu)) {
+                        throw new CustomCartException(ExceptionCode.CARTS_ORDER_ITEM_EXIST);
+                    } else if (isCartMenuEqualsRequestMenuStore(cart, menu)) {
+                        // 동일한 스토어인 경우: 장바구니에 같은 메뉴가 있다면 수량만 업데이트
+                        cart.getMenuCarts().stream()
+                                .filter(menucart -> menucart.getMenu().equals(menu)) // 동일한 메뉴 찾기
+                                .findFirst()
+                                .ifPresentOrElse(existingMenuCart -> {
+                                    // 기존 메뉴가 있으면 수량만 변경
+                                    int oldQuantity = existingMenuCart.getQuantity(); // 기존 수량
+                                    int newTotalPrice = menu.getMenuPrice() * (existingMenuCart.getQuantity() + quantity);
 
-                        menuCartRepository.save(newMenuCart);
+                                    existingMenuCart.setQuantity(existingMenuCart.getQuantity() + quantity);
+                                    existingMenuCart.setTotalPrice(newTotalPrice);
+                                    menuCartRepository.save(existingMenuCart);
 
-                        //장바구니 업데이트 ( 가격, 수량)
-                        cart.setTotalPrice(cart.getTotalPrice() + newMenuCart.getTotalPrice());
-                        cart.setTotalQuantity(cart.getTotalQuantity() + newMenuCart.getQuantity());
-                        cartRepository.save(cart);
+                                    // 장바구니 업데이트 (가격, 수량)
+                                    cart.setTotalPrice(cart.getTotalPrice() + menu.getMenuPrice() * quantity);
+                                    cart.setTotalQuantity(cart.getTotalQuantity() + quantity);
+                                    cartRepository.save(cart);
+                                }, () -> {
+                                    // 기존 메뉴가 없으면 새로 메뉴 추가
+                                    MenuCart newMenuCart = createCartRequestDto.to(menu, cart, quantity);
+                                    menuCartRepository.save(newMenuCart);
+
+                                    // 장바구니 업데이트 (가격, 수량)
+                                    cart.setTotalPrice(cart.getTotalPrice() + newMenuCart.getTotalPrice());
+                                    cart.setTotalQuantity(cart.getTotalQuantity() + newMenuCart.getQuantity());
+                                    cartRepository.save(cart);
+                                });
                     }
                 },
                 () -> {
                     // 장바구니가 없으면 새로 생성
-                    Menu menu = getMenu(createCartRequestDto);
                     Cart cart = Cart.builder()
                             .user(user)
                             .menuCarts(new ArrayList<>())
@@ -68,7 +97,7 @@ public class CartServiceImpl implements CartService {
 
                     cartRepository.save(cart);
 
-                    //새 장바구니에 메뉴 추가
+                    // 새 장바구니에 메뉴 추가
                     MenuCart menuCart = MenuCart.builder()
                             .menu(menu)
                             .cart(cart)
@@ -77,7 +106,6 @@ public class CartServiceImpl implements CartService {
                             .build();
 
                     menuCartRepository.save(menuCart);
-
                 });
     }
 

@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.server.delivery.model.payment.Payment;
 
 public interface PaymentJpaRepository extends JpaRepository<Payment, UUID> {
-	@Query("select exists (select 1 from Payment p where p.order.orderId = :serverOrderId)")
+	@Query("select exists (select 1 from Payment p where p.order.id = :serverOrderId)")
 	boolean existsByOrderUuid(UUID serverOrderId);
 
 	@Query("select p from Payment p "

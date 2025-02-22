@@ -1,19 +1,21 @@
 package com.server.delivery.model.store.repository.store;
 
-import com.server.delivery.model.store.entity.Store;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
-import java.util.UUID;
+import com.server.delivery.model.store.entity.Store;
 
-public interface StoreJpaRepository extends JpaRepository<Store, Long> {
-    Optional<Store> findByStoreUuid(UUID storeUuid);
+public interface StoreJpaRepository extends JpaRepository<Store, UUID> {
+	Optional<Store> findByStoreUuid(UUID storeUuid);
 
-    boolean existsStoreByStoreName(String storeName);
+	boolean existsStoreByStoreName(String storeName);
 
     Page<Store> findByStoreNameContainingAndStoreIsGrantedTrue(String keyword, Pageable sortedPageable);
 
     Page<Store> findByStoreIsGrantedFalse(Pageable sortedPageable);
+
 }
