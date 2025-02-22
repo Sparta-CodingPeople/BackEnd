@@ -1,11 +1,13 @@
 package com.server.delivery.model.review.entity;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import com.server.delivery.common.BaseEntity;
+import com.server.delivery.model.user.entity.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,4 +50,18 @@ public class ReviewImage extends BaseEntity {
 	@Column(name = "review_image_is_Deleted")
 	private Boolean isDeleted = Boolean.FALSE;
 
+	public void changeReview(Review review) {
+		this.review = review;
+	}
+
+	public void changeDeleteStatus(User user) {
+		this.isDeleted = Boolean.TRUE;
+		this.setDeletedAt(LocalDateTime.now());
+		this.setDeletedBy(user.getUsername());
+	}
+
+	public void performSoftDelete() {
+		this.isDeleted = Boolean.TRUE;
+		this.softDelete();
+	}
 }

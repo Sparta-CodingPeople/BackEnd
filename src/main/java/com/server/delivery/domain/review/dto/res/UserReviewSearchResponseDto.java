@@ -9,8 +9,8 @@ import com.server.delivery.model.review.entity.ReviewImage;
 
 public record UserReviewSearchResponseDto(
 	UUID reviewId,
-	//UUID storeId,
-	//String storeName,
+	UUID storeUuid,
+	String storeName,
 	Double rating,
 	String content,
 	List<String> images,
@@ -20,8 +20,8 @@ public record UserReviewSearchResponseDto(
 	public static UserReviewSearchResponseDto from(Review review) {
 		return new UserReviewSearchResponseDto(
 			review.getId(),
-			//review.getStore().getStoreUuid(),
-			//review.getStore().getStoreName(),
+			review.getStore().getStoreUuid(),
+			review.getStore().getStoreName(),
 			review.getRating(),
 			review.getContent(),
 			review.getImages().stream().map(ReviewImage::getImageUrl).toList(),
