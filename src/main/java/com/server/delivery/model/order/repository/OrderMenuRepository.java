@@ -1,5 +1,6 @@
 package com.server.delivery.model.order.repository;
 
+import com.server.delivery.model.menu.entity.Menu;
 import com.server.delivery.model.order.entity.OrderMenu;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface OrderMenuRepository {
     void delete(OrderMenu orderMenu);
 
     List<OrderMenu> saveAll(List<OrderMenu> orderMenuList);
+
+    boolean isExistMenu(Menu menu);
 }
