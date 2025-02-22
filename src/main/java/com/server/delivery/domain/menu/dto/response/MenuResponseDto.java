@@ -24,7 +24,7 @@ public class MenuResponseDto {
                 .foodName(menu.getMenuName())
                 .description(menu.getMenuDescription())
                 .price(menu.getMenuPrice())
-                .availability(menu.isMenuAvailability())
+                .availability(menu.getMenuAvailability())
                 .foodImage(menu.getFoodImage())
                 .build();
     }

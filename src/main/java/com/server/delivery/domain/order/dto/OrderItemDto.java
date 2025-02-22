@@ -10,8 +10,7 @@ import java.util.UUID;
 @Setter
 @Builder
 public class OrderItemDto {
-    private UUID productId;
-    private String productName;
-    private int productCount;
+    private UUID productUuid;
     private int productPrice;
+    private int productCount;
 }

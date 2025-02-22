@@ -102,6 +102,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
 
+    @Transactional(readOnly = true)
     public PageCustom<MenuResponseDto> searchMenus(
             Long userId,
             UUID storeUuid, String keyword,

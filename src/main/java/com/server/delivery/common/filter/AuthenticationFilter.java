@@ -25,9 +25,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             "/api/owner/v1/auth/sign-up",
             "/api/v1/auth/sign-in",
             "/api/v1/auth/renew",
-            "/api/v1/auth/sign-up/owner", // 새로 추가한 화이트리스트 URL
-            "/api/v1/auth/sign-up/customer", // 새로 추가한 화이트리스트 URL
-            "/api/v1/master/v1/sign-in" // 새로 추가한 화이트리스트 URL
+            "/api/v1/auth/sign-up/owner",
+            "/api/v1/auth/sign-up/customer",
+            "/api/master/v1/sign-in"
     );
     private final JwtHelper jwtHelper;
 

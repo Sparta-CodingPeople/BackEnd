@@ -64,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = OrderCreateRequestDto.toDto(requestDto, store, user, cart);
 
         //저장, 리턴
-        Order savedOrder = orderRepository.save(order);
+        orderRepository.save(order);
 
         List<OrderMenu> orderMenuList = cart.getMenuCarts().stream()
                 .map(menuCart -> {
@@ -126,7 +126,7 @@ public class OrderServiceImpl implements OrderService {
             //각 아이템이 존재하는 아이템인지 체크 후 업데이트
             for (OrderItemDto itemDto : updateDto.getItems()) {
                 //요청 메뉴 아이디 및 수량
-                UUID requestMenuUuid = itemDto.getProductId();
+                UUID requestMenuUuid = itemDto.getProductUuid();
                 int requestMenuQuantity = itemDto.getProductCount();
 
                 //존재하는 메뉴인지 체크
@@ -144,7 +144,7 @@ public class OrderServiceImpl implements OrderService {
                     } else {
                         // 0개 이상이라면 수량 및 가격 업데이트
                         orderMenu.setQuantity(requestMenuQuantity);
-                        orderMenu.setTotalPrice(requestMenuQuantity * itemDto.getProductPrice());
+                        orderMenu.setTotalPrice(requestMenuQuantity * orderMenu.getMenu().getMenuPrice());
                         updatedOrderMenus.add(orderMenu);
                     }
                 } else {
@@ -230,11 +230,13 @@ public class OrderServiceImpl implements OrderService {
         //3. 주문상태 변경
         order.setIsDeleted(Boolean.TRUE);
         order.softDelete();
+        orderRepository.save(order);
 
         //4. item들 삭제처리
         for (OrderMenu orderitem : order.getOrderMenus()) {
             orderitem.setIsDeleted(Boolean.TRUE);
             orderitem.softDelete();
+            orderMenuRepository.save(orderitem);
         }
 
         //TODO :: 배달 상태 변경 API를 별도로 호출하도록 설정
@@ -291,6 +293,8 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setOrderStatus(OrderStatus.REJECTED);
+
+        orderRepository.save(order);
 
         // TODO:: order취소시 취소 사유 테이블을 따로 만들어서 저장해야 하나?
     }

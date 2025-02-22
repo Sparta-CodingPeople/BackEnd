@@ -4,6 +4,8 @@ import com.server.delivery.model.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @Builder
@@ -15,7 +17,7 @@ public class UserStore {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "user_store_uuid")
-    private String uuid;
+    private UUID uuid;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;

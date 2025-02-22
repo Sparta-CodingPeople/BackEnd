@@ -37,7 +37,8 @@ public class Menu extends BaseEntity {
     private int menuPrice;
 
     @Column(name = "menu_availability", nullable = false)
-    private boolean menuAvailability;
+    @Builder.Default
+    private Boolean menuAvailability = Boolean.TRUE;
 
     @Column(name = "food_image")
     private String foodImage;

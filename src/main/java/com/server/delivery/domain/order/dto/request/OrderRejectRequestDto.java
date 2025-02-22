@@ -8,6 +8,5 @@ import lombok.Setter;
 @Setter
 @Builder
 public class OrderRejectRequestDto {
-    private String orderAcceptStatus;
     private String rejectMessage;
 }
