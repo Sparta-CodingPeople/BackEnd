@@ -84,5 +84,4 @@ public class OrderController {
         return CustomResponse.success("주문이 거부되었습니다");
     }
 
-    // ref. 주문 완료 API 추가
 }

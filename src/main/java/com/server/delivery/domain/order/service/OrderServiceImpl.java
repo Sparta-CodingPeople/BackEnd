@@ -64,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = OrderCreateRequestDto.toDto(requestDto, store, user, cart);
 
         //저장, 리턴
-        Order savedOrder = orderRepository.save(order);
+        orderRepository.save(order);
 
         List<OrderMenu> orderMenuList = cart.getMenuCarts().stream()
                 .map(menuCart -> {
@@ -126,7 +126,7 @@ public class OrderServiceImpl implements OrderService {
             //각 아이템이 존재하는 아이템인지 체크 후 업데이트
             for (OrderItemDto itemDto : updateDto.getItems()) {
                 //요청 메뉴 아이디 및 수량
-                UUID requestMenuUuid = itemDto.getProductId();
+                UUID requestMenuUuid = itemDto.getProductUuid();
                 int requestMenuQuantity = itemDto.getProductCount();
 
                 //존재하는 메뉴인지 체크
@@ -144,7 +144,7 @@ public class OrderServiceImpl implements OrderService {
                     } else {
                         // 0개 이상이라면 수량 및 가격 업데이트
                         orderMenu.setQuantity(requestMenuQuantity);
-                        orderMenu.setTotalPrice(requestMenuQuantity * itemDto.getProductPrice());
+                        orderMenu.setTotalPrice(requestMenuQuantity * orderMenu.getMenu().getMenuPrice());
                         updatedOrderMenus.add(orderMenu);
                     }
                 } else {

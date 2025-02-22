@@ -14,7 +14,6 @@ public class OrderUpdateRequestDto {
 
     private List<OrderItemDto> items;
     private int deliveryTip;
-    private int totalprice;
     private String deliveryAddress;
     private String messageForRider;
     private String messageForStore;
