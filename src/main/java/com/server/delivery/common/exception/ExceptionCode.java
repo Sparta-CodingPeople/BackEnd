@@ -52,6 +52,9 @@ public enum ExceptionCode {
     ORDER_IS_CANCLED(HttpStatus.BAD_REQUEST, "Order Is Cancled", 7002),
     ORDER_IS_ACCEPTED(HttpStatus.BAD_REQUEST, "Order Is Accepted", 7003),
     ORDER_IS_REJECTED(HttpStatus.BAD_REQUEST, "Order Is Rejected", 7004),
+    ORDER_ALREADY_DELIVERING(HttpStatus.BAD_REQUEST, "Order Already Delivering", 7005),
+    ORDER_STORE_OWNER_MISMATCH(HttpStatus.BAD_REQUEST, "Order Store Owner Mismatch", 7006),
+    ORDER_USER_NOT_MATCHED(HttpStatus.BAD_REQUEST, "Order User Not Matched", 7007),
 
 
     // 리뷰 - 8000
@@ -89,7 +92,6 @@ public enum ExceptionCode {
     PAYMENT_CONFIRM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Confirm Error.", 3332),
     PAYMENT_CANCEL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Error.", 3333),
     PAYMENT_CANCEL_REASON_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Reason Not Found.", 3334),
-    ORDER_ALREADY_DELIVERING(HttpStatus.BAD_REQUEST, "Order Already Delivering", 3335),
     ;
 
     private final HttpStatus httpStatus;
