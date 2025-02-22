@@ -230,11 +230,13 @@ public class OrderServiceImpl implements OrderService {
         //3. 주문상태 변경
         order.setIsDeleted(Boolean.TRUE);
         order.softDelete();
+        orderRepository.save(order);
 
         //4. item들 삭제처리
         for (OrderMenu orderitem : order.getOrderMenus()) {
             orderitem.setIsDeleted(Boolean.TRUE);
             orderitem.softDelete();
+            orderMenuRepository.save(orderitem);
         }
 
         //TODO :: 배달 상태 변경 API를 별도로 호출하도록 설정
