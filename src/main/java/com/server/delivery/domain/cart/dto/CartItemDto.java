@@ -18,6 +18,7 @@ public class CartItemDto {
 
     public static CartItemDto from(MenuCart menuCart) {
         return CartItemDto.builder()
+                .productId(menuCart.getMenuCartUuid())
                 .productName(menuCart.getMenu().getMenuName())
                 .quantity(menuCart.getQuantity())
                 .totalPrice(menuCart.getTotalPrice())
