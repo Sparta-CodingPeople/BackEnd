@@ -70,8 +70,7 @@ public class ReviewController {
 		ReviewDetailSearchResponseDto response = reviewService.searchReview(reviewId);
 		return CustomResponse.success(ResponseMessage.REVIEW_SEARCH.getMessage(), response);
 	}
-
-	// todo. Store api 구현 후 테스트
+	
 	// 특정 음식점의 리뷰 목록을 확인할 경우
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping("/v1/reviews/stores/{storeId}")

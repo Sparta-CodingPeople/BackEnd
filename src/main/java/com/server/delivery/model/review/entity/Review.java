@@ -75,12 +75,17 @@ public class Review extends BaseEntity {
 	public void updateReview(String content, Double rating) {
 		this.content = content;
 		this.rating = rating;
-		// ref. 삭제 시간, 삭제자 추가
 	}
 
 	public void updateReviewImages(List<ReviewImage> images) {
-		this.images.clear();
-		this.images.addAll(images);
-		// ref. 삭제 시간, 삭제자 추가
+		for (ReviewImage image : images) {
+			image.changeReview(this);
+		}
+		this.images = images;
+	}
+
+	public void performSoftDelete() {
+		this.isDeleted = Boolean.TRUE;
+		this.softDelete();
 	}
 }
