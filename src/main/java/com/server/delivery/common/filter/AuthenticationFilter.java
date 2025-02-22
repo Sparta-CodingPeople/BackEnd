@@ -21,7 +21,13 @@ import java.util.List;
 public class AuthenticationFilter extends OncePerRequestFilter {
 
     private static final List<String> EXCLUDE_URLS = List.of(
-            "/api/v1/auth/sign-up", "/api/owner/v1/auth/sign-up", "/api/v1/auth/sign-in", "/api/v1/auth/renew"
+            "/api/v1/auth/sign-up",
+            "/api/owner/v1/auth/sign-up",
+            "/api/v1/auth/sign-in",
+            "/api/v1/auth/renew",
+            "/api/v1/auth/sign-up/owner", // 새로 추가한 화이트리스트 URL
+            "/api/v1/auth/sign-up/customer", // 새로 추가한 화이트리스트 URL
+            "/api/v1/master/v1/sign-in" // 새로 추가한 화이트리스트 URL
     );
     private final JwtHelper jwtHelper;
 
@@ -30,7 +36,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         //1.요청 경로를 가져오기
         String requestURI = request.getRequestURI();
 
-        //2. whileList 경로 등록 후 필터에서 제외되록 설정
+        //2. 화이트리스트 경로 등록 후 필터에서 제외되도록 설정
         boolean isWhitelisted = EXCLUDE_URLS.stream().anyMatch(requestURI::matches);
         if (isWhitelisted) {
             filterChain.doFilter(request, response);
@@ -54,7 +60,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         } catch (CustomJwtException e) {
             log.error("JWT validation failed: {}", e.getMessage());
 
-            //response에 바로 에러 응답을 설정하여 필터 체인 중단
+            // response에 바로 에러 응답을 설정하여 필터 체인 중단
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.setStatus(e.getHttpStatus().value());
@@ -68,6 +74,5 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-
     }
 }
