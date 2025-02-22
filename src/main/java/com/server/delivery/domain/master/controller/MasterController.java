@@ -7,6 +7,7 @@ import com.server.delivery.domain.auth.service.AuthService;
 import com.server.delivery.domain.master.dto.request.MasterSignInRequestDto;
 import com.server.delivery.domain.master.service.MasterService;
 import com.server.delivery.domain.store.dto.response.StoreResponseDto;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -24,14 +25,17 @@ public class MasterController {
 
     @PostMapping("sign-in")
     public CustomResponse<Void> signIn(
-            @RequestBody MasterSignInRequestDto masterSignInRequestDto
+            @RequestBody MasterSignInRequestDto masterSignInRequestDto,
+            HttpServletResponse response
     ) {
-        authService.signInMaster(masterSignInRequestDto);
+        String accessToken = authService.signInMaster(masterSignInRequestDto);
+
+        response.setHeader("Authorization", "Bearer " + accessToken);
 
         return CustomResponse.success("마스터 로그인 성공");
     }
 
-    @PostMapping("/stores")
+    @GetMapping("/stores")
     public CustomResponse<PageCustom<StoreResponseDto>> getNeededGrantedStore(
             @AuthenticationPrincipal CustomUserDetail customUserDetail,
             @PageableDefault Pageable pageable
