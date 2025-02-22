@@ -292,6 +292,8 @@ public class OrderServiceImpl implements OrderService {
 
         order.setOrderStatus(OrderStatus.REJECTED);
 
+        orderRepository.save(order);
+
         // TODO:: order취소시 취소 사유 테이블을 따로 만들어서 저장해야 하나?
     }
 

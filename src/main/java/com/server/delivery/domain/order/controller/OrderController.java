@@ -8,7 +8,6 @@ import com.server.delivery.domain.order.dto.response.OrderGetResponseDto;
 import com.server.delivery.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -76,13 +75,13 @@ public class OrderController {
 
     //주문거부
     @PostMapping("/{orderId}/reject")
-    public ResponseEntity<CustomResponse<?>> rejectOrder(
+    public CustomResponse<Void> rejectOrder(
             @RequestBody OrderRejectRequestDto orderRejectRequestDto,
             @PathVariable UUID orderId
     ) {
         orderService.rejectOrder(orderId, orderRejectRequestDto);
-        CustomResponse<?> responseBody = CustomResponse.success("주문 거부되었습니다");
-        return ResponseEntity.ok(responseBody);
+
+        return CustomResponse.success("주문이 거부되었습니다");
     }
 
     // ref. 주문 완료 API 추가
