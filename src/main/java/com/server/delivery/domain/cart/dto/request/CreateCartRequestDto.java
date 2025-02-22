@@ -13,7 +13,7 @@ import java.util.UUID;
 @Setter
 @Builder
 public class CreateCartRequestDto {
-    private UUID productId;
+    private UUID menuUuid;
     private int quantity;
 
     public MenuCart to(Menu menu, Cart cart, int quantity) {

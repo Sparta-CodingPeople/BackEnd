@@ -40,7 +40,7 @@ public class CartServiceImpl implements CartService {
         }
         return isCartMenuEqualsRequestMenuStore;
     }
-    
+
     @Override
     @Transactional
     public void createCart(Long userId, CreateCartRequestDto createCartRequestDto) {
@@ -185,7 +185,7 @@ public class CartServiceImpl implements CartService {
     }
 
     private Menu getMenu(CreateCartRequestDto createCartRequestDto) {
-        return menuRepository.findByMenuUuId(createCartRequestDto.getProductId()).orElseThrow(
+        return menuRepository.findByMenuUuId(createCartRequestDto.getMenuUuid()).orElseThrow(
                 () -> new CustomMenuException(ExceptionCode.MENU_NOT_FOUND)
 
         );
