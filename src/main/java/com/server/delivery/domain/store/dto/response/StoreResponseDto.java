@@ -24,6 +24,41 @@ public class StoreResponseDto {
     private boolean storeIsDeleted;
     private boolean storeIsGranted;
     private List<OperationTimesresponseDto> storeOperationList;
+    private double reviewsRate;
+
+    public static StoreResponseDto from(Store store, double reviewsRate) {
+        List<String> categoryList = new ArrayList<>();
+        store.getCategoryMappings().stream().forEach(
+                item -> categoryList.add(item.getStoreCategory().getStoreType().getCategoryNameKorean())
+        );
+        List<OperationTimesresponseDto> operationTimesresponseDtoList = new ArrayList<>();
+        store.getOperatingHours().stream().forEach(
+                item -> {
+                    OperationTimes operationTimes = item.getOperationTimes();
+                    OperationTimesresponseDto operationTimesresponseDto = OperationTimesresponseDto.builder()
+                            .days(operationTimes.getWeekday().getKoreanName())
+                            .openTime(operationTimes.getOperationTimeOpeningTime())
+                            .closeTime(operationTimes.getOperationTimeClosingTime())
+                            .isHoliday(operationTimes.isHoliday())
+                            .build();
+                    operationTimesresponseDtoList.add(operationTimesresponseDto);
+                }
+        );
+
+        return StoreResponseDto.builder()
+                .storeUuid(store.getStoreUuid())
+                .storeName(store.getStoreName())
+                .storeCategoryList(categoryList)
+                .storeIsDeleted(store.isStoreIsDeleted())
+                .phoneNumber(store.getPhoneNumber())
+                .storeIsGranted(store.isStoreIsGranted())
+                .storeOperationList(operationTimesresponseDtoList)
+                .address(store.getLocation().getAddress())
+                .zipCode(store.getLocation().getZipcode())
+                .reviewsRate(reviewsRate)
+                .build();
+
+    }
 
     public static StoreResponseDto from(Store store) {
         List<String> categoryList = new ArrayList<>();

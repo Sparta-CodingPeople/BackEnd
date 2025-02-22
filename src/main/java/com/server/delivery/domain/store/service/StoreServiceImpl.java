@@ -4,6 +4,7 @@ import com.server.delivery.common.PageCustom;
 import com.server.delivery.common.exception.ExceptionCode;
 import com.server.delivery.common.exception.customException.CustomStoreException;
 import com.server.delivery.common.exception.customException.CustomUserException;
+import com.server.delivery.domain.review.service.ReviewService;
 import com.server.delivery.domain.store.dto.request.StoreLocationRequestDto;
 import com.server.delivery.domain.store.dto.request.StoreOperatingHoursRequestDto;
 import com.server.delivery.domain.store.dto.request.StoreRegisterRequestDto;
@@ -52,6 +53,7 @@ public class StoreServiceImpl implements StoreService {
     private final OwnerRepository ownerRepository;
     private final OwnerStoreRepository ownerStoreRepository;
     private final UserHelper userHelper;
+    private final ReviewService reviewService;
 
     private static void isStoreGranted(Store store) {
         if (!store.isStoreIsGranted()) {
@@ -188,11 +190,19 @@ public class StoreServiceImpl implements StoreService {
 
         Page<Store> storePage = storeRepository.findByStoreNameContainingAndStoreIsGrantedTrue(keyword, sortedPageable);
 
-        List<StoreResponseDto> storeList = storePage.getContent().stream()
-                .map(StoreResponseDto::from)
+        // Store 엔티티 → StoreResponseDto 변환
+        List<StoreResponseDto> storeResponseDtoList = storePage.getContent().stream()
+                .map(store -> {
+                    double reviewsRate = store.getReviews().stream()
+                            .mapToDouble(value -> value.getRating())
+                            .average()
+                            .orElse(0.0); // 리뷰가 없으면 0.0 반환
+
+                    return StoreResponseDto.from(store, reviewsRate);
+                })
                 .toList();
 
-        return new PageCustom<>(storeList, sortedPageable, storePage.getTotalElements());
+        return new PageCustom<>(storeResponseDtoList, sortedPageable, storePage.getTotalElements());
     }
 
     @Transactional
@@ -233,10 +243,19 @@ public class StoreServiceImpl implements StoreService {
 
     @Transactional(readOnly = true)
     public StoreResponseDto findStore(UUID storeUuid) {
-        Store store = getStore(storeUuid);
+        Store store = getStoreWithReviews(storeUuid);
         isStoreGranted(store);
 
-        return StoreResponseDto.from(store);
+        double reviewsRatingAverage = store.getReviews().stream()
+                .mapToDouble(value -> value.getRating())
+                .average().orElse(0.0);
+
+
+        return StoreResponseDto.from(store, reviewsRatingAverage);
+    }
+
+    private Store getStoreWithReviews(UUID storeUuid) {
+        return storeRepository.findStoreWithReviews(storeUuid);
     }
 
     @Transactional
@@ -246,6 +265,10 @@ public class StoreServiceImpl implements StoreService {
         //store와 연관된 모든걸 isDeleted변경해야함
         // store조회가 안되면 자동으로 예외가 발생하기 때문에 다른건 softDelete처리하지 않는다? -> 이후 SpringBatch 돌릴대 Store를 삭제하면서 연관된것들을 삭제하면 되기 때문에 ㄱㅊ다고 생각
         Store store = getStore(storeUuid);
+
+        if (!store.getOrders().isEmpty()) {
+            throw new CustomStoreException(ExceptionCode.STORE_ORDER_IS_EXIST); //매장 주문이 존재하면
+        }
 
         store.softDelete();
         store.setStoreIsDeleted(true);

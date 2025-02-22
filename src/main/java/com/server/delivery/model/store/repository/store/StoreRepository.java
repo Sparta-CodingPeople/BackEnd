@@ -17,4 +17,6 @@ public interface StoreRepository {
     Page<Store> findByStoreNameContainingAndStoreIsGrantedTrue(String keyword, Pageable sortedPageable);
 
     Page<Store> findByStoreIsGrantedFalse(Pageable sortedPageable);
+
+    Store findStoreWithReviews(UUID storeUuid);
 }
