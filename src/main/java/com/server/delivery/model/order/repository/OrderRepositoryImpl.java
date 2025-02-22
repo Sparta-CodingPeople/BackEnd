@@ -1,7 +1,10 @@
 package com.server.delivery.model.order.repository;
 
 import com.server.delivery.model.order.entity.Order;
+import com.server.delivery.model.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -25,6 +28,11 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public void delete(Order order) {
         jpaRepository.delete(order);
+    }
+
+    @Override
+    public Page<Order> findByUserAndStoreNameContaining(User user, Pageable sortedPageable, String keyword) {
+        return jpaRepository.findByUserAndStoreNameContaining(user, keyword, sortedPageable);
     }
 
 

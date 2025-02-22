@@ -1,13 +1,17 @@
 package com.server.delivery.domain.order.controller;
 
+import com.server.delivery.common.PageCustom;
 import com.server.delivery.common.jwt.CustomUserDetail;
 import com.server.delivery.common.response.CustomResponse;
 import com.server.delivery.common.response.ResponseMessage;
 import com.server.delivery.domain.order.dto.request.*;
 import com.server.delivery.domain.order.dto.response.OrderGetResponseDto;
+import com.server.delivery.domain.order.dto.response.OrderSearchListResponseDto;
 import com.server.delivery.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,21 +47,38 @@ public class OrderController {
         return CustomResponse.success("주문이 수정되었습니다.");
     }
 
-    //주문조회
+    //주문 단일조회
     @GetMapping("/{orderUuid}")
-    public CustomResponse<OrderGetResponseDto> getOrder(@PathVariable UUID orderUuid) {
-        OrderGetResponseDto response = orderService.findOrder(orderUuid);
+    public CustomResponse<OrderGetResponseDto> getOrder(
+            @PathVariable UUID orderUuid,
+            @AuthenticationPrincipal CustomUserDetail userDetail
+    ) {
+        OrderGetResponseDto response = orderService.findOrder(orderUuid, userDetail.getUserId());
 
         return CustomResponse.success("주문이 조회되었습니다.", response);
+    }
+
+    //주문 검색
+    @GetMapping
+    public CustomResponse<PageCustom<OrderSearchListResponseDto>> searchOrder(
+            @RequestParam("search") String search,
+            @PageableDefault Pageable pageable,
+            @AuthenticationPrincipal CustomUserDetail customUserDetail
+    ) {
+
+        PageCustom<OrderSearchListResponseDto> resultList = orderService.searchOrder(customUserDetail.getUserId(), search, pageable);
+
+        return CustomResponse.success("주문 검색 성공", resultList);
     }
 
     //주문취소
     @PatchMapping("/{orderId}/cancel")
     public CustomResponse<Void> deleteOrder(
             @RequestBody DeleteOrderReqeustDto deleteOrderReqeustDto,
-            @PathVariable UUID orderId
+            @PathVariable UUID orderId,
+            @AuthenticationPrincipal CustomUserDetail userDetail
     ) {
-        orderService.deleteOrder(orderId);
+        orderService.deleteOrder(orderId, userDetail.getUserId());
 
         return CustomResponse.success("주문이 취소되었습니다.");
     }
@@ -66,9 +87,10 @@ public class OrderController {
     @PostMapping("/{orderId}/accept")
     public CustomResponse<Void> acceptOrder(
             @RequestBody OrderAcceptRequestDto orderAcceptRequestDto,
-            @PathVariable UUID orderId
+            @PathVariable UUID orderId,
+            @AuthenticationPrincipal CustomUserDetail userDetail
     ) {
-        orderService.acceptOrder(orderId, orderAcceptRequestDto);
+        orderService.acceptOrder(orderId, orderAcceptRequestDto, userDetail.getUserId());
 
         return CustomResponse.success("주문 접수되었습니다");
     }
@@ -77,9 +99,10 @@ public class OrderController {
     @PostMapping("/{orderId}/reject")
     public CustomResponse<Void> rejectOrder(
             @RequestBody OrderRejectRequestDto orderRejectRequestDto,
-            @PathVariable UUID orderId
+            @PathVariable UUID orderId,
+            @AuthenticationPrincipal CustomUserDetail userDetail
     ) {
-        orderService.rejectOrder(orderId, orderRejectRequestDto);
+        orderService.rejectOrder(orderId, orderRejectRequestDto, userDetail.getUserId());
 
         return CustomResponse.success("주문이 거부되었습니다");
     }
