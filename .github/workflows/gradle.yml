@@ -20,7 +20,7 @@ jobs:
 
       # 2️⃣ 서브모듈 업데이트
       - name: Update git submodules
-        run: git submodule update --init --recursive
+        run: git submodule update --remote
 
       # 3️⃣ JDK 17 설정
       - name: Set up JDK 17
