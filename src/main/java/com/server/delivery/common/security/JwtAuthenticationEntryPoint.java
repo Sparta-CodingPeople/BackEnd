@@ -18,16 +18,26 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
 
-        String message = request.getAttribute("message").toString();
-        int code = (int) request.getAttribute("code");
+        // Get message and code from request attributes, defaulting to empty string and 0 if null
+        String message = (String) request.getAttribute("message");
+        int code = (request.getAttribute("code") != null) ? (int) request.getAttribute("code") : 4999;
 
+        // If message is null, set a default message
+        if (message == null) {
+            message = "Invalid Authentication";
+        }
 
-        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);  // 400 Bad Request
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
 
         ObjectMapper objectMapper = new ObjectMapper();
-        String result = objectMapper.writeValueAsString(ExceptionResponse.builder().httpStatus(HttpStatus.FORBIDDEN).status(HttpStatus.FORBIDDEN).message(message).code(code).build());
+        String result = objectMapper.writeValueAsString(ExceptionResponse.builder()
+                .httpStatus(HttpStatus.FORBIDDEN)
+                .status(HttpStatus.FORBIDDEN)
+                .message(message)
+                .code(code)
+                .build());
 
         response.getWriter().write(result);
     }
