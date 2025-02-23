@@ -97,8 +97,10 @@ public enum ExceptionCode {
 
 	// 배달 - 2000
 	DELIVERY_NOT_FOUND(HttpStatus.BAD_REQUEST, "Delivery Not Found.", 2000),
-	DELIVERY_NOT_READY_FOR_START(HttpStatus.BAD_REQUEST, "Delivery Not Ready For Start.", 2001),
-	DELIVERY_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "Delivery Not Completed", 2002);
+	DELIVERY_ALREADY_START(HttpStatus.BAD_REQUEST, "Delivery Already Start.", 2001),
+	DELIVERY_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "Delivery Not Completed", 2002),
+	DELIVERY_ALREADY_DELIVERED(HttpStatus.BAD_REQUEST, "Delivery Already Delivered", 2003),
+	DELIVERY_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "Delivery Already Completed", 2004);
 
 	private final HttpStatus httpStatus;
 	private final String message;

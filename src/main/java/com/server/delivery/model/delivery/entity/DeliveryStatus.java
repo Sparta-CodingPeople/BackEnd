@@ -9,11 +9,15 @@ public enum DeliveryStatus {
 	COMPLETED, // 배달 기사가 음식을 고객에게 전달한 상태
 	CANCELED; // 고객의 사유로 인해 배달이 취소된 상태
 
-	public static boolean isNotReadyForStart(DeliveryStatus status) {
-		return status != WAITING;
+	public static boolean isAlreadyStarted(DeliveryStatus status) {
+		return status == DELIVERING || status == COMPLETED || status == CANCELED;
 	}
 
 	public static boolean isNotDelivering(DeliveryStatus status) {
 		return status != DELIVERING;
+	}
+
+	public static boolean isCompletedDelivery(DeliveryStatus status) {
+		return status == COMPLETED;
 	}
 }

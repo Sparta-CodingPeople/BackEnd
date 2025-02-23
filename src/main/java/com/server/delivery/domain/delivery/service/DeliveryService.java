@@ -31,8 +31,8 @@ public class DeliveryService {
 		Delivery foundDelivery = deliveryJpaRepository.findByDeliveryUuid(deliveryId)
 			.orElseThrow(() -> new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_FOUND));
 
-		if (DeliveryStatus.isNotReadyForStart(foundDelivery.getStatus())) {
-			throw new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_READY_FOR_START);
+		if (DeliveryStatus.isAlreadyStarted(foundDelivery.getStatus())) {
+			throw new CustomDeliveryException(ExceptionCode.DELIVERY_ALREADY_START);
 		}
 
 		foundDelivery.changeStatusToDelivering();
@@ -51,7 +51,11 @@ public class DeliveryService {
 			.orElseThrow(() -> new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_FOUND));
 
 		if (DeliveryStatus.isNotDelivering(foundDelivery.getStatus())) {
-			throw new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_COMPLETED);
+			throw new CustomDeliveryException(ExceptionCode.DELIVERY_ALREADY_COMPLETED);
+		}
+
+		if (DeliveryStatus.isCompletedDelivery(foundDelivery.getStatus())) {
+			throw new CustomDeliveryException(ExceptionCode.DELIVERY_ALREADY_DELIVERED);
 		}
 
 		foundDelivery.changeStatusToCompleted();
