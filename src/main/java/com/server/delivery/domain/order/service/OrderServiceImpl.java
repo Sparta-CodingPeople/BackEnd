@@ -29,6 +29,7 @@ import com.server.delivery.model.store.entity.Store;
 import com.server.delivery.model.user.entity.User;
 import com.server.delivery.model.user.entity.constant.UserRole;
 import com.server.delivery.util.helper.MenuHelper;
+import com.server.delivery.util.helper.OrderHelper;
 import com.server.delivery.util.helper.UserHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -51,6 +52,7 @@ public class OrderServiceImpl implements OrderService {
     private final UserHelper userHelper;
     private final PaymentJpaRepository paymentJpaRepository;
     private final MenuHelper menuHelper;
+    private final OrderHelper orderHelper;
 
     private static void updateOrderField(OrderUpdateRequestDto updateDto, Order order) {
         if (updateDto.getDeliveryAddress() != null) {
@@ -144,7 +146,7 @@ public class OrderServiceImpl implements OrderService {
     //주문 수정
     //Master만
     public void updateOrder(UUID orderId, OrderUpdateRequestDto updateDto) {
-        Order order = getOrder(orderId);
+        Order order = orderHelper.getOrder(orderId);
 
         //수정가능여부 -> 주문 승인대기, 주문 승인상태에서만 가능
         validateOrderStatusForUpdate(order);
@@ -248,7 +250,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderGetResponseDto findOrder(UUID orderUuid, Long userId) {
 
-        Order order = getOrder(orderUuid);
+        Order order = orderHelper.getOrder(orderUuid);
         User user = userHelper.getUserById(userId);
 
         //사장이라면 본인 가게의 주문만 확인
@@ -273,7 +275,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void deleteOrder(UUID orderUuid, Long userId) {
         //1. 주문조회,유저 조회
-        Order order = getOrder(orderUuid);
+        Order order = orderHelper.getOrder(orderUuid);
         User owner = userHelper.getUserById(userId);
 
         isOrderStoreMatchedOwnerStore(owner, order.getStore());
@@ -297,14 +299,12 @@ public class OrderServiceImpl implements OrderService {
             orderitem.softDelete();
             orderMenuRepository.save(orderitem);
         }
-
-        //TODO :: 배달 상태 변경 API를 별도로 호출하도록 설정
     }
 
     @Transactional
     @Override
     public void acceptOrder(UUID orderUuid, OrderAcceptRequestDto acceptDto, Long userId) {
-        Order order = getOrder(orderUuid);
+        Order order = orderHelper.getOrder(orderUuid);
         Store store = order.getStore();
         User owner = userHelper.getUserById(userId);
         isOrderStoreMatchedOwnerStore(owner, store);
@@ -338,7 +338,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void rejectOrder(UUID orderUuid, OrderRejectRequestDto rejectDto, Long userId) {
         User owner = userHelper.getUserById(userId);
-        Order order = getOrder(orderUuid);
+        Order order = orderHelper.getOrder(orderUuid);
 
         isOrderStoreMatchedOwnerStore(owner, order.getStore());
 
@@ -362,7 +362,6 @@ public class OrderServiceImpl implements OrderService {
         order.changePayment(foundPayment);
 
         orderRepository.save(order);
-        // TODO:: order취소시 취소 사유 테이블을 따로 만들어서 저장해야 하나?
     }
 
     private List<OrderItemDto> toItemDtos(List<OrderMenu> orderMenus) {
@@ -377,10 +376,6 @@ public class OrderServiceImpl implements OrderService {
                 .toList();
     }
 
-    private Order getOrder(UUID orderId) {
-        return orderRepository.findByOrderUuid(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
-    }
 
     private Cart getCart(OrderCreateRequestDto requestDto) {
         return cartRepository.findByCartUuid(requestDto.getCartUuid()).orElseThrow(

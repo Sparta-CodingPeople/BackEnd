@@ -114,7 +114,6 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userHelper.getUser(masterSignInRequestDto.getUsername());
 
-        //TODO::masterCode 해싱처리하고 비교하기
         if (passwordEncoder.matches(masterSignInRequestDto.getPassword(), user.getPassword())) {
             user.updateTokenIssuedAt();
             return generateToken(user, secretKey);

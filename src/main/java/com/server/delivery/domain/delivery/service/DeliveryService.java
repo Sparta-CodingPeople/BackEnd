@@ -1,10 +1,5 @@
 package com.server.delivery.domain.delivery.service;
 
-import java.util.UUID;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.server.delivery.common.exception.ExceptionCode;
 import com.server.delivery.common.exception.customException.CustomDeliveryException;
 import com.server.delivery.common.exception.customException.CustomOrderException;
@@ -16,61 +11,60 @@ import com.server.delivery.domain.delivery.repository.DeliveryJpaRepository;
 import com.server.delivery.model.delivery.entity.Delivery;
 import com.server.delivery.model.delivery.entity.DeliveryStatus;
 import com.server.delivery.model.order.entity.Order;
-import com.server.delivery.model.order.repository.OrderJpaRepository;
-
+import com.server.delivery.util.helper.OrderHelper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class DeliveryService {
-	private final OrderJpaRepository orderJpaRepository;
-	private final DeliveryJpaRepository deliveryJpaRepository;
+    private final DeliveryJpaRepository deliveryJpaRepository;
+    private final OrderHelper orderHelper;
 
-	@Transactional
-	public DeliveryStartResponseDto startDelivery(UUID deliveryId, DeliveryStartRequestDto request) {
-		Delivery foundDelivery = deliveryJpaRepository.findByDeliveryUuid(deliveryId)
-			.orElseThrow(() -> new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_FOUND));
+    @Transactional
+    public DeliveryStartResponseDto startDelivery(UUID deliveryId, DeliveryStartRequestDto request) {
+        Delivery foundDelivery = deliveryJpaRepository.findByDeliveryUuid(deliveryId)
+                .orElseThrow(() -> new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_FOUND));
 
-		if (DeliveryStatus.isAlreadyStarted(foundDelivery.getStatus())) {
-			throw new CustomDeliveryException(ExceptionCode.DELIVERY_ALREADY_START);
-		}
+        if (DeliveryStatus.isAlreadyStarted(foundDelivery.getStatus())) {
+            throw new CustomDeliveryException(ExceptionCode.DELIVERY_ALREADY_START);
+        }
 
-		foundDelivery.changeStatusToDelivering();
+        foundDelivery.changeStatusToDelivering();
 
-		Order foundOrder = orderJpaRepository.findByOrderUuid(request.orderUuid())
-			.orElseThrow(() -> new CustomOrderException(ExceptionCode.ORDER_NOT_FOUND));
+        Order foundOrder = orderHelper.getOrder(request.orderUuid());
+        validateOrderDelivery(foundDelivery, foundOrder);
 
-		validateOrderDelivery(foundDelivery, foundOrder);
+        return DeliveryStartResponseDto.from(foundDelivery, foundOrder);
+    }
 
-		return DeliveryStartResponseDto.from(foundDelivery, foundOrder);
-	}
+    @Transactional
+    public DeliveryCompleteResponseDto completeDelivery(UUID deliveryId, DeliveryCompleteRequestDto request) {
+        Delivery foundDelivery = deliveryJpaRepository.findByDeliveryUuid(deliveryId)
+                .orElseThrow(() -> new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_FOUND));
 
-	@Transactional
-	public DeliveryCompleteResponseDto completeDelivery(UUID deliveryId, DeliveryCompleteRequestDto request) {
-		Delivery foundDelivery = deliveryJpaRepository.findByDeliveryUuid(deliveryId)
-			.orElseThrow(() -> new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_FOUND));
+        if (DeliveryStatus.isNotDelivering(foundDelivery.getStatus())) {
+            throw new CustomDeliveryException(ExceptionCode.DELIVERY_ALREADY_COMPLETED);
+        }
 
-		if (DeliveryStatus.isNotDelivering(foundDelivery.getStatus())) {
-			throw new CustomDeliveryException(ExceptionCode.DELIVERY_ALREADY_COMPLETED);
-		}
+        if (DeliveryStatus.isCompletedDelivery(foundDelivery.getStatus())) {
+            throw new CustomDeliveryException(ExceptionCode.DELIVERY_ALREADY_DELIVERED);
+        }
 
-		if (DeliveryStatus.isCompletedDelivery(foundDelivery.getStatus())) {
-			throw new CustomDeliveryException(ExceptionCode.DELIVERY_ALREADY_DELIVERED);
-		}
+        foundDelivery.changeStatusToCompleted();
 
-		foundDelivery.changeStatusToCompleted();
+        Order foundOrder = orderHelper.getOrder(request.orderUuid());
+        validateOrderDelivery(foundDelivery, foundOrder);
 
-		Order foundOrder = orderJpaRepository.findByOrderUuid(request.orderUuid())
-			.orElseThrow(() -> new CustomOrderException(ExceptionCode.ORDER_NOT_FOUND));
+        return DeliveryCompleteResponseDto.from(foundDelivery, foundOrder);
+    }
 
-		validateOrderDelivery(foundDelivery, foundOrder);
-
-		return DeliveryCompleteResponseDto.from(foundDelivery, foundOrder);
-	}
-
-	private void validateOrderDelivery(Delivery delivery, Order order) {
-		if (!delivery.getOrder().getOrderUuid().equals(order.getOrderUuid())) {
-			throw new CustomOrderException(ExceptionCode.ORDER_NOT_FOUND);
-		}
-	}
+    private void validateOrderDelivery(Delivery delivery, Order order) {
+        if (!delivery.getOrder().getOrderUuid().equals(order.getOrderUuid())) {
+            throw new CustomOrderException(ExceptionCode.ORDER_NOT_FOUND);
+        }
+    }
 }
