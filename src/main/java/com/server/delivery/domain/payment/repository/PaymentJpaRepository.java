@@ -20,6 +20,6 @@ public interface PaymentJpaRepository extends JpaRepository<Payment, UUID> {
 		+ "order by p.order.createdAt desc")
 	Page<Payment> searchUserReviews(Long userId, Pageable pageable);
 
-	@Query("select p from Payment p where p.id = :paymentUuid")
+	@Query("select p from Payment p where p.paymentUuid = :paymentUuid")
 	Optional<Payment> findByPaymentUuid(UUID paymentUuid);
 }
