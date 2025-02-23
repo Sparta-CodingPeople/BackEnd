@@ -13,6 +13,7 @@ import com.server.delivery.domain.store.dto.response.StoreResponseDto;
 import com.server.delivery.model.owner.entity.Owner;
 import com.server.delivery.model.owner.entity.OwnerStore;
 import com.server.delivery.model.owner.repository.OwnerRepository;
+import com.server.delivery.model.review.entity.Review;
 import com.server.delivery.model.store.constant.SeoulAreaCode;
 import com.server.delivery.model.store.constant.StoreType;
 import com.server.delivery.model.store.constant.WeekDays;
@@ -59,6 +60,25 @@ public class StoreServiceImpl implements StoreService {
         if (!store.isStoreIsGranted()) {
             throw new CustomStoreException(ExceptionCode.STORE_NOT_GRANTED);
         }
+    }
+
+    private static void deleteRelatedWithStoreEntity(Store store) {
+        store.softDelete();
+        store.setStoreIsDeleted(true);
+        Location location = store.getLocation();
+        location.setDeleted(true);
+        location.softDelete();
+        List<StoreOperationTimes> operatingHours = store.getOperatingHours();
+        operatingHours.forEach(operatingHour -> {
+            operatingHour.setDeleted(true);
+            operatingHour.softDelete();
+        });
+        List<StoreCategoryMapping> categoryMappings = store.getCategoryMappings();
+        categoryMappings.forEach(storeCategoryMapping -> {
+            storeCategoryMapping.setDeleted(true);
+            storeCategoryMapping.softDelete();
+        });
+        store.getReviews().forEach(Review::performSoftDelete);
     }
 
     public void registerStore(
@@ -194,7 +214,7 @@ public class StoreServiceImpl implements StoreService {
         List<StoreResponseDto> storeResponseDtoList = storePage.getContent().stream()
                 .map(store -> {
                     double reviewsRate = store.getReviews().stream()
-                            .mapToDouble(value -> value.getRating())
+                            .mapToDouble(Review::getRating)
                             .average()
                             .orElse(0.0); // 리뷰가 없으면 0.0 반환
 
@@ -247,7 +267,7 @@ public class StoreServiceImpl implements StoreService {
         isStoreGranted(store);
 
         double reviewsRatingAverage = store.getReviews().stream()
-                .mapToDouble(value -> value.getRating())
+                .mapToDouble(Review::getRating)
                 .average().orElse(0.0);
 
 
@@ -270,8 +290,7 @@ public class StoreServiceImpl implements StoreService {
             throw new CustomStoreException(ExceptionCode.STORE_ORDER_IS_EXIST); //매장 주문이 존재하면
         }
 
-        store.softDelete();
-        store.setStoreIsDeleted(true);
+        deleteRelatedWithStoreEntity(store);
         storeRepository.save(store);
     }
 
