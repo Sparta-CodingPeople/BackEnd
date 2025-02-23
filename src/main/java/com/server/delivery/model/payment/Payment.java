@@ -73,6 +73,8 @@ public class Payment {
 	private PaymentCancelDetails cancelDetails;
 
 	public void changeCancelStatus(PaymentCancelOutput paymentCancelOutput) {
+		// orderStatus는 canceled로 변경되고, paymentStatus는 canceled로 설정
+		this.order.changeOrderStatusAfterPaymentCancel(this);
 		this.paymentKey = paymentCancelOutput.paymentKey();
 		this.transactionKey = paymentCancelOutput.lastTransactionKey();
 		this.status = paymentCancelOutput.status();
@@ -84,6 +86,10 @@ public class Payment {
 	}
 
 	public boolean isCanceled() {
-		return cancelDetails.getCancelTransactionKey() != null;
+		return this.cancelDetails != null;
+	}
+
+	public void changeOrder(Order order) {
+		this.order = order;
 	}
 }
