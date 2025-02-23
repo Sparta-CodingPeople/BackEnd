@@ -13,7 +13,7 @@ public record DeliveryCompleteResponseDto(
 	public static DeliveryCompleteResponseDto from(Delivery delivery, Order order) {
 		return new DeliveryCompleteResponseDto(
 			OrderInfo.from(order),
-			delivery.getId()
+			delivery.getDeliveryUuid()
 		);
 	}
 

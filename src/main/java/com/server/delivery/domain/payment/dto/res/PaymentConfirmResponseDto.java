@@ -8,7 +8,7 @@ public record PaymentConfirmResponseDto(
 	UUID paymentId
 ) {
 	public static PaymentConfirmResponseDto from(Payment payment) {
-		return new PaymentConfirmResponseDto(payment.getId());
+		return new PaymentConfirmResponseDto(payment.getPaymentUuid());
 	}
 }
 

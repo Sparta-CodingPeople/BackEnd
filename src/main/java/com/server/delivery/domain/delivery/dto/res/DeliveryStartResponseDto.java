@@ -43,7 +43,7 @@ public record DeliveryStartResponseDto(
 	) {
 		public static DeliveryInfo from(Delivery delivery) {
 			return new DeliveryInfo(
-				delivery.getId(),
+				delivery.getDeliveryUuid(),
 				delivery.getStatus(),
 				delivery.getDeliveryStartTime(),
 				delivery.getDeliveryArrivalTime()

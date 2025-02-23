@@ -38,7 +38,7 @@ public class Delivery extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "delivery_id")
-	private UUID id;
+	private UUID deliveryUuid;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "delivery_status")

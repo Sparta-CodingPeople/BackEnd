@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import com.server.delivery.model.delivery.entity.Delivery;
 
 public interface DeliveryJpaRepository extends JpaRepository<Delivery, UUID> {
-	@Query("select d from Delivery d where d.id = :deliveryId")
+	@Query("select d from Delivery d where d.deliveryUuid = :deliveryId")
 	Optional<Delivery> findByDeliveryUuid(UUID deliveryId);
 }
