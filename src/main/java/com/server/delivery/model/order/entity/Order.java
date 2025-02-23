@@ -1,7 +1,10 @@
 package com.server.delivery.model.order.entity;
 
 import com.server.delivery.common.BaseEntity;
+import com.server.delivery.common.exception.ExceptionCode;
+import com.server.delivery.common.exception.customException.CustomDeliveryException;
 import com.server.delivery.model.delivery.entity.Delivery;
+import com.server.delivery.model.delivery.entity.DeliveryStatus;
 import com.server.delivery.model.payment.Payment;
 import com.server.delivery.model.review.entity.Review;
 import com.server.delivery.model.store.entity.Store;
@@ -92,7 +95,15 @@ public class Order extends BaseEntity {
         payment.changeOrder(this);
     }
 
-    public void changePayment(Payment payment) {
-        this.payment = payment;
-    }
+
+	public void changePayment(Payment payment) {
+		this.payment = payment;
+	}
+
+	public boolean isNotDeliveryCompleted() {
+		if (delivery == null) {
+			throw new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_FOUND);
+		}
+		return delivery.getStatus() != DeliveryStatus.COMPLETED;
+	}
 }

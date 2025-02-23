@@ -1,37 +1,72 @@
 package com.server.delivery.domain.delivery.service;
 
-import com.server.delivery.common.exception.ExceptionCode;
-import com.server.delivery.common.exception.customException.CustomOrderException;
-import com.server.delivery.domain.delivery.dto.res.DeliverySearchResponseDto;
-import com.server.delivery.model.delivery.entity.Delivery;
-import com.server.delivery.model.order.entity.Order;
-import com.server.delivery.model.order.entity.OrderStatus;
-import com.server.delivery.model.order.repository.OrderJpaRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.server.delivery.common.exception.ExceptionCode;
+import com.server.delivery.common.exception.customException.CustomDeliveryException;
+import com.server.delivery.common.exception.customException.CustomOrderException;
+import com.server.delivery.domain.delivery.dto.req.DeliveryCompleteRequestDto;
+import com.server.delivery.domain.delivery.dto.req.DeliveryStartRequestDto;
+import com.server.delivery.domain.delivery.dto.res.DeliveryCompleteResponseDto;
+import com.server.delivery.domain.delivery.dto.res.DeliveryStartResponseDto;
+import com.server.delivery.domain.delivery.repository.DeliveryJpaRepository;
+import com.server.delivery.model.delivery.entity.Delivery;
+import com.server.delivery.model.delivery.entity.DeliveryStatus;
+import com.server.delivery.model.order.entity.Order;
+import com.server.delivery.model.order.repository.OrderJpaRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class DeliveryService {
-    private final OrderJpaRepository orderJpaRepository;
+	private final OrderJpaRepository orderJpaRepository;
+	private final DeliveryJpaRepository deliveryJpaRepository;
 
-    public DeliverySearchResponseDto searchDeliveryInfo(UUID orderId) {
-        // 주문 조회
-        Order foundOrder = orderJpaRepository.findByOrderUuid(orderId)
-                .orElseThrow(() -> new CustomOrderException(ExceptionCode.ORDER_NOT_FOUND));
+	@Transactional
+	public DeliveryStartResponseDto startDelivery(UUID deliveryId, DeliveryStartRequestDto request) {
+		Delivery foundDelivery = deliveryJpaRepository.findByDeliveryUuid(deliveryId)
+			.orElseThrow(() -> new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_FOUND));
 
-        Delivery foundDelivery = foundOrder.getDelivery();
+		if (DeliveryStatus.isNotReadyForStart(foundDelivery.getStatus())) {
+			throw new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_READY_FOR_START);
+		}
 
-        // 주문 상태 확인
-        // 주문 상태가 ACCEPT이면 deliveryStartTime update
-        if (foundOrder.getOrderStatus() == OrderStatus.ACCEPT) {
-            foundDelivery.updateDeliveryStartTime(foundOrder);
-        }
+		foundDelivery.changeStatusToDelivering();
 
-        foundDelivery.updateDeliveryEstimatedTime(foundOrder);
+		Order foundOrder = orderJpaRepository.findByOrderUuid(request.orderUuid())
+			.orElseThrow(() -> new CustomOrderException(ExceptionCode.ORDER_NOT_FOUND));
 
-        return DeliverySearchResponseDto.of(foundOrder, foundDelivery);
-    }
+		validateOrderDelivery(foundDelivery, foundOrder);
+
+		return DeliveryStartResponseDto.from(foundDelivery, foundOrder);
+	}
+
+	@Transactional
+	public DeliveryCompleteResponseDto completeDelivery(UUID deliveryId, DeliveryCompleteRequestDto request) {
+		Delivery foundDelivery = deliveryJpaRepository.findByDeliveryUuid(deliveryId)
+			.orElseThrow(() -> new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_FOUND));
+
+		if (DeliveryStatus.isNotDelivering(foundDelivery.getStatus())) {
+			throw new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_COMPLETED);
+		}
+
+		foundDelivery.changeStatusToCompleted();
+
+		Order foundOrder = orderJpaRepository.findByOrderUuid(request.orderUuid())
+			.orElseThrow(() -> new CustomOrderException(ExceptionCode.ORDER_NOT_FOUND));
+
+		validateOrderDelivery(foundDelivery, foundOrder);
+
+		return DeliveryCompleteResponseDto.from(foundDelivery, foundOrder);
+	}
+
+	private void validateOrderDelivery(Delivery delivery, Order order) {
+		if (!delivery.getOrder().getOrderUuid().equals(order.getOrderUuid())) {
+			throw new CustomOrderException(ExceptionCode.ORDER_NOT_FOUND);
+		}
+	}
 }

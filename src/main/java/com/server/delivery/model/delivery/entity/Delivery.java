@@ -50,9 +50,6 @@ public class Delivery extends BaseEntity {
 	@Column(name = "delivery_arrival_time") // 도착 예상 시간
 	private Integer deliveryArrivalTime;
 
-	@Column(name = "delivery_cancel_reason")
-	private String cancelReason;
-
 	@OneToOne(mappedBy = "delivery")
 	private Order order;
 
@@ -76,5 +73,13 @@ public class Delivery extends BaseEntity {
 		int orderCookingTime = foundOrder.getOrderCookingTime();
 		int estimatedDeliveryTime = foundOrder.getEstimatedDeliveryTime();
 		this.deliveryArrivalTime = orderCookingTime + estimatedDeliveryTime;
+	}
+
+	public void changeStatusToDelivering() {
+		this.status = DeliveryStatus.DELIVERING;
+	}
+
+	public void changeStatusToCompleted() {
+		this.status = DeliveryStatus.COMPLETED;
 	}
 }

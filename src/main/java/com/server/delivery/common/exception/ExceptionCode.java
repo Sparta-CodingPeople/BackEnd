@@ -60,6 +60,7 @@ public enum ExceptionCode {
 	// 리뷰 - 8000
 	REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "Review Not Found.", 8001),
 	REVIEW_UPDATE_EXPIRED(HttpStatus.BAD_REQUEST, "Review Update Expired.", 8002),
+	REVIEW_NOT_WRITE_DELIVERY_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "Review Not Write Delivery Not Completed.", 8003),
 
 	//카트 - 9000
 	CARTS_ORDER_ITEM_EXIST(HttpStatus.BAD_REQUEST, "Carts Order Item Exist.", 9001),
@@ -92,7 +93,13 @@ public enum ExceptionCode {
 	PAYMENT_REQUEST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Request Error.", 3331),
 	PAYMENT_CONFIRM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Confirm Error.", 3332),
 	PAYMENT_CANCEL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Error.", 3333),
-	PAYMENT_CANCEL_REASON_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Reason Not Found.", 3334);
+	PAYMENT_CANCEL_REASON_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Reason Not Found.", 3334),
+
+	// 배달 - 2000
+	DELIVERY_NOT_FOUND(HttpStatus.BAD_REQUEST, "Delivery Not Found.", 2000),
+	DELIVERY_NOT_READY_FOR_START(HttpStatus.BAD_REQUEST, "Delivery Not Ready For Start.", 2001),
+	DELIVERY_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "Delivery Not Completed", 2002);
+
 	private final HttpStatus httpStatus;
 	private final String message;
 	private final Integer code;
