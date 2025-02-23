@@ -16,7 +16,7 @@ public record PaymentCancelResponseDto(
 	public static PaymentCancelResponseDto from(Payment payment) {
 		PaymentCancelDetails cancelDetails = payment.getCancelDetails();
 		return new PaymentCancelResponseDto(
-			payment.getId(),
+			payment.getPaymentUuid(),
 			payment.getPaymentKey(),
 			cancelDetails.getCanceledAt(),
 			payment.getTransactionKey(),
