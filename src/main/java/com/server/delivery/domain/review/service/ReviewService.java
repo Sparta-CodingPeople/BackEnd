@@ -1,10 +1,26 @@
 package com.server.delivery.domain.review.service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import com.server.delivery.common.exception.CustomReviewException;
+import com.server.delivery.common.exception.ExceptionCode;
+import com.server.delivery.domain.review.dto.req.ReviewCreateRequestDto;
+import com.server.delivery.domain.review.dto.req.ReviewUpdateRequestDto;
+import com.server.delivery.domain.review.dto.res.*;
+import com.server.delivery.domain.review.repository.ReviewImageJpaRepository;
 
+import com.server.delivery.domain.review.repository.ReviewJpaRepository;
+import com.server.delivery.model.order.entity.Order;
+import com.server.delivery.model.review.entity.Review;
+import com.server.delivery.model.review.entity.ReviewImage;
+import com.server.delivery.model.store.entity.Store;
+import com.server.delivery.model.user.entity.User;
+import com.server.delivery.util.helper.OrderHelper;
+import com.server.delivery.util.helper.StoreHelper;
+import com.server.delivery.util.helper.ReviewHelper;
+import com.server.delivery.util.helper.ReviewImageHelper;
+import com.server.delivery.util.helper.UserHelper;
+import com.server.delivery.util.s3image.S3ImageUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
@@ -12,44 +28,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.server.delivery.common.exception.CustomReviewException;
-import com.server.delivery.common.exception.ExceptionCode;
-import com.server.delivery.common.exception.customException.CustomOrderException;
-import com.server.delivery.common.exception.customException.CustomStoreException;
-import com.server.delivery.domain.review.dto.req.ReviewCreateRequestDto;
-import com.server.delivery.domain.review.dto.req.ReviewUpdateRequestDto;
-import com.server.delivery.domain.review.dto.res.ReviewCreateResponseDto;
-import com.server.delivery.domain.review.dto.res.ReviewDetailSearchResponseDto;
-import com.server.delivery.domain.review.dto.res.ReviewUpdateResponseDto;
-import com.server.delivery.domain.review.dto.res.StoreReviewSearchResponseDto;
-import com.server.delivery.domain.review.dto.res.UserReviewSearchResponseDto;
-import com.server.delivery.domain.review.repository.ReviewJpaRepository;
-import com.server.delivery.model.order.entity.Order;
-import com.server.delivery.model.order.repository.OrderJpaRepository;
-import com.server.delivery.model.review.entity.Review;
-import com.server.delivery.model.review.entity.ReviewImage;
-import com.server.delivery.model.store.entity.Store;
-import com.server.delivery.model.store.repository.store.StoreJpaRepository;
-import com.server.delivery.model.user.entity.User;
-import com.server.delivery.util.helper.ReviewHelper;
-import com.server.delivery.util.helper.ReviewImageHelper;
-import com.server.delivery.util.helper.UserHelper;
-import com.server.delivery.util.s3image.S3ImageUtil;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ReviewService {
-	private final UserHelper userHelper;
-	private final S3ImageUtil s3ImageUtil;
-	private final OrderJpaRepository orderJpaRepository;
+public class ReviewService { 
+  
+   private final UserHelper userHelper;
+    private final S3ImageUtil s3ImageUtil;
+    private final ReviewJpaRepository reviewJpaRepository;
+    private final OrderHelper orderHelper;
+    private final StoreHelper storeHelper;
 	private final ReviewJpaRepository reviewJpaRepository;
 	private final ReviewHelper reviewHelper;
 	private final ReviewImageHelper reviewImageHelper;
-	private final StoreJpaRepository storeJpaRepository;
 
 	@Transactional
 	public ReviewCreateResponseDto createReview(
@@ -58,16 +54,14 @@ public class ReviewService {
 		List<MultipartFile> images
 	) {
 		// 주문 정보 가져오기
-		Order foundOrder = orderJpaRepository.findById(request.orderId())
-			.orElseThrow(() -> new CustomOrderException(ExceptionCode.ORDER_NOT_FOUND));
+		        Order foundOrder = orderHelper.getOrder(request.orderId());
 
 		if (foundOrder.isNotDeliveryCompleted()) {
 			throw new CustomReviewException(ExceptionCode.REVIEW_NOT_WRITE_DELIVERY_NOT_COMPLETED);
 		}
 
 		// 가게 정보 가져오기
-		Store store = storeJpaRepository.findByStoreUuid(request.storeUuid())
-			.orElseThrow(() -> new CustomStoreException(ExceptionCode.STORE_NOT_FOUND));
+		        Store store = storeHelper.getStoreByUuid(request.storeUuid());
 
 		// 유저 가져오기
 		User user = userHelper.getUserById(userId);

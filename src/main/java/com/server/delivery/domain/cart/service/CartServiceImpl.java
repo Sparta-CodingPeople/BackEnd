@@ -12,8 +12,8 @@ import com.server.delivery.model.cart.entity.MenuCart;
 import com.server.delivery.model.cart.repository.CartRepository;
 import com.server.delivery.model.cart.repository.MenuCartRepository;
 import com.server.delivery.model.menu.entity.Menu;
-import com.server.delivery.model.menu.repository.MenuRepository;
 import com.server.delivery.model.user.entity.User;
+import com.server.delivery.util.helper.MenuHelper;
 import com.server.delivery.util.helper.UserHelper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,17 +28,14 @@ import java.util.UUID;
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
-    private final MenuRepository menuRepository;
     private final MenuCartRepository menuCartRepository;
     private final UserHelper userHelper;
+    private final MenuHelper menuHelper;
 
     private static boolean isCartMenuEqualsRequestMenuStore(Cart cart, Menu menu) {
-        boolean isCartMenuEqualsRequestMenuStore = cart.getMenuCarts().stream().anyMatch(
+        return cart.getMenuCarts().stream().anyMatch(
                 menucart -> menucart.getMenu().getStore().getStoreUuid().equals(menu.getStore().getStoreUuid())
         );
-        if (isCartMenuEqualsRequestMenuStore) {
-        }
-        return isCartMenuEqualsRequestMenuStore;
     }
 
     @Override
@@ -48,7 +45,7 @@ public class CartServiceImpl implements CartService {
         User user = userHelper.getUserById(userId);
 
         int quantity = createCartRequestDto.getQuantity();
-        Menu menu = getMenu(createCartRequestDto);
+        Menu menu = menuHelper.getMenu(createCartRequestDto.getMenuUuid());
 
 
         cartRepository.findByUser(user).ifPresentOrElse(cart -> {
@@ -63,7 +60,7 @@ public class CartServiceImpl implements CartService {
                                 .findFirst()
                                 .ifPresentOrElse(existingMenuCart -> {
                                     // 기존 메뉴가 있으면 수량만 변경
-                                    int oldQuantity = existingMenuCart.getQuantity(); // 기존 수량
+                                    existingMenuCart.getQuantity(); // 기존 수량
                                     int newTotalPrice = menu.getMenuPrice() * (existingMenuCart.getQuantity() + quantity);
 
                                     existingMenuCart.setQuantity(existingMenuCart.getQuantity() + quantity);
@@ -183,13 +180,5 @@ public class CartServiceImpl implements CartService {
         return menuCartRepository.findByMenuUuid(productId).orElseThrow(
                 () -> new CustomMenuException(ExceptionCode.MENU_CART_NOT_FOUND)
         );
-    }
-
-    private Menu getMenu(CreateCartRequestDto createCartRequestDto) {
-        return menuRepository.findByMenuUuId(createCartRequestDto.getMenuUuid()).orElseThrow(
-                () -> new CustomMenuException(ExceptionCode.MENU_NOT_FOUND)
-
-        );
-
     }
 }

@@ -3,11 +3,7 @@ package com.server.delivery.model.ai.entity;
 import com.server.delivery.common.BaseEntity;
 import com.server.delivery.model.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
+import lombok.*;
 
 @Entity
 @Getter
@@ -23,11 +19,11 @@ public class Ai extends BaseEntity {
     @Column(name = "ai_id")
     private Long id;
 
-    @Column(name ="ai_response_text", nullable = false, length = 150)
+    @Column(name = "ai_response_text", nullable = false, length = 150)
     private String responseText;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "users_id")
     private User user;
 
 }

@@ -16,7 +16,7 @@ public class MenuCart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "menu_cart_uuid")
+    @Column(name = "menus_cart_uuid")
     private UUID menuCartUuid;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,10 +25,10 @@ public class MenuCart {
     @ManyToOne(fetch = FetchType.LAZY)
     private Cart cart;
 
-    @Column(name = "menu_cart_quantity", nullable = false)
+    @Column(name = "menus_cart_quantity", nullable = false)
     private int quantity;
 
-    @Column(name = "menu_cart_total_price", nullable = false)
+    @Column(name = "menus_cart_total_price", nullable = false)
     private int totalPrice;
 
 }

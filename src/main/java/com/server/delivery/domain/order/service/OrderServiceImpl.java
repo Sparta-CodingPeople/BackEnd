@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.server.delivery.common.PageCustom;
 import com.server.delivery.common.exception.ExceptionCode;
 import com.server.delivery.common.exception.customException.CustomCartException;
-import com.server.delivery.common.exception.customException.CustomMenuException;
 import com.server.delivery.common.exception.customException.CustomOrderException;
 import com.server.delivery.domain.order.dto.OrderItemDto;
 import com.server.delivery.domain.order.dto.request.OrderAcceptRequestDto;
@@ -32,7 +31,6 @@ import com.server.delivery.model.delivery.entity.Delivery;
 import com.server.delivery.model.delivery.entity.DeliveryStatus;
 import com.server.delivery.model.delivery.entity.DeliveryTip;
 import com.server.delivery.model.menu.entity.Menu;
-import com.server.delivery.model.menu.repository.MenuRepository;
 import com.server.delivery.model.order.entity.Order;
 import com.server.delivery.model.order.entity.OrderMenu;
 import com.server.delivery.model.order.entity.OrderStatus;
@@ -42,6 +40,8 @@ import com.server.delivery.model.payment.Payment;
 import com.server.delivery.model.store.entity.Store;
 import com.server.delivery.model.user.entity.User;
 import com.server.delivery.model.user.entity.constant.UserRole;
+import com.server.delivery.util.helper.MenuHelper;
+import com.server.delivery.util.helper.OrderHelper;
 import com.server.delivery.util.helper.DeliveryHelper;
 import com.server.delivery.util.helper.PaymentHelper;
 import com.server.delivery.util.helper.UserHelper;
@@ -54,7 +54,6 @@ public class OrderServiceImpl implements OrderService {
 
 	private final OrderRepository orderRepository;
 	private final OrderMenuRepository orderMenuRepository;
-	private final MenuRepository menuRepository;
 	private final CartRepository cartRepository;
 	private final DeliveryHelper deliveryHelper;
 	private final UserHelper userHelper;
@@ -134,10 +133,8 @@ public class OrderServiceImpl implements OrderService {
 
 		List<OrderMenu> orderMenuList = cart.getMenuCarts().stream()
 			.map(menuCart -> {
-				Menu menuByOrderMenu = menuRepository.findByMenuUuId(menuCart.getMenu().getMenuUuId())
-					.orElseThrow(
-						() -> new CustomMenuException(ExceptionCode.MENU_NOT_FOUND)
-					);
+			 Menu menuByOrderMenu = menuHelper.getMenu(menuCart.getMenuCartUuid());
+
 
 				return OrderMenu.builder()
 					.quantity(cart.getTotalQuantity())
@@ -155,7 +152,7 @@ public class OrderServiceImpl implements OrderService {
 	//주문 수정
 	//Master만
 	public void updateOrder(UUID orderId, OrderUpdateRequestDto updateDto) {
-		Order order = getOrder(orderId);
+        Order order = orderHelper.getOrder(orderId);
 
 		//수정가능여부 -> 주문 승인대기, 주문 승인상태에서만 가능
 		validateOrderStatusForUpdate(order);
@@ -259,7 +256,7 @@ public class OrderServiceImpl implements OrderService {
 	@Transactional
 	public OrderGetResponseDto findOrder(UUID orderUuid, Long userId) {
 
-		Order order = getOrder(orderUuid);
+        Order order = orderHelper.getOrder(orderId);
 		User user = userHelper.getUserById(userId);
 
 		//사장이라면 본인 가게의 주문만 확인
@@ -284,7 +281,7 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public void deleteOrder(UUID orderUuid, Long userId) {
 		//1. 주문조회,유저 조회
-		Order order = getOrder(orderUuid);
+        Order order = orderHelper.getOrder(orderId);
 		User owner = userHelper.getUserById(userId);
 
 		isOrderStoreMatchedOwnerStore(owner, order.getStore());
@@ -315,7 +312,7 @@ public class OrderServiceImpl implements OrderService {
 	@Transactional
 	@Override
 	public void acceptOrder(UUID orderUuid, OrderAcceptRequestDto acceptDto, Long userId) {
-		Order order = getOrder(orderUuid);
+        Order order = orderHelper.getOrder(orderId);
 		Store store = order.getStore();
 		User owner = userHelper.getUserById(userId);
 		isOrderStoreMatchedOwnerStore(owner, store);
@@ -348,7 +345,7 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public void rejectOrder(UUID orderUuid, OrderRejectRequestDto rejectDto, Long userId) {
 		User owner = userHelper.getUserById(userId);
-		Order order = getOrder(orderUuid);
+        Order order = orderHelper.getOrder(orderId);
 
 		isOrderStoreMatchedOwnerStore(owner, order.getStore());
 
@@ -383,17 +380,6 @@ public class OrderServiceImpl implements OrderService {
 				.build()
 			)
 			.toList();
-	}
-
-	private Menu getMenu(UUID requestMenuUuid) {
-		return menuRepository.findByMenuUuId(requestMenuUuid).orElseThrow(
-			() -> new CustomMenuException(ExceptionCode.MENU_NOT_FOUND)
-		);
-	}
-
-	private Order getOrder(UUID orderId) {
-		return orderRepository.findByOrderUuid(orderId)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
 	}
 
 	private Cart getCart(OrderCreateRequestDto requestDto) {

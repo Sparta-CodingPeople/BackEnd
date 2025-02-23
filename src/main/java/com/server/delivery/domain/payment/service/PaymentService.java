@@ -1,15 +1,6 @@
 package com.server.delivery.domain.payment.service;
 
-import java.util.UUID;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedModel;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.server.delivery.common.exception.ExceptionCode;
-import com.server.delivery.common.exception.customException.CustomOrderException;
 import com.server.delivery.common.exception.customException.CustomPaymentException;
 import com.server.delivery.common.jwt.CustomUserDetail;
 import com.server.delivery.domain.payment.client.PaymentClient;
@@ -23,17 +14,24 @@ import com.server.delivery.domain.payment.dto.res.PaymentSearchResponseDto;
 import com.server.delivery.domain.payment.repository.PaymentJpaRepository;
 import com.server.delivery.model.order.entity.Order;
 import com.server.delivery.model.order.entity.OrderStatus;
-import com.server.delivery.model.order.repository.OrderJpaRepository;
 import com.server.delivery.model.payment.Payment;
 import com.server.delivery.model.user.entity.User;
+import com.server.delivery.util.helper.OrderHelper;
 import com.server.delivery.util.helper.PaymentHelper;
 import com.server.delivery.util.helper.UserHelper;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
+  
 	private final OrderJpaRepository orderJpaRepository;
 	private final UserHelper userHelper;
 	private final PaymentClient paymentClient;
@@ -50,8 +48,7 @@ public class PaymentService {
 
 		// memo. Order는 기본적으로 주문 승인이 되기 위한 대기 중인 상태 (WAITING)
 		// 		주문 상태가 WAITING인 경우 결제 요청 실행, 이외에는 결제 요청을 실행할 수 없음
-		Order foundOrder = orderJpaRepository.findByOrderUuid(confirmRequest.serverOrderId())
-			.orElseThrow(() -> new CustomOrderException(ExceptionCode.ORDER_NOT_FOUND));
+		        Order foundOrder = orderHelper.getOrder(confirmRequest.serverOrderId());
 
 		if (OrderStatus.isNotWaiting(foundOrder.getOrderStatus())) {
 			throw new CustomPaymentException(ExceptionCode.PAYMENT_REQUEST_REJECT);

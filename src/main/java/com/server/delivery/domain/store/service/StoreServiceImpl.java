@@ -4,7 +4,6 @@ import com.server.delivery.common.PageCustom;
 import com.server.delivery.common.exception.ExceptionCode;
 import com.server.delivery.common.exception.customException.CustomStoreException;
 import com.server.delivery.common.exception.customException.CustomUserException;
-import com.server.delivery.domain.review.service.ReviewService;
 import com.server.delivery.domain.store.dto.request.StoreLocationRequestDto;
 import com.server.delivery.domain.store.dto.request.StoreOperatingHoursRequestDto;
 import com.server.delivery.domain.store.dto.request.StoreRegisterRequestDto;
@@ -28,6 +27,7 @@ import com.server.delivery.model.store.repository.storeOperationTimes.StoreOpera
 import com.server.delivery.model.store.repository.userStore.UserStoreRepository;
 import com.server.delivery.model.user.entity.User;
 import com.server.delivery.model.user.entity.UserStore;
+import com.server.delivery.util.helper.StoreHelper;
 import com.server.delivery.util.helper.UserHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -54,7 +54,7 @@ public class StoreServiceImpl implements StoreService {
     private final OwnerRepository ownerRepository;
     private final OwnerStoreRepository ownerStoreRepository;
     private final UserHelper userHelper;
-    private final ReviewService reviewService;
+    private final StoreHelper storeHelper;
 
     private static void isStoreGranted(Store store) {
         if (!store.isStoreIsGranted()) {
@@ -295,8 +295,6 @@ public class StoreServiceImpl implements StoreService {
     }
 
     private Store getStore(UUID storeUuid) {
-        return storeRepository.findByStoreUuid(storeUuid).orElseThrow(
-                () -> new CustomStoreException(ExceptionCode.STORE_NOT_FOUND)
-        );
+        return storeHelper.getStoreByUuid(storeUuid);
     }
 }
