@@ -7,11 +7,12 @@ import com.server.delivery.domain.delivery.dto.req.DeliveryCompleteRequestDto;
 import com.server.delivery.domain.delivery.dto.req.DeliveryStartRequestDto;
 import com.server.delivery.domain.delivery.dto.res.DeliveryCompleteResponseDto;
 import com.server.delivery.domain.delivery.dto.res.DeliveryStartResponseDto;
-import com.server.delivery.domain.delivery.repository.DeliveryJpaRepository;
 import com.server.delivery.model.delivery.entity.Delivery;
 import com.server.delivery.model.delivery.entity.DeliveryStatus;
 import com.server.delivery.model.order.entity.Order;
 import com.server.delivery.util.helper.OrderHelper;
+import com.server.delivery.util.helper.DeliveryHelper;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,17 +22,16 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class DeliveryService {
-    private final DeliveryJpaRepository deliveryJpaRepository;
     private final OrderHelper orderHelper;
+	private final DeliveryHelper deliveryHelper;
 
-    @Transactional
-    public DeliveryStartResponseDto startDelivery(UUID deliveryId, DeliveryStartRequestDto request) {
-        Delivery foundDelivery = deliveryJpaRepository.findByDeliveryUuid(deliveryId)
-                .orElseThrow(() -> new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_FOUND));
+	@Transactional
+	public DeliveryStartResponseDto startDelivery(UUID deliveryId, DeliveryStartRequestDto request) {
+		Delivery foundDelivery = deliveryHelper.getDelivery(deliveryId);
 
-        if (DeliveryStatus.isAlreadyStarted(foundDelivery.getStatus())) {
-            throw new CustomDeliveryException(ExceptionCode.DELIVERY_ALREADY_START);
-        }
+		if (DeliveryStatus.isAlreadyStarted(foundDelivery.getStatus())) {
+			throw new CustomDeliveryException(ExceptionCode.DELIVERY_ALREADY_START);
+		}
 
         foundDelivery.changeStatusToDelivering();
 
@@ -41,10 +41,10 @@ public class DeliveryService {
         return DeliveryStartResponseDto.from(foundDelivery, foundOrder);
     }
 
-    @Transactional
-    public DeliveryCompleteResponseDto completeDelivery(UUID deliveryId, DeliveryCompleteRequestDto request) {
-        Delivery foundDelivery = deliveryJpaRepository.findByDeliveryUuid(deliveryId)
-                .orElseThrow(() -> new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_FOUND));
+	@Transactional
+	public DeliveryCompleteResponseDto completeDelivery(UUID deliveryId, DeliveryCompleteRequestDto request) {
+		Delivery foundDelivery = deliveryHelper.getDelivery(deliveryId);
+  
 
         if (DeliveryStatus.isNotDelivering(foundDelivery.getStatus())) {
             throw new CustomDeliveryException(ExceptionCode.DELIVERY_ALREADY_COMPLETED);
