@@ -20,4 +20,8 @@ public class DeliveryHelper {
 		return deliveryJpaRepository.findById(deliveryId)
 			.orElseThrow(() -> new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_FOUND));
 	}
+
+	public Delivery save(Delivery delivery) {
+		return deliveryJpaRepository.save(delivery);
+	}
 }
