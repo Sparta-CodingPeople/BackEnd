@@ -1,9 +1,8 @@
 package com.server.delivery.common.exception;
 
-import org.springframework.http.HttpStatus;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -56,6 +55,8 @@ public enum ExceptionCode {
 	ORDER_ALREADY_DELIVERING(HttpStatus.BAD_REQUEST, "Order Already Delivering", 7005),
 	ORDER_STORE_OWNER_MISMATCH(HttpStatus.BAD_REQUEST, "Order Store Owner Mismatch", 7006),
 	ORDER_USER_NOT_MATCHED(HttpStatus.BAD_REQUEST, "Order User Not Matched", 7007),
+  OERDER_USER_NOT_EXIST(HttpStatus.BAD_REQUEST, "OERDER_User Not Exist", 7008),
+
 
 	// 리뷰 - 8000
 	REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "Review Not Found.", 8001),
