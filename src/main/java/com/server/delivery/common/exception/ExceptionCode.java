@@ -92,7 +92,13 @@ public enum ExceptionCode {
 	PAYMENT_REQUEST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Request Error.", 3331),
 	PAYMENT_CONFIRM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Confirm Error.", 3332),
 	PAYMENT_CANCEL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Error.", 3333),
-	PAYMENT_CANCEL_REASON_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Reason Not Found.", 3334);
+	PAYMENT_CANCEL_REASON_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "Payment Cancel Reason Not Found.", 3334),
+
+	// 배달 - 2000
+	DELIVERY_NOT_FOUND(HttpStatus.BAD_REQUEST, "Delivery Not Found.", 2000),
+	DELIVERY_NOT_READY_FOR_START(HttpStatus.BAD_REQUEST, "Delivery Not Ready For Start.", 2001),
+	DELIVERY_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "Delivery Not Completed", 2002);
+
 	private final HttpStatus httpStatus;
 	private final String message;
 	private final Integer code;

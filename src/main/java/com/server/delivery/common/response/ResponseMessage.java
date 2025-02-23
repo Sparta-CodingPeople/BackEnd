@@ -23,7 +23,11 @@ public enum ResponseMessage {
 	PAYMENT_SEARCH_ALL("결제 내역 목록 조회 성공"),
 
 	// 주문
-	ORDER_REQUEST("주문하기 성공");
+	ORDER_REQUEST("주문하기 성공"),
+
+	// 배달
+	DELIVERY_START("배달 시작 성공"),
+	DELIVERY_COMPLETE("배달 완료 성공");
 
 	private final String message;
 }
