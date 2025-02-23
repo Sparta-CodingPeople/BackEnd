@@ -43,12 +43,13 @@ public class SecurityConfig {
                 .requestMatchers("/api/owner/v1/auth/sign-up", "/api/v1/auth/sign-up/owner").permitAll() // Owner 관련 경로 추가
                 .requestMatchers("/api/v1/auth/sign-up/customer").permitAll() // 고객 관련 경로 추가
 
-                // 공개된 경로 설정
-                .requestMatchers("/api/v1/reviews/**", "/api/v1/reviews/stores/**").hasAnyAuthority("CUSTOMER", "OWNER", "MANAGER", "MASTER")
-                .requestMatchers("/api/v1/users/{userId}/reviews").hasAnyAuthority("CUSTOMER", "OWNER", "MASTER")
+                // 리뷰 관련 경로
+                // 리뷰 생성 (CUSTOMER만 가능)
+                .requestMatchers(HttpMethod.POST, "/api/v1/reviews").hasAuthority("CUSTOMER")
 
-                // Master 관련 경로
-                .requestMatchers("/api/master/v1/stores/**").hasAuthority("MASTER")
+                // 리뷰 수정 및 삭제 (MASTER만 가능)
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/reviews/{reviewId}").hasAuthority("MASTER")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/reviews/{reviewId}").hasAuthority("MASTER")
 
                 // Owner 관련 경로
                 .requestMatchers(HttpMethod.PUT, "/api/v1/owner/{toBeManagerUserId}/toBeManagerUser").hasAnyAuthority("OWNER", "MANAGER")
