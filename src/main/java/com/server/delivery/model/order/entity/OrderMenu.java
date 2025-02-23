@@ -15,31 +15,31 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE p_order_menu SET order_menu_is_deleted = true WHERE orders_menus_uuid = ?")
-@SQLRestriction("order_menu_is_deleted = false")
-@Table(name = "p_order_menu")
+@SQLDelete(sql = "UPDATE p_orders_menu SET orders_menus_is_deleted = true WHERE orders_menus_uuid = ?")
+@SQLRestriction("orders_menus_is_deleted = false")
+@Table(name = "p_orders_menu")
 public class OrderMenu extends BaseEntity {
     @Id
     @Column(name = "orders_menus_uuid")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "order_menu_quantity")
+    @Column(name = "orders_menus_quantity")
     private int quantity;
 
-    @Column(name = "order_menu_total_price")
+    @Column(name = "orders_menus_total_price")
     private int totalPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_uuid")
+    @JoinColumn(name = "orders_uuid")
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_uuid")
+    @JoinColumn(name = "menus_uuid")
     private Menu menu;
 
     @Builder.Default
-    @Column(name = "order_menu_is_Deleted")
+    @Column(name = "orders_menus_is_Deleted")
     private Boolean isDeleted = Boolean.FALSE;
 
 }

@@ -24,30 +24,30 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE p_order SET order_is_deleted = true WHERE order_uuid = ?")
-@SQLRestriction("order_is_deleted = false")
-@Table(name = "p_order")
+@SQLDelete(sql = "UPDATE p_orders SET orders_is_deleted = true WHERE orders_uuid = ?")
+@SQLRestriction("orders_is_deleted = false")
+@Table(name = "p_orders")
 public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "order_uuid")
+    @Column(name = "orders_uuid")
     private UUID orderUuid;
 
-    @Column(name = "order_total_price")
+    @Column(name = "orders_total_price")
     private int totalPrice;
 
-    @Column(name = "order_total_quantity")
+    @Column(name = "orders_total_quantity")
     private int totalQuantity; //주문총수량 //item의 개수? 주문한 수량의 합?
 
-    @Column(name = "order_order_message")
+    @Column(name = "orders_orders_message")
     private String orderMessage;
 
-    @Column(name = "order_order_type")
+    @Column(name = "orders_orders_type")
     @Enumerated(EnumType.STRING)
     private OrderType orderType;  //온라인,오프라인 -> (배달/포장)
 
-    @Column(name = "order_order_status")
+    @Column(name = "orders_orders_status")
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus; // 준비중/배달중/거절/승인/취소 !==딜리버리스테이터스
 
@@ -56,7 +56,7 @@ public class Order extends BaseEntity {
     private Payment payment;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "users_id")
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -71,19 +71,19 @@ public class Order extends BaseEntity {
     private Review review;
 
     // ref. 배달 조회 시 필요 (조리 시간)
-    @Column(name = "order_cooking_time")
+    @Column(name = "orders_cooking_time")
     private Integer orderCookingTime;
 
     // ref. 배달 조회 시 필요 (배달 예상 시간)
-    @Column(name = "order_estimated_delivery_time")
+    @Column(name = "orders_estimated_delivery_time")
     private Integer estimatedDeliveryTime;
 
     // ref. 배달 조회 시 필요 (배달 주소)
-    @Column(name = "order_delivery_address")
+    @Column(name = "orders_delivery_address")
     private String deliveryAddress;
 
     @Builder.Default
-    @Column(name = "order_is_deleted")
+    @Column(name = "orders_is_deleted")
     private Boolean isDeleted = Boolean.FALSE;
 
     @OneToMany(mappedBy = "order")
@@ -96,14 +96,14 @@ public class Order extends BaseEntity {
     }
 
 
-	public void changePayment(Payment payment) {
-		this.payment = payment;
-	}
+    public void changePayment(Payment payment) {
+        this.payment = payment;
+    }
 
-	public boolean isNotDeliveryCompleted() {
-		if (delivery == null) {
-			throw new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_FOUND);
-		}
-		return delivery.getStatus() != DeliveryStatus.COMPLETED;
-	}
+    public boolean isNotDeliveryCompleted() {
+        if (delivery == null) {
+            throw new CustomDeliveryException(ExceptionCode.DELIVERY_NOT_FOUND);
+        }
+        return delivery.getStatus() != DeliveryStatus.COMPLETED;
+    }
 }
