@@ -55,10 +55,13 @@ public class ReviewService {
 		ReviewCreateRequestDto request,
 		List<MultipartFile> images
 	) {
-		// ref. 배달이 완료된 주문 내역인지 확인 여부 추가!!
 		// 주문 정보 가져오기
 		Order foundOrder = orderJpaRepository.findById(request.orderId())
 			.orElseThrow(() -> new CustomOrderException(ExceptionCode.ORDER_NOT_FOUND));
+
+		if (foundOrder.isNotDeliveryCompleted()) {
+			throw new CustomReviewException(ExceptionCode.REVIEW_NOT_WRITE_DELIVERY_NOT_COMPLETED);
+		}
 
 		// 가게 정보 가져오기
 		Store store = storeJpaRepository.findByStoreUuid(request.storeUuid())
@@ -141,7 +144,6 @@ public class ReviewService {
 		return ReviewDetailSearchResponseDto.from(foundReview);
 	}
 
-	// todo. 테스트 필요
 	@Transactional(readOnly = true)
 	public PagedModel<StoreReviewSearchResponseDto> searchStoreReviews(
 		UUID storeId,

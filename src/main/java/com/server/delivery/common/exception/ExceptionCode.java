@@ -60,6 +60,7 @@ public enum ExceptionCode {
 	// 리뷰 - 8000
 	REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST, "Review Not Found.", 8001),
 	REVIEW_UPDATE_EXPIRED(HttpStatus.BAD_REQUEST, "Review Update Expired.", 8002),
+	REVIEW_NOT_WRITE_DELIVERY_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "Review Not Write Delivery Not Completed.", 8003),
 
 	//카트 - 9000
 	CARTS_ORDER_ITEM_EXIST(HttpStatus.BAD_REQUEST, "Carts Order Item Exist.", 9001),
