@@ -22,11 +22,11 @@ public class Manager extends BaseEntity {
     @Column(name = "manager_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;  // 매니저가 될 유저
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_uuid")
     private Store store;  // 매니저가 속한 매장
 

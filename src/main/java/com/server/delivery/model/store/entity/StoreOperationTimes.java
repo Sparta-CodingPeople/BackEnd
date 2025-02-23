@@ -22,11 +22,11 @@ public class StoreOperationTimes extends BaseEntity {
     @Column(name = "store_operation_times_uuid")
     private UUID storeOperationTimesUuid;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_uuid", nullable = false)
     private Store store;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "operation_times_uuid", nullable = false)
     private OperationTimes operationTimes;
 

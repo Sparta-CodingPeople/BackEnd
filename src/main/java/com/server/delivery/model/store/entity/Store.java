@@ -67,7 +67,7 @@ public class Store extends BaseEntity {
     @OneToMany(mappedBy = "store")
     private List<StoreCategoryMapping> categoryMappings = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_uuid")
     private Location location;
 
