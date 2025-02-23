@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<Void> deleteUser(CustomUserDetail customUserDetail) {
         User user = userHelper.getUser(customUserDetail.getUsername());
         user.softDelete();
-        userRepository.delete(user);
+        userRepository.save(user);
 
         return ResponseEntity.noContent().build();
     }
