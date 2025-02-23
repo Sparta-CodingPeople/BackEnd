@@ -26,6 +26,7 @@ import com.server.delivery.model.order.entity.OrderStatus;
 import com.server.delivery.model.order.repository.OrderJpaRepository;
 import com.server.delivery.model.payment.Payment;
 import com.server.delivery.model.user.entity.User;
+import com.server.delivery.util.helper.PaymentHelper;
 import com.server.delivery.util.helper.UserHelper;
 
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class PaymentService {
 	private final UserHelper userHelper;
 	private final PaymentClient paymentClient;
 	private final PaymentJpaRepository paymentJpaRepository;
+	private final PaymentHelper paymentHelper;
 
 	@Transactional
 	public PaymentConfirmResponseDto confirmPayment(CustomUserDetail userDetail,
@@ -72,19 +74,15 @@ public class PaymentService {
 			.requestedAt(confirmedPaymentOutput.requestedAt())
 			.paidAt(confirmedPaymentOutput.approvedAt())
 			.build();
-
-		paymentJpaRepository.save(payment);
-
-		// todo. 주문 생성 후 결제 요청 완료되면, OrderStatus는 waiting -> completed인 줄 알았으나, waiting
-		//foundOrder.changeOrderStatusAfterPaymentConfirm(payment);
+		
+		paymentHelper.save(payment);
 
 		return PaymentConfirmResponseDto.from(payment);
 	}
 
 	@Transactional
 	public PaymentCancelResponseDto cancelPayment(UUID paymentId, PaymentCancelRequestDto cancelRequest) {
-		Payment foundPayment = paymentJpaRepository.findById(paymentId)
-			.orElseThrow(() -> new CustomPaymentException(ExceptionCode.PAYMENT_NOT_FOUND));
+		Payment foundPayment = paymentHelper.findById(paymentId);
 
 		// 중복 요청 방지
 		if (foundPayment.isCanceled()) {
@@ -100,7 +98,7 @@ public class PaymentService {
 		PaymentCancelOutput paymentCancelOutput = paymentClient.cancelPayment(foundPayment.getPaymentKey(),
 			cancelRequest);
 
-		// memo. 주문 취소 시 orderStatus는 rejected로 변경되고, paymentStatus는 rejected로 설정되는지 확인
+		// memo. 주문 취소 시 orderStatus는 rejected로 변경되고, paymentStatus는 rejected로 설정
 		foundPayment.changeCancelStatus(paymentCancelOutput);
 
 		return PaymentCancelResponseDto.from(foundPayment);
@@ -108,8 +106,7 @@ public class PaymentService {
 
 	@Transactional(readOnly = true)
 	public PaymentSearchResponseDto searchPayment(UUID paymentId) {
-		Payment foundPayment = paymentJpaRepository.findById(paymentId)
-			.orElseThrow(() -> new CustomPaymentException(ExceptionCode.PAYMENT_NOT_FOUND));
+		Payment foundPayment = paymentHelper.findById(paymentId);
 		return PaymentSearchResponseDto.from(foundPayment);
 	}
 
