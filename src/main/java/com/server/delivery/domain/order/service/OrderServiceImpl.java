@@ -294,6 +294,7 @@ public class OrderServiceImpl implements OrderService {
         //3. 주문상태 변경
         order.setIsDeleted(Boolean.TRUE);
         order.softDelete();
+        order.setOrderStatus(OrderStatus.CANCELED);
         orderRepository.save(order);
 
         //4. item들 삭제처리
