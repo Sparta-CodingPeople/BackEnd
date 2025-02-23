@@ -23,7 +23,6 @@ import com.server.delivery.domain.review.dto.res.ReviewDetailSearchResponseDto;
 import com.server.delivery.domain.review.dto.res.ReviewUpdateResponseDto;
 import com.server.delivery.domain.review.dto.res.StoreReviewSearchResponseDto;
 import com.server.delivery.domain.review.dto.res.UserReviewSearchResponseDto;
-import com.server.delivery.domain.review.repository.ReviewImageJpaRepository;
 import com.server.delivery.domain.review.repository.ReviewJpaRepository;
 import com.server.delivery.model.order.entity.Order;
 import com.server.delivery.model.order.repository.OrderJpaRepository;
@@ -32,6 +31,8 @@ import com.server.delivery.model.review.entity.ReviewImage;
 import com.server.delivery.model.store.entity.Store;
 import com.server.delivery.model.store.repository.store.StoreJpaRepository;
 import com.server.delivery.model.user.entity.User;
+import com.server.delivery.util.helper.ReviewHelper;
+import com.server.delivery.util.helper.ReviewImageHelper;
 import com.server.delivery.util.helper.UserHelper;
 import com.server.delivery.util.s3image.S3ImageUtil;
 
@@ -46,7 +47,8 @@ public class ReviewService {
 	private final S3ImageUtil s3ImageUtil;
 	private final OrderJpaRepository orderJpaRepository;
 	private final ReviewJpaRepository reviewJpaRepository;
-	private final ReviewImageJpaRepository reviewImageJpaRepository;
+	private final ReviewHelper reviewHelper;
+	private final ReviewImageHelper reviewImageHelper;
 	private final StoreJpaRepository storeJpaRepository;
 
 	@Transactional
@@ -79,13 +81,13 @@ public class ReviewService {
 			.build();
 
 		// 리뷰 저장
-		reviewJpaRepository.save(review);
+		reviewHelper.saveReview(review);
 
 		// 이미지 처리 (이미지가 없는 경우 pass)
 		if (images != null && !images.isEmpty()) {
 			List<ReviewImage> reviewImages = processReviewImages(review, images);
 			// ReviewImage 저장
-			reviewImageJpaRepository.saveAll(reviewImages);
+			reviewImageHelper.saveAll(reviewImages);
 		}
 
 		// 응답 반환
@@ -99,8 +101,7 @@ public class ReviewService {
 		List<MultipartFile> images
 	) {
 		// 리뷰 조회
-		Review foundReview = reviewJpaRepository.findById(reviewId)
-			.orElseThrow(() -> new CustomReviewException(ExceptionCode.REVIEW_NOT_FOUND));
+		Review foundReview = reviewHelper.getReview(reviewId);
 
 		// 수정 가능 여부 확인
 		if (LocalDateTime.now().isAfter(foundReview.getCreatedAt().plusDays(3))) {
@@ -109,7 +110,7 @@ public class ReviewService {
 
 		// 리뷰 글만 수정하는 경우
 		foundReview.updateReview(request.content(), request.rating());
-		reviewJpaRepository.save(foundReview);
+		reviewHelper.saveReview(foundReview);
 
 		// 리뷰 이미지를 수정하는 경우
 		// 이미지 처리 (기존 이미지 삭제 후 새로운 이미지 저장)
@@ -123,11 +124,11 @@ public class ReviewService {
 			// 새로운 리뷰 이미지 저장
 			List<ReviewImage> newReviewImages = processReviewImages(foundReview, images);
 			// dirty checking 이미지 사진 변경
-			reviewImageJpaRepository.saveAll(newReviewImages);
+			reviewImageHelper.saveAll(newReviewImages);
 
 			// 리뷰에 새로운 이미지 추가
 			foundReview.updateReviewImages(newReviewImages);
-			reviewJpaRepository.save(foundReview);
+			reviewHelper.saveReview(foundReview);
 		}
 
 		// 응답 반환
@@ -137,8 +138,7 @@ public class ReviewService {
 	@Transactional(readOnly = true)
 	public ReviewDetailSearchResponseDto searchReview(UUID reviewId) {
 		// 리뷰 조회 (reviewId)
-		Review foundReview = reviewJpaRepository.findById(reviewId)
-			.orElseThrow(() -> new CustomReviewException(ExceptionCode.REVIEW_NOT_FOUND));
+		Review foundReview = reviewHelper.getReview(reviewId);
 
 		// 응답 반환
 		return ReviewDetailSearchResponseDto.from(foundReview);
@@ -169,8 +169,7 @@ public class ReviewService {
 
 	@Transactional
 	public void deleteReview(UUID reviewId) {
-		Review review = reviewJpaRepository.findById(reviewId)
-			.orElseThrow(() -> new CustomReviewException(ExceptionCode.REVIEW_NOT_FOUND));
+		Review review = reviewHelper.getReview(reviewId);
 
 		List<ReviewImage> reviewImages = review.getImages();
 
@@ -183,7 +182,7 @@ public class ReviewService {
 		// 리뷰 삭제
 		review.performSoftDelete();
 
-		reviewJpaRepository.save(review);
+		reviewHelper.saveReview(review);
 	}
 
 	private List<ReviewImage> processReviewImages(Review review, List<MultipartFile> images) {
@@ -203,8 +202,8 @@ public class ReviewService {
 				log.error("image upload fail: {}", e.getMessage());
 			}
 		}
-
-		reviewImageJpaRepository.saveAll(reviewImages);
+		
+		reviewImageHelper.saveAll(reviewImages);
 
 		return reviewImages;
 	}
