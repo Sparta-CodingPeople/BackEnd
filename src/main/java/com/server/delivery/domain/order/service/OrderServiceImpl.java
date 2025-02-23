@@ -3,7 +3,6 @@ package com.server.delivery.domain.order.service;
 import com.server.delivery.common.PageCustom;
 import com.server.delivery.common.exception.ExceptionCode;
 import com.server.delivery.common.exception.customException.CustomCartException;
-import com.server.delivery.common.exception.customException.CustomMenuException;
 import com.server.delivery.common.exception.customException.CustomOrderException;
 import com.server.delivery.domain.delivery.repository.DeliveryJpaRepository;
 import com.server.delivery.domain.order.dto.OrderItemDto;
@@ -31,6 +30,7 @@ import com.server.delivery.model.store.entity.Store;
 import com.server.delivery.model.store.repository.store.StoreRepository;
 import com.server.delivery.model.user.entity.User;
 import com.server.delivery.model.user.entity.constant.UserRole;
+import com.server.delivery.util.helper.MenuHelper;
 import com.server.delivery.util.helper.UserHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -54,6 +54,7 @@ public class OrderServiceImpl implements OrderService {
     private final DeliveryJpaRepository deliveryJpaRepository;
     private final UserHelper userHelper;
     private final PaymentJpaRepository paymentJpaRepository;
+    private final MenuHelper menuHelper;
 
     private static void updateOrderField(OrderUpdateRequestDto updateDto, Order order) {
         if (updateDto.getDeliveryAddress() != null) {
@@ -129,10 +130,7 @@ public class OrderServiceImpl implements OrderService {
 
         List<OrderMenu> orderMenuList = cart.getMenuCarts().stream()
                 .map(menuCart -> {
-                    Menu menuByOrderMenu = menuRepository.findByMenuUuId(menuCart.getMenu().getMenuUuId())
-                            .orElseThrow(
-                                    () -> new CustomMenuException(ExceptionCode.MENU_NOT_FOUND)
-                            );
+                    Menu menuByOrderMenu = menuHelper.getMenu(menuCart.getMenuCartUuid());
 
                     return OrderMenu.builder()
                             .quantity(cart.getTotalQuantity())
@@ -170,7 +168,7 @@ public class OrderServiceImpl implements OrderService {
 
                 //존재하는 메뉴인지 체크
                 Optional<OrderMenu> existingOrderMenu = isMenusExist(order, requestMenuUuid);
-                Menu menu = getMenu(requestMenuUuid);
+                Menu menu = menuHelper.getMenu(requestMenuUuid);
                 //존재할경우 데이터 수정
                 if (existingOrderMenu.isPresent()) {
                     OrderMenu orderMenu = existingOrderMenu.get();
@@ -381,12 +379,6 @@ public class OrderServiceImpl implements OrderService {
                         .build()
                 )
                 .toList();
-    }
-
-    private Menu getMenu(UUID requestMenuUuid) {
-        return menuRepository.findByMenuUuId(requestMenuUuid).orElseThrow(
-                () -> new CustomMenuException(ExceptionCode.MENU_NOT_FOUND)
-        );
     }
 
     private Order getOrder(UUID orderId) {

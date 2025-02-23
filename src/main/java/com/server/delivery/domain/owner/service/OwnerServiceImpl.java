@@ -9,6 +9,7 @@ import com.server.delivery.model.manager.repository.ManagerRepository;
 import com.server.delivery.model.store.entity.Store;
 import com.server.delivery.model.store.repository.store.StoreRepository;
 import com.server.delivery.model.user.entity.User;
+import com.server.delivery.util.helper.StoreHelper;
 import com.server.delivery.util.helper.UserHelper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +22,16 @@ public class OwnerServiceImpl implements OwnerService {
     private final UserHelper userHelper;
     private final StoreRepository storeRepository;
     private final ManagerRepository managerRepository;
+    private final StoreHelper storeHelper;
 
 
     @Override
     @Transactional
     public void setManager(Long toBeManagerUserId, UpdateManagerRequestDto updateManagerRequestDto, Long ownerUserId) {
-        System.out.println("ownerUserId ={} " + ownerUserId);
         User ownerUser = userHelper.getUserById(ownerUserId);
         User toBeManagerUser = userHelper.getUserById(toBeManagerUserId);
 
-        Store store = getStore(updateManagerRequestDto);
+        Store store = storeHelper.getStoreByUuid(updateManagerRequestDto.getStoreUuid());
         if (store.getUserStore() != null && !store.getUserStore().stream().anyMatch(
                 userStore -> userStore.getUser().equals(ownerUser)
         )) {
@@ -52,16 +53,10 @@ public class OwnerServiceImpl implements OwnerService {
 
     }
 
-    private Store getStore(UpdateManagerRequestDto updateManagerRequestDto) {
-        return storeRepository.findByStoreUuid(updateManagerRequestDto.getStoreUuid()).orElseThrow(
-                () -> new CustomStoreException(ExceptionCode.STORE_NOT_FOUND)
-        );
-    }
-
     @Override
     @Transactional
     public void updateManager(Long changedUserId, UpdateManagerRequestDto updateManagerRequestDto, Long userId) {
-        Store store = getStore(updateManagerRequestDto);
+        Store store = storeHelper.getStoreByUuid(updateManagerRequestDto.getStoreUuid());
         User changedUser = userHelper.getUserById(changedUserId);
         Manager oldManager = store.getManager();
         oldManager.setDeleted(true);

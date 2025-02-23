@@ -3,7 +3,6 @@ package com.server.delivery.domain.menu.service;
 import com.server.delivery.common.PageCustom;
 import com.server.delivery.common.exception.ExceptionCode;
 import com.server.delivery.common.exception.customException.CustomMenuException;
-import com.server.delivery.common.exception.customException.CustomStoreException;
 import com.server.delivery.common.exception.customException.CustomUserException;
 import com.server.delivery.domain.menu.dto.request.MenuCreateRequestDto;
 import com.server.delivery.domain.menu.dto.request.MenuUpdateRequestDto;
@@ -14,6 +13,8 @@ import com.server.delivery.model.order.repository.OrderMenuRepository;
 import com.server.delivery.model.store.entity.Store;
 import com.server.delivery.model.store.repository.store.StoreRepository;
 import com.server.delivery.model.user.entity.User;
+import com.server.delivery.util.helper.MenuHelper;
+import com.server.delivery.util.helper.StoreHelper;
 import com.server.delivery.util.helper.UserHelper;
 import com.server.delivery.util.s3image.S3ImageUtil;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,8 @@ public class MenuServiceImpl implements MenuService {
     private final OrderMenuRepository orderMenuRepository;
     private final S3ImageUtil s3ImageUtil;
     private final UserHelper userHelper;
+    private final StoreHelper storeHelper;
+    private final MenuHelper menuHelper;
 
     @Transactional
     public void registerMenu(
@@ -46,7 +49,7 @@ public class MenuServiceImpl implements MenuService {
     ) {
         userHelper.getUserById(userId);
 
-        Store store = getStore(storeUuid);
+        Store store = storeHelper.getStoreByUuid(storeUuid);
         validateIsUsersStore(userId, store);
         validateIsMenuExist(store, requestDto.getFoodName());
 
@@ -66,7 +69,7 @@ public class MenuServiceImpl implements MenuService {
             MultipartFile foodImage
     ) {
 
-        Menu menu = getMenuByMenuUuid(menuUuid);
+        Menu menu = menuHelper.getMenu(menuUuid);
         validateIsUsersStore(userId, menu.getStore());
         validateIsMenuExist(menu, requestDto.getFoodName());
 
@@ -91,7 +94,7 @@ public class MenuServiceImpl implements MenuService {
             Long userId,
             UUID menuUuid
     ) {
-        Menu menu = getMenuByMenuUuid(menuUuid);
+        Menu menu = menuHelper.getMenu(menuUuid);
 
         //사용자의 매장인지 체크
         validateIsUsersStore(userId, menu.getStore());
@@ -111,8 +114,7 @@ public class MenuServiceImpl implements MenuService {
     public MenuResponseDto getMenu(
             Long userId, UUID menuUuid
     ) {
-        Menu menu = getMenuByMenuUuid(menuUuid);
-
+        Menu menu = menuHelper.getMenu(menuUuid);
         validateIsUsersStore(userId, menu.getStore());
 
         return MenuResponseDto.from(menu);
@@ -130,7 +132,7 @@ public class MenuServiceImpl implements MenuService {
 
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), defaultSort);
 
-        Store store = getStore(storeUuid);
+        Store store = storeHelper.getStoreByUuid(storeUuid);
 
         Page<Menu> menuList = menuRepository.findByStoreAndMenuNameContainingAndMenuAvailabilityTrue(store, keyword, pageable);
 
@@ -140,18 +142,6 @@ public class MenuServiceImpl implements MenuService {
 
         return new PageCustom<>(userDtoList, sortedPageable, menuList.getTotalElements());
 
-    }
-
-    private Menu getMenuByMenuUuid(UUID menuUuid) {
-        return menuRepository.findByMenuUuId(menuUuid).orElseThrow(
-                () -> new CustomMenuException(ExceptionCode.MENU_NOT_FOUND)
-        );
-    }
-
-    private Store getStore(UUID storeUuid) {
-        return storeRepository.findByStoreUuid(storeUuid).orElseThrow(
-                () -> new CustomStoreException(ExceptionCode.STORE_NOT_FOUND)
-        );
     }
 
     private void validateIsUsersStore(Long userId, Store store) {
