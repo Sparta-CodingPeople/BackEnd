@@ -11,6 +11,5 @@ import java.util.UUID;
 @Builder
 public class OrderItemDto {
     private UUID productUuid;
-    private int productPrice;
     private int productCount;
 }
