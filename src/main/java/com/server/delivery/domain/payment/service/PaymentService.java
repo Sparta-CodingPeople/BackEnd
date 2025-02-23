@@ -31,86 +31,86 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
-  
-	private final OrderJpaRepository orderJpaRepository;
-	private final UserHelper userHelper;
-	private final PaymentClient paymentClient;
-	private final PaymentJpaRepository paymentJpaRepository;
-	private final PaymentHelper paymentHelper;
 
-	@Transactional
-	public PaymentConfirmResponseDto confirmPayment(CustomUserDetail userDetail,
-		PaymentConfirmRequestDto confirmRequest) {
-		// 중복 요청 방지
-		if (paymentJpaRepository.existsByOrderUuid(confirmRequest.serverOrderId())) {
-			throw new CustomPaymentException(ExceptionCode.PAYMENT_REQUEST_ALREADY_DONE);
-		}
+    private final UserHelper userHelper;
+    private final PaymentClient paymentClient;
+    private final PaymentJpaRepository paymentJpaRepository;
+    private final PaymentHelper paymentHelper;
+    private final OrderHelper orderHelper;
 
-		// memo. Order는 기본적으로 주문 승인이 되기 위한 대기 중인 상태 (WAITING)
-		// 		주문 상태가 WAITING인 경우 결제 요청 실행, 이외에는 결제 요청을 실행할 수 없음
-		        Order foundOrder = orderHelper.getOrder(confirmRequest.serverOrderId());
+    @Transactional
+    public PaymentConfirmResponseDto confirmPayment(CustomUserDetail userDetail,
+                                                    PaymentConfirmRequestDto confirmRequest) {
+        // 중복 요청 방지
+        if (paymentJpaRepository.existsByOrderUuid(confirmRequest.serverOrderId())) {
+            throw new CustomPaymentException(ExceptionCode.PAYMENT_REQUEST_ALREADY_DONE);
+        }
 
-		if (OrderStatus.isNotWaiting(foundOrder.getOrderStatus())) {
-			throw new CustomPaymentException(ExceptionCode.PAYMENT_REQUEST_REJECT);
-		}
+        // memo. Order는 기본적으로 주문 승인이 되기 위한 대기 중인 상태 (WAITING)
+        // 		주문 상태가 WAITING인 경우 결제 요청 실행, 이외에는 결제 요청을 실행할 수 없음
+        Order foundOrder = orderHelper.getOrder(confirmRequest.serverOrderId());
 
-		// 원래 WebClient를 통해 서버 to 서버로 결제 요청과 승인이 필요 -> 연동 없이 requestPayment, confirmPayment 진행
-		PaymentConfirmOutput confirmedPaymentOutput = paymentClient.confirmPayment(confirmRequest);
+        if (OrderStatus.isNotWaiting(foundOrder.getOrderStatus())) {
+            throw new CustomPaymentException(ExceptionCode.PAYMENT_REQUEST_REJECT);
+        }
 
-		User foundUser = userHelper.getUserById(userDetail.getId());
+        // 원래 WebClient를 통해 서버 to 서버로 결제 요청과 승인이 필요 -> 연동 없이 requestPayment, confirmPayment 진행
+        PaymentConfirmOutput confirmedPaymentOutput = paymentClient.confirmPayment(confirmRequest);
 
-		Payment payment = Payment.builder()
-			.amount(confirmedPaymentOutput.totalAmount())
-			.paymentMethod(confirmedPaymentOutput.paymentMethod())
-			.transactionKey(confirmedPaymentOutput.transactionKey())
-			.paymentKey(confirmedPaymentOutput.paymentKey())
-			.paymentMethod(confirmedPaymentOutput.paymentMethod())
-			.status(confirmedPaymentOutput.status())
-			.order(foundOrder)
-			.user(foundUser)
-			.requestedAt(confirmedPaymentOutput.requestedAt())
-			.paidAt(confirmedPaymentOutput.approvedAt())
-			.build();
-		
-		paymentHelper.save(payment);
+        User foundUser = userHelper.getUserById(userDetail.getId());
 
-		return PaymentConfirmResponseDto.from(payment);
-	}
+        Payment payment = Payment.builder()
+                .amount(confirmedPaymentOutput.totalAmount())
+                .paymentMethod(confirmedPaymentOutput.paymentMethod())
+                .transactionKey(confirmedPaymentOutput.transactionKey())
+                .paymentKey(confirmedPaymentOutput.paymentKey())
+                .paymentMethod(confirmedPaymentOutput.paymentMethod())
+                .status(confirmedPaymentOutput.status())
+                .order(foundOrder)
+                .user(foundUser)
+                .requestedAt(confirmedPaymentOutput.requestedAt())
+                .paidAt(confirmedPaymentOutput.approvedAt())
+                .build();
 
-	@Transactional
-	public PaymentCancelResponseDto cancelPayment(UUID paymentId, PaymentCancelRequestDto cancelRequest) {
-		Payment foundPayment = paymentHelper.findById(paymentId);
+        paymentHelper.save(payment);
 
-		// 중복 요청 방지
-		if (foundPayment.isCanceled()) {
-			throw new CustomPaymentException(ExceptionCode.PAYMENT_ALREADY_CANCELED);
-		}
+        return PaymentConfirmResponseDto.from(payment);
+    }
 
-		// memo. 주문 거부(REJECTED)와 주문 취소(CANCELED)인 경우에만 결제 취소 가능
-		Order order = foundPayment.getOrder();
-		if (!OrderStatus.canCancelPayment(order.getOrderStatus())) {
-			throw new CustomPaymentException(ExceptionCode.PAYMENT_CANCEL_FAILED);
-		}
+    @Transactional
+    public PaymentCancelResponseDto cancelPayment(UUID paymentId, PaymentCancelRequestDto cancelRequest) {
+        Payment foundPayment = paymentHelper.findById(paymentId);
 
-		PaymentCancelOutput paymentCancelOutput = paymentClient.cancelPayment(foundPayment.getPaymentKey(),
-			cancelRequest);
+        // 중복 요청 방지
+        if (foundPayment.isCanceled()) {
+            throw new CustomPaymentException(ExceptionCode.PAYMENT_ALREADY_CANCELED);
+        }
 
-		// memo. 주문 취소 시 orderStatus는 rejected로 변경되고, paymentStatus는 rejected로 설정
-		foundPayment.changeCancelStatus(paymentCancelOutput);
+        // memo. 주문 거부(REJECTED)와 주문 취소(CANCELED)인 경우에만 결제 취소 가능
+        Order order = foundPayment.getOrder();
+        if (!OrderStatus.canCancelPayment(order.getOrderStatus())) {
+            throw new CustomPaymentException(ExceptionCode.PAYMENT_CANCEL_FAILED);
+        }
 
-		return PaymentCancelResponseDto.from(foundPayment);
-	}
+        PaymentCancelOutput paymentCancelOutput = paymentClient.cancelPayment(foundPayment.getPaymentKey(),
+                cancelRequest);
 
-	@Transactional(readOnly = true)
-	public PaymentSearchResponseDto searchPayment(UUID paymentId) {
-		Payment foundPayment = paymentHelper.findById(paymentId);
-		return PaymentSearchResponseDto.from(foundPayment);
-	}
+        // memo. 주문 취소 시 orderStatus는 rejected로 변경되고, paymentStatus는 rejected로 설정
+        foundPayment.changeCancelStatus(paymentCancelOutput);
 
-	@Transactional(readOnly = true)
-	public PagedModel<PaymentSearchResponseDto> searchPayments(Long userId, Pageable pageable) {
-		Page<Payment> payments = paymentJpaRepository.searchUserReviews(userId, pageable);
-		Page<PaymentSearchResponseDto> content = payments.map(PaymentSearchResponseDto::from);
-		return new PagedModel<>(content);
-	}
+        return PaymentCancelResponseDto.from(foundPayment);
+    }
+
+    @Transactional(readOnly = true)
+    public PaymentSearchResponseDto searchPayment(UUID paymentId) {
+        Payment foundPayment = paymentHelper.findById(paymentId);
+        return PaymentSearchResponseDto.from(foundPayment);
+    }
+
+    @Transactional(readOnly = true)
+    public PagedModel<PaymentSearchResponseDto> searchPayments(Long userId, Pageable pageable) {
+        Page<Payment> payments = paymentJpaRepository.searchUserReviews(userId, pageable);
+        Page<PaymentSearchResponseDto> content = payments.map(PaymentSearchResponseDto::from);
+        return new PagedModel<>(content);
+    }
 }
