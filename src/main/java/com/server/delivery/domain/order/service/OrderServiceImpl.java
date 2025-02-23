@@ -170,7 +170,7 @@ public class OrderServiceImpl implements OrderService {
 
                 //존재하는 메뉴인지 체크
                 Optional<OrderMenu> existingOrderMenu = isMenusExist(order, requestMenuUuid);
-
+                Menu menu = getMenu(requestMenuUuid);
                 //존재할경우 데이터 수정
                 if (existingOrderMenu.isPresent()) {
                     OrderMenu orderMenu = existingOrderMenu.get();
@@ -190,8 +190,8 @@ public class OrderServiceImpl implements OrderService {
                         OrderMenu newOrderMenu = OrderMenu.builder()
                                 .order(order)
                                 .quantity(requestMenuQuantity)
-                                .totalPrice(requestMenuQuantity * itemDto.getProductPrice())
-                                .menu(getMenu(requestMenuUuid)) // 상품 조회 메서드 필요
+                                .totalPrice(requestMenuQuantity * menu.getMenuPrice())
+                                .menu(menu) // 상품 조회 메서드 필요
                                 .build();
                         updatedOrderMenus.add(newOrderMenu);
                     }
@@ -377,9 +377,7 @@ public class OrderServiceImpl implements OrderService {
 
         return orderMenus.stream()
                 .map(orderMenu -> OrderItemDto.builder()
-                        //.productId(UUID.fromString(orderMenu.getId()))
                         .productCount(orderMenu.getQuantity())
-                        .productPrice(orderMenu.getTotalPrice())
                         .build()
                 )
                 .toList();
