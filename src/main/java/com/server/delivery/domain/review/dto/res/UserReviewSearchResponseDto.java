@@ -19,7 +19,7 @@ public record UserReviewSearchResponseDto(
 ) {
 	public static UserReviewSearchResponseDto from(Review review) {
 		return new UserReviewSearchResponseDto(
-			review.getId(),
+			review.getReviewUuid(),
 			review.getStore().getStoreUuid(),
 			review.getStore().getStoreName(),
 			review.getRating(),

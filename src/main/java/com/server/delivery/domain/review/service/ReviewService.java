@@ -89,7 +89,7 @@ public class ReviewService {
 		}
 
 		// 응답 반환
-		return ReviewCreateResponseDto.from(review.getId());
+		return ReviewCreateResponseDto.from(review.getReviewUuid());
 	}
 
 	@Transactional
