@@ -364,6 +364,11 @@ public class OrderServiceImpl implements OrderService {
 
 		orderRepository.save(order);
 
+		// 주문이 거부된 경우 payment와 연결 필요
+		Payment foundPayment = paymentJpaRepository.findByPaymentUuid(rejectDto.getPaymentUuid())
+			.orElseThrow(() -> new CustomOrderException(ExceptionCode.PAYMENT_NOT_FOUND));
+		order.changePayment(foundPayment);
+
 		// TODO:: order취소시 취소 사유 테이블을 따로 만들어서 저장해야 하나?
 	}
 
