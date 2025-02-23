@@ -1,5 +1,6 @@
 package com.server.delivery.model.store.entity;
 
+import com.server.delivery.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
@@ -14,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table(name = "store_category_mapping")
 @SQLRestriction("store_category_mapping_is_deleted = false")
-public class StoreCategoryMapping {
+public class StoreCategoryMapping extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

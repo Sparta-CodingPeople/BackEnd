@@ -34,7 +34,7 @@ public class Cart extends BaseEntity {
     @OneToMany(mappedBy = "cart")
     private List<MenuCart> menuCarts;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

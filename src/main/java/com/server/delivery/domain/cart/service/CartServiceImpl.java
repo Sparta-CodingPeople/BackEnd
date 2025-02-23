@@ -110,6 +110,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public SearchCartResponseDto searchCart(Long userId) {
         User user = userHelper.getUserById(userId);
 

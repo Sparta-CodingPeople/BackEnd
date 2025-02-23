@@ -30,11 +30,11 @@ public class OrderMenu extends BaseEntity {
     @Column(name = "order_menu_total_price")
     private int totalPrice;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_uuid")
     private Order order;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_uuid")
     private Menu menu;
 

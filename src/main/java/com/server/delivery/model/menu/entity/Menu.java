@@ -43,7 +43,7 @@ public class Menu extends BaseEntity {
     @Column(name = "food_image")
     private String foodImage;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
