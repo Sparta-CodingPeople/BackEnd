@@ -4,7 +4,6 @@ import com.server.delivery.common.PageCustom;
 import com.server.delivery.domain.store.dto.response.StoreResponseDto;
 import com.server.delivery.model.store.entity.Store;
 import com.server.delivery.model.store.repository.store.StoreRepository;
-import com.server.delivery.model.user.repository.UserRepository;
 import com.server.delivery.util.helper.StoreHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,7 +19,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class MasterServiceImpl implements MasterService {
-    private final UserRepository userRepository;
     private final StoreRepository storeRepository;
     private final StoreHelper storeHelper;
 

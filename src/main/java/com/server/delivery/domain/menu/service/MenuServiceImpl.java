@@ -11,7 +11,6 @@ import com.server.delivery.model.menu.entity.Menu;
 import com.server.delivery.model.menu.repository.MenuRepository;
 import com.server.delivery.model.order.repository.OrderMenuRepository;
 import com.server.delivery.model.store.entity.Store;
-import com.server.delivery.model.store.repository.store.StoreRepository;
 import com.server.delivery.model.user.entity.User;
 import com.server.delivery.util.helper.MenuHelper;
 import com.server.delivery.util.helper.StoreHelper;
@@ -32,7 +31,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class MenuServiceImpl implements MenuService {
-    private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
     private final OrderMenuRepository orderMenuRepository;
     private final S3ImageUtil s3ImageUtil;
@@ -103,7 +101,6 @@ public class MenuServiceImpl implements MenuService {
         if (orderMenuRepository.isExistMenu(menu)) {
             throw new CustomMenuException(ExceptionCode.MENU_ORDER_IS_EXIST);
         }
-        ;
 
         menu.setMenuAvailability(false);
         menu.softDelete();

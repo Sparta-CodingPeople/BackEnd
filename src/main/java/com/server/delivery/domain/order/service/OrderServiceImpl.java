@@ -19,7 +19,6 @@ import com.server.delivery.model.delivery.entity.Delivery;
 import com.server.delivery.model.delivery.entity.DeliveryStatus;
 import com.server.delivery.model.delivery.entity.DeliveryTip;
 import com.server.delivery.model.menu.entity.Menu;
-import com.server.delivery.model.menu.repository.MenuRepository;
 import com.server.delivery.model.order.entity.Order;
 import com.server.delivery.model.order.entity.OrderMenu;
 import com.server.delivery.model.order.entity.OrderStatus;
@@ -27,7 +26,6 @@ import com.server.delivery.model.order.repository.OrderMenuRepository;
 import com.server.delivery.model.order.repository.OrderRepository;
 import com.server.delivery.model.payment.Payment;
 import com.server.delivery.model.store.entity.Store;
-import com.server.delivery.model.store.repository.store.StoreRepository;
 import com.server.delivery.model.user.entity.User;
 import com.server.delivery.model.user.entity.constant.UserRole;
 import com.server.delivery.util.helper.MenuHelper;
@@ -48,8 +46,6 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderMenuRepository orderMenuRepository;
-    private final StoreRepository storeRepository;
-    private final MenuRepository menuRepository;
     private final CartRepository cartRepository;
     private final DeliveryJpaRepository deliveryJpaRepository;
     private final UserHelper userHelper;
