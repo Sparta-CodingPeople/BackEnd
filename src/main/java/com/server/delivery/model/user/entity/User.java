@@ -79,8 +79,7 @@ public class User extends BaseEntity {
     @Builder.Default
     private Boolean isDeleted = Boolean.FALSE;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "master_id")
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Master master;
 
     @OneToMany(mappedBy = "user")

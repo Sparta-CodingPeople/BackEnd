@@ -10,7 +10,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLRestriction("master_is_delted = false")
+@SQLRestriction("master_is_deleted = false")
 @Table(name = "p_master")
 public class Master {
 
