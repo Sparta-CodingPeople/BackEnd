@@ -2,6 +2,7 @@ package com.server.delivery.domain.review.service;
 
 import com.server.delivery.common.exception.CustomReviewException;
 import com.server.delivery.common.exception.ExceptionCode;
+import com.server.delivery.common.pagination.PageSize;
 import com.server.delivery.domain.review.dto.req.ReviewCreateRequestDto;
 import com.server.delivery.domain.review.dto.req.ReviewUpdateRequestDto;
 import com.server.delivery.domain.review.dto.res.*;
@@ -16,6 +17,7 @@ import com.server.delivery.util.s3image.S3ImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
@@ -132,24 +134,17 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public PagedModel<StoreReviewSearchResponseDto> searchStoreReviews(
-            UUID storeId,
-            String keyword,
-            Pageable pageable
-    ) {
-        // 검색 조건 및 정렬 조건에 따라 리뷰 조회
-        Page<Review> reviews = reviewJpaRepository.searchStoreReviews(storeId, keyword, pageable);
+    public PagedModel<StoreReviewSearchResponseDto> searchStoreReviews(UUID storeId, String keyword, Pageable pageable) {
+        Pageable validatedPageable = toPageable(pageable);
+        Page<Review> reviews = reviewJpaRepository.searchByStoreReview(storeId, keyword, validatedPageable);
         Page<StoreReviewSearchResponseDto> content = reviews.map(StoreReviewSearchResponseDto::from);
         return new PagedModel<>(content);
     }
 
     @Transactional(readOnly = true)
-    public PagedModel<UserReviewSearchResponseDto> searchUserReviews(
-            Long userId,
-            String keyword,
-            Pageable pageable
-    ) {
-        Page<Review> reviews = reviewJpaRepository.searchUserReviews(userId, keyword, pageable);
+    public PagedModel<UserReviewSearchResponseDto> searchUserReviews(Long userId, String keyword, Pageable pageable) {
+        Pageable validatedPageable = toPageable(pageable);
+        Page<Review> reviews = reviewJpaRepository.searchUserReviews(userId, keyword, validatedPageable);
         Page<UserReviewSearchResponseDto> content = reviews.map(UserReviewSearchResponseDto::from);
         return new PagedModel<>(content);
     }
@@ -193,5 +188,10 @@ public class ReviewService {
         reviewImageHelper.saveAll(reviewImages);
 
         return reviewImages;
+    }
+
+    private Pageable toPageable(Pageable originPageable) {
+        int validatedSize = PageSize.of(originPageable.getPageSize());
+        return PageRequest.of(originPageable.getPageNumber(), validatedSize, originPageable.getSort());
     }
 }
