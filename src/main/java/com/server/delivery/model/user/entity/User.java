@@ -14,7 +14,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,56 +26,56 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE p_users SET users_is_deleted = true WHERE users_id = ?")
-@SQLRestriction("users_is_deleted = false")
-@Table(name = "p_users")
+@SQLDelete(sql = "UPDATE p_user SET user_is_deleted = true WHERE user_id = ?")
+@SQLRestriction("user_is_deleted = false")
+@Table(name = "p_user")
 public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "users_id", nullable = false, updatable = false)
+    @Column(name = "user_id", nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "users_username", nullable = false, unique = true)
+    @Column(name = "user_username", nullable = false, unique = true)
     private String username;
 
-    @Column(name = "users_password", nullable = false)
+    @Column(name = "user_password", nullable = false)
     private String password;
 
-    @Column(name = "users_first_name", nullable = false)
+    @Column(name = "user_first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "users_last_name", nullable = false)
+    @Column(name = "user_last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "users_nickname", nullable = false)
+    @Column(name = "user_nickname", nullable = false)
     private String nickname;
 
-    @Column(name = "users_phone_number", nullable = false)
+    @Column(name = "user_phone_number", nullable = false)
     private String phoneNumber;
 
-    @Column(name = "users_profile_image")
+    @Column(name = "user_profile_image")
     private String profileImage;
 
     @Builder.Default
-    @Column(name = "users_is_public", nullable = false)
+    @Column(name = "user_is_public", nullable = false)
     private Boolean isPublic = Boolean.FALSE;
 
-    @Column(name = "users_role", nullable = false)
+    @Column(name = "user_role", nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    @Column(name = "users_gender", nullable = false)
+    @Column(name = "user_gender", nullable = false)
     @Enumerated(EnumType.STRING)
     private UserGender gender;
 
-    @Column(name = "users_birth_date", nullable = false)
+    @Column(name = "user_birth_date", nullable = false)
     private LocalDate birthDate;
 
-    @Column(name = "users_token_issued_at")
+    @Column(name = "user_token_issued_at")
     private LocalDateTime tokenIssuedAt;
 
-    @Column(name = "users_is_deleted")
+    @Column(name = "user_is_deleted")
     @Builder.Default
     private Boolean isDeleted = Boolean.FALSE;
 
@@ -88,7 +87,7 @@ public class User extends BaseEntity {
     private List<Owner> owners;
 
     @OneToMany(mappedBy = "user")
-    private List<UserStore> userStores;
+    private List<UserStore> usertores;
 
     @OneToMany(mappedBy = "user")
     private List<Manager> managers;
@@ -113,8 +112,4 @@ public class User extends BaseEntity {
         this.tokenIssuedAt = LocalDateTime.now();
     }
 
-    public void softDelete() {
-        this.setDeletedAt(LocalDateTime.now());
-        this.setDeletedBy(SecurityContextHolder.getContext().getAuthentication().getName());
-    }
 }

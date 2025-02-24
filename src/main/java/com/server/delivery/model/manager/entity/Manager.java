@@ -23,7 +23,7 @@ public class Manager extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "users_id")
+    @JoinColumn(name = "user_id")
     private User user;  // 매니저가 될 유저
 
     @ManyToOne(fetch = FetchType.LAZY)

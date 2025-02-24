@@ -35,7 +35,7 @@ public class Cart extends BaseEntity {
     private List<MenuCart> menuCarts;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "users_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "cart_is_deleted")

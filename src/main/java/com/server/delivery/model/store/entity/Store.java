@@ -22,30 +22,30 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE p_stores SET stores_is_deleted = true WHERE stores_uuid = ?")
-@SQLRestriction("stores_is_deleted = false")
-@Table(name = "p_stores")
+@SQLDelete(sql = "UPDATE p_store SET store_is_deleted = true WHERE store_uuid = ?")
+@SQLRestriction("store_is_deleted = false")
+@Table(name = "p_store")
 public class Store extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "stores_uuid")
+    @Column(name = "store_uuid")
     private UUID storeUuid;
 
-    @Column(name = "stores_name", nullable = false, length = 100)
+    @Column(name = "store_name", nullable = false, length = 100)
     private String storeName;
 
     @Column(name = "phone_number", nullable = false, length = 100)
     private String phoneNumber;
 
-    @Column(name = "stores_description")
+    @Column(name = "store_description")
     private String storeDescription;
 
-    @Column(name = "stores_is_deleted")
+    @Column(name = "store_is_deleted")
     @Builder.Default
     private boolean storeIsDeleted = Boolean.FALSE;
 
-    @Column(name = "stores_is_granted")
+    @Column(name = "store_is_granted")
     @Builder.Default
     private boolean storeIsGranted = Boolean.FALSE;
 

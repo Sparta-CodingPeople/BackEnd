@@ -37,7 +37,7 @@ public class Review extends BaseEntity {
     private Double rating;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "users_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Builder.Default
@@ -53,12 +53,12 @@ public class Review extends BaseEntity {
     private Store store;
 
     @OneToOne
-    @JoinColumn(name = "orders_uuid", unique = true)
+    @JoinColumn(name = "order_uuid", unique = true)
     private Order order;
 
     // todo. 필요 시 추가
     //    @ManyToOne
-    //    @JoinColumn(name = "menus_uuid")
+    //    @JoinColumn(name = "menu_uuid")
     //    private Menu menu;
 
     public void updateReview(String content, Double rating) {
