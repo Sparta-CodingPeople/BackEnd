@@ -3,6 +3,7 @@ package com.server.delivery.domain.payment.service;
 import com.server.delivery.common.exception.ExceptionCode;
 import com.server.delivery.common.exception.customException.CustomPaymentException;
 import com.server.delivery.common.jwt.CustomUserDetail;
+import com.server.delivery.common.pagination.PageSize;
 import com.server.delivery.domain.payment.client.PaymentClient;
 import com.server.delivery.domain.payment.client.dto.PaymentCancelOutput;
 import com.server.delivery.domain.payment.client.dto.PaymentConfirmOutput;
@@ -21,6 +22,7 @@ import com.server.delivery.util.helper.PaymentHelper;
 import com.server.delivery.util.helper.UserHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
@@ -109,8 +111,14 @@ public class PaymentService {
 
     @Transactional(readOnly = true)
     public PagedModel<PaymentSearchResponseDto> searchPayments(Long userId, Pageable pageable) {
-        Page<Payment> payments = paymentJpaRepository.searchUserReviews(userId, pageable);
+        Pageable validatedPageable = toPageable(pageable);
+        Page<Payment> payments = paymentJpaRepository.searchUserReviews(userId, validatedPageable);
         Page<PaymentSearchResponseDto> content = payments.map(PaymentSearchResponseDto::from);
         return new PagedModel<>(content);
+    }
+
+    private Pageable toPageable(Pageable originPageable) {
+        int validatedSize = PageSize.of(originPageable.getPageSize());
+        return PageRequest.of(originPageable.getPageNumber(), validatedSize, originPageable.getSort());
     }
 }
