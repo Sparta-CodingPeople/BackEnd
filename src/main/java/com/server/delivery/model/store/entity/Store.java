@@ -42,9 +42,11 @@ public class Store extends BaseEntity {
     private String storeDescription;
 
     @Column(name = "stores_is_deleted")
+    @Builder.Default
     private boolean storeIsDeleted = Boolean.FALSE;
 
     @Column(name = "stores_is_granted")
+    @Builder.Default
     private boolean storeIsGranted = Boolean.FALSE;
 
     @OneToMany(mappedBy = "store")
