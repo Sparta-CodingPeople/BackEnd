@@ -40,11 +40,11 @@ public class Payment {
     private String paymentKey;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orders_uuid")
+    @JoinColumn(name = "order_uuid")
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "users_uuid")
+    @JoinColumn(name = "user_uuid")
     private User user;
 
     @Column(name = "payment_request_at")

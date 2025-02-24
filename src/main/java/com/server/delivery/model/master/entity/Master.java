@@ -23,7 +23,7 @@ public class Master {
     private String masterCode;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "users_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "master_is_deleted")

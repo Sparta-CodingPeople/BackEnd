@@ -17,26 +17,26 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE p_menus SET menus_availability = FALSE WHERE menus_uuid = ?")
-@SQLRestriction("menus_availability = true")
-@Table(name = "p_menus")
+@SQLDelete(sql = "UPDATE p_menu SET menu_availability = FALSE WHERE menu_uuid = ?")
+@SQLRestriction("menu_availability = true")
+@Table(name = "p_menu")
 public class Menu extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "menus_uuid")
+    @Column(name = "menu_uuid")
     private UUID menuUuId;
 
-    @Column(name = "menus_name", nullable = false)
+    @Column(name = "menu_name", nullable = false)
     private String menuName;
 
-    @Column(name = "menus_description")
+    @Column(name = "menu_description")
     private String menuDescription;
 
-    @Column(name = "menus_price", nullable = false)
+    @Column(name = "menu_price", nullable = false)
     private int menuPrice;
 
-    @Column(name = "menus_availability", nullable = false)
+    @Column(name = "menu_availability", nullable = false)
     @Builder.Default
     private Boolean menuAvailability = Boolean.TRUE;
 

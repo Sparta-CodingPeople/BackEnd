@@ -15,31 +15,31 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE p_orders_menu SET orders_menus_is_deleted = true WHERE orders_menus_uuid = ?")
-@SQLRestriction("orders_menus_is_deleted = false")
-@Table(name = "p_orders_menu")
+@SQLDelete(sql = "UPDATE p_order_menu SET order_menu_is_deleted = true WHERE order_menu_uuid = ?")
+@SQLRestriction("order_menu_is_deleted = false")
+@Table(name = "p_order_menu")
 public class OrderMenu extends BaseEntity {
     @Id
-    @Column(name = "orders_menus_uuid")
+    @Column(name = "order_menu_uuid")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "orders_menus_quantity")
+    @Column(name = "order_menu_quantity")
     private int quantity;
 
-    @Column(name = "orders_menus_total_price")
+    @Column(name = "order_menu_total_price")
     private int totalPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orders_uuid")
+    @JoinColumn(name = "order_uuid")
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menus_uuid")
+    @JoinColumn(name = "menu_uuid")
     private Menu menu;
 
     @Builder.Default
-    @Column(name = "orders_menus_is_Deleted")
+    @Column(name = "order_menu_is_Deleted")
     private Boolean isDeleted = Boolean.FALSE;
 
 }

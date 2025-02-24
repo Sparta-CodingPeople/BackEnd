@@ -11,12 +11,12 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "p_users_stores")
+@Table(name = "p_user_store")
 public class UserStore {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "users_stores_uuid")
+    @Column(name = "user_store_uuid")
     private UUID uuid;
 
     @ManyToOne(fetch = FetchType.LAZY)

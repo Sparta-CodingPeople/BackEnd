@@ -34,7 +34,7 @@ public class DeliveryAddress extends BaseEntity {
     private String detailAddress;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "users_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Builder.Default
