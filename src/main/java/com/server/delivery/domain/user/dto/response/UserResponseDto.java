@@ -13,6 +13,7 @@ public class UserResponseDto {
     private Long id;
     private String name;
     private String username;
+    private String nickname;
     private String phoneNumber;
     private UserGender gender;
     private LocalDate birthDate;
@@ -41,6 +42,7 @@ public class UserResponseDto {
                 .birthDate(user.getBirthDate())
                 .isPublic(user.getIsPublic())
                 .profileIamge(user.getProfileImage())
+                .nickname(user.getNickname())
                 .build();
     }
 }

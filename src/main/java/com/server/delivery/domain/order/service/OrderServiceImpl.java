@@ -124,7 +124,7 @@ public class OrderServiceImpl implements OrderService {
 
         List<OrderMenu> orderMenuList = cart.getMenuCarts().stream()
                 .map(menuCart -> {
-                    Menu menuByOrderMenu = menuHelper.getMenu(menuCart.getMenuCartUuid());
+                    Menu menuByOrderMenu = menuHelper.getMenu(menuCart.getMenu().getMenuUuId());
 
 
                     return OrderMenu.builder()
