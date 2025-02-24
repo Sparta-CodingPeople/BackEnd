@@ -267,7 +267,6 @@ public class OrderServiceImpl implements OrderService {
         return OrderGetResponseDto.from(order, itemDtos);
     }
 
-    //주문접수 -> ref. 주문 승낙 여부 확인하고, 승낙된 주문만 배달정보 생성
     @Transactional
     @Override
     public void deleteOrder(UUID orderUuid, Long userId) {
@@ -297,7 +296,6 @@ public class OrderServiceImpl implements OrderService {
             orderMenuRepository.save(orderitem);
         }
 
-        //TODO :: 배달 상태 변경 API를 별도로 호출하도록 설정
     }
 
     @Transactional
@@ -347,9 +345,6 @@ public class OrderServiceImpl implements OrderService {
         if (order.getOrderStatus() == OrderStatus.CANCELED) {
             throw new CustomOrderException(ExceptionCode.ORDER_IS_CANCLED);
         }
-        if (order.getOrderStatus() == OrderStatus.REJECTED) {
-            throw new CustomOrderException(ExceptionCode.ORDER_IS_REJECTED);
-        }
 
         order.setOrderStatus(OrderStatus.REJECTED);
 
@@ -358,7 +353,6 @@ public class OrderServiceImpl implements OrderService {
         order.changePayment(foundPayment);
 
         orderRepository.save(order);
-        // TODO:: order취소시 취소 사유 테이블을 따로 만들어서 저장해야 하나?
     }
 
     private List<OrderItemDto> toItemDtos(List<OrderMenu> orderMenus) {
