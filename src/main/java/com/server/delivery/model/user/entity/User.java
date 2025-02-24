@@ -87,7 +87,7 @@ public class User extends BaseEntity {
     private List<Owner> owners;
 
     @OneToMany(mappedBy = "user")
-    private List<UserStore> usertores;
+    private List<UserStore> userStores;
 
     @OneToMany(mappedBy = "user")
     private List<Manager> managers;
