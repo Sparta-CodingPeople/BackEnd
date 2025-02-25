@@ -27,4 +27,5 @@ public interface StoreService {
 
     PageCustom<StoreResponseDto> searchStores(String search, Pageable pageable);
 
+    PageCustom<StoreResponseDto> searchStoresByArea(String search, Pageable pageable);
 }

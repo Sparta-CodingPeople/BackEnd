@@ -28,11 +28,11 @@ public class StoreResponseDto {
 
     public static StoreResponseDto from(Store store, double reviewsRate) {
         List<String> categoryList = new ArrayList<>();
-        store.getCategoryMappings().stream().forEach(
+        store.getCategoryMappings().forEach(
                 item -> categoryList.add(item.getStoreCategory().getStoreType().getCategoryNameKorean())
         );
         List<OperationTimesresponseDto> operationTimesresponseDtoList = new ArrayList<>();
-        store.getOperatingHours().stream().forEach(
+        store.getOperatingHours().forEach(
                 item -> {
                     OperationTimes operationTimes = item.getOperationTimes();
                     OperationTimesresponseDto operationTimesresponseDto = OperationTimesresponseDto.builder()

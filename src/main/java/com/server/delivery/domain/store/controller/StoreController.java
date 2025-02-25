@@ -110,4 +110,16 @@ public class StoreController {
 
         return CustomResponse.success("매장 검색 결과", storeList);
     }
+
+    //매장 지점 검색
+    @GetMapping("/searchArea")
+    public CustomResponse<PageCustom<StoreResponseDto>> searchStoresByArea(
+            @RequestParam("search") String search,
+            @PageableDefault Pageable pageable,
+            @AuthenticationPrincipal CustomUserDetail userDetail
+    ) {
+        PageCustom<StoreResponseDto> storeList = storeService.searchStoresByArea(search, pageable);
+
+        return CustomResponse.success("매장 검색 결과", storeList);
+    }
 }
