@@ -26,7 +26,7 @@ public class Manager extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;  // 매니저가 될 유저
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_uuid")
     private Store store;  // 매니저가 속한 매장
 
