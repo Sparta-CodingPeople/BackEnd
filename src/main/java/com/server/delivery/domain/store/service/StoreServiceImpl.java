@@ -19,6 +19,7 @@ import com.server.delivery.model.store.entity.*;
 import com.server.delivery.model.store.repository.location.LocationRepository;
 import com.server.delivery.model.store.repository.operationTimes.OperationTimesRepository;
 import com.server.delivery.model.store.repository.ownerStore.OwnerStoreRepository;
+import com.server.delivery.model.store.repository.store.CustomStoreRepository;
 import com.server.delivery.model.store.repository.store.StoreRepository;
 import com.server.delivery.model.store.repository.storeCategory.StoreCategoryRepository;
 import com.server.delivery.model.store.repository.storeCategoryMapping.StoreCategoryMappingRepository;
@@ -51,6 +52,7 @@ public class StoreServiceImpl implements StoreService {
     private final OwnerStoreRepository ownerStoreRepository;
     private final UserHelper userHelper;
     private final StoreHelper storeHelper;
+    private final CustomStoreRepository customStoreRepository;
 
     private static void isStoreGranted(Store store) {
         if (!store.isStoreIsGranted()) {
@@ -221,6 +223,27 @@ public class StoreServiceImpl implements StoreService {
                 })
                 .toList();
 
+        return new PageCustom<>(storeResponseDtoList, sortedPageable, storePage.getTotalElements());
+    }
+
+    @Override
+    @Transactional
+    public PageCustom<StoreResponseDto> searchStoresByArea(String search, Pageable pageable) {
+        // 기본 정렬 조건: 생성일 내림차순 → 수정일 내림차순
+        Sort defaultSort = Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("modifiedAt"));
+
+        // pageable 객체에 기본 정렬 적용
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), defaultSort);
+
+        // Store 검색 결과 가져오기
+        Page<Store> storePage = customStoreRepository.searchStoresByArea(search, sortedPageable);
+
+        // Store 엔티티 → StoreResponseDto 변환
+        List<StoreResponseDto> storeResponseDtoList = storePage.getContent().stream()
+                .map(StoreResponseDto::from)
+                .toList();
+
+        // PageableCustom 생성 후 PageCustom 반환
         return new PageCustom<>(storeResponseDtoList, sortedPageable, storePage.getTotalElements());
     }
 
