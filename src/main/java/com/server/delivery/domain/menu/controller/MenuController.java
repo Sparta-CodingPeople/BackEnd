@@ -40,8 +40,8 @@ public class MenuController {
     @PutMapping("/{menuUuid}/menu")
     public CustomResponse<Void> updateMenu(
             @PathVariable UUID menuUuid,
-            @RequestPart MenuUpdateRequestDto requestDto,
-            @RequestPart MultipartFile foodImage,
+            @RequestPart(value = "requestDto") MenuUpdateRequestDto requestDto,
+            @RequestPart(value = "foodImage") MultipartFile foodImage,
             @AuthenticationPrincipal CustomUserDetail userDetail
     ) {
 
