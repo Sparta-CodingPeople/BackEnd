@@ -21,7 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("dev")
+@ActiveProfiles("local")
+@Transactional
 public class AuthControllerSignUpTest {
 
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -35,7 +36,7 @@ public class AuthControllerSignUpTest {
     @Test
     public void testCustomerSignUp() throws Exception {
         CustomerCreateRequestDto requestDto = CustomerCreateRequestDto.builder()
-                .username("test123123")
+                .username("user19230")
                 .password("Tester12@")
                 .firstName("John")
                 .lastName("Doe")
@@ -64,7 +65,7 @@ public class AuthControllerSignUpTest {
     @Transactional
     public void testOwnerSignUp() throws Exception {
         OwnerCreateRequestDto requestDto = OwnerCreateRequestDto.builder()
-                .username("owner1")
+                .username("owner11323")
                 .password("Password123@")
                 .firstName("John")
                 .lastName("Doe")
