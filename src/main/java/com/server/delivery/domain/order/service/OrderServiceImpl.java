@@ -75,8 +75,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private static void isOrderStoreMatchedOwnerStore(User owner, Store store) {
-        if (owner.getUserStores().stream().noneMatch(userStore ->
-                userStore.getStore().equals(store))) {
+        if (owner.getOwners().stream().noneMatch(owners ->
+                owners.getStores().equals(store))) {
             throw new CustomOrderException(ExceptionCode.ORDER_STORE_OWNER_MISMATCH);
         }
     }
@@ -209,7 +209,7 @@ public class OrderServiceImpl implements OrderService {
 
     // 매장명으로 조회(일단은?)
     @Override
-    public PageCustom<OrderSearchListResponseDto> searchOrder(Long userId, String search, Pageable pageable) {
+    public PageCustom<OrderSearchListResponseDto> searchOrder(Long userId, String keyword, Pageable pageable) {
         //고객 - 본인 주문만 , 사장 - 본인 매장만
         User user = userHelper.getUserById(userId);
 
@@ -217,23 +217,31 @@ public class OrderServiceImpl implements OrderService {
 
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), defaultSort);
 
-        Page<Order> orderPage = orderRepository.findByUserAndStoreNameContaining(user, sortedPageable, search);
-        List<Order> filteredOrders;
+        // 2. 노출 개수 제한 (10, 30, 50 중 하나, 기본값 10)
+        int size = pageable.getPageSize();
+        if (size != 10 && size != 30 && size != 50) {
+            size = 10; // 허용되지 않는 경우 기본값 10으로 설정
+        }
 
-        // 오더 검색 결과에서 오너의 매장 중 일치하는 결과들만 조회
-        //TODO 유저는 조회되지만 사장은 조회안되는 문제 해결하기
-        if (user.getUserRole().equals(UserRole.OWNER)) {
-            filteredOrders = orderPage.getContent().stream()
-                    .filter(order -> user.getUserStores().stream()
-                            .anyMatch(userStore -> userStore.getStore().equals(order.getStore()))
-                    )
-                    .toList();
+        Page<Order> orderPage = null;
+        if (keyword != null) {
+            // 키워드가 있으면, CUSTOMER는 매장이름이 포함된 주문 내역을, OWNER는 본인의 매장 주문 내역을 반환
+            if (user.getUserRole().equals(UserRole.CUSTOMER)) {
+                orderPage = orderRepository.findByUserAndStoreNameContaining(user, sortedPageable, keyword);
+            } else if (user.getUserRole().equals(UserRole.OWNER)) {
+                orderPage = orderRepository.findByStoreNameContainingAndStoreOwner(user, sortedPageable, keyword);
+            }
         } else {
-            filteredOrders = orderPage.getContent();
+            // 키워드가 없으면, CUSTOMER는 본인의 모든 주문 내역을, OWNER는 본인의 매장들의 주문 내역을 반환
+            if (user.getUserRole().equals(UserRole.CUSTOMER)) {
+                orderPage = orderRepository.findAllByUser(user, sortedPageable);
+            } else if (user.getUserRole().equals(UserRole.OWNER)) {
+                orderPage = orderRepository.findByStoreOwner(user, sortedPageable);
+            }
         }
 
         // Order → OrderSearchListResponseDto 변환
-        List<OrderSearchListResponseDto> responseDtoList = filteredOrders.stream()
+        List<OrderSearchListResponseDto> responseDtoList = Objects.requireNonNull(orderPage).getContent().stream()
                 .map(OrderSearchListResponseDto::from) // 변환 메서드 필요
                 .toList();
 
