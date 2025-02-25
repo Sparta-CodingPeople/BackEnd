@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 public class OwnerController {
     private final OwnerService ownerService;
 
-    //TODO :: 매니저 수정하는 엔티티도 필요
     @PutMapping("/{toBeManagerUserId}/toBeManagerUser")
     public ResponseEntity<Void> setManager(
             @PathVariable Long toBeManagerUserId,
