@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,7 +35,7 @@ public class Location extends BaseEntity {
     private int zipcode;
 
     @OneToMany(mappedBy = "location")
-    private List<Store> stores = new ArrayList<>();
+    private List<Store> stores;
 
     @Column(name = "location_is_deleted")
     @Builder.Default

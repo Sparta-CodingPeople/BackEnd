@@ -16,4 +16,6 @@ public interface MenuRepository {
     void delete(Menu menu);
 
     Page<Menu> findByStoreAndMenuNameContainingAndMenuAvailabilityTrue(Store store, String keyword, Pageable pageable);
+
+    Page<Menu> findAllByStoreAndMenuAvailabilityTrue(Store store, Pageable pageable);
 }

@@ -16,4 +16,10 @@ public interface OrderRepository {
     void delete(Order order);
 
     Page<Order> findByUserAndStoreNameContaining(User user, Pageable sortedPageable, String keyword);
+
+    Page<Order> findAllByUser(User user, Pageable sortedPageable);
+
+    Page<Order> findByStoreNameContainingAndStoreOwner(User user, Pageable sortedPageable, String keyword);
+
+    Page<Order> findByStoreOwner(User user, Pageable sortedPageable);
 }

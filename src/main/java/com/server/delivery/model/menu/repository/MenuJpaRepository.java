@@ -15,4 +15,6 @@ public interface MenuJpaRepository extends JpaRepository<Menu, UUID> {
     void deleteByMenuUuId(UUID menuUuid);
 
     Page<Menu> findByStoreAndMenuNameContainingAndMenuAvailabilityTrue(Store store, String keyword, Pageable pageable);
+
+    Page<Menu> findAllByStoreAndMenuAvailabilityTrue(Store store, Pageable pageable);
 }

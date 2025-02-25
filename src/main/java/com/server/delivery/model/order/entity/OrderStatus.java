@@ -6,32 +6,31 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum OrderStatus {
-	WAITING(1, "주문 승인 대기중"), // 결제 성공 시 & 주문 승인 시
-	DELIVERING(2, "배달중"),
-	REJECTED(3, "주문 거절"),
-	ACCEPT(4, "주문 승인"),
-	CANCELED(5, "주문 취소"),
-	COMPLETE(6, "배달 완료됨");
+    WAITING(1, "주문 승인 대기중"), // 결제 성공 시 & 주문 승인 시
+    DELIVERING(2, "배달중"),
+    REJECTED(3, "주문 거절"),
+    ACCEPT(4, "주문 승인"),
+    CANCELED(5, "주문 취소"),
+    COMPLETE(6, "배달 완료됨");
 
-	private final int number;
-	private final String koreanValue;
+    private final int number;
+    private final String koreanValue;
 
-	// 숫자를 enum 값으로 변환하는 메소드
-	public static OrderStatus fromNumber(int number) {
-		for (OrderStatus orderStatus : values()) {
-			if (orderStatus.getNumber() == number) {
-				return orderStatus;
-			}
-		}
-		throw new IllegalArgumentException("Invalid number: " + number);
-	}
+    // 숫자를 enum 값으로 변환하는 메소드
+    public static OrderStatus fromNumber(int number) {
+        for (OrderStatus orderStatus : values()) {
+            if (orderStatus.getNumber() == number) {
+                return orderStatus;
+            }
+        }
+        throw new IllegalArgumentException("Invalid number: " + number);
+    }
 
-	public static boolean isNotWaiting(OrderStatus orderStatus) {
-		return orderStatus != WAITING;
-	}
+    public static boolean isNotWaiting(OrderStatus orderStatus) {
+        return orderStatus != WAITING;
+    }
 
-	// todo. 환불하면 OrderStatus가 completed인 상태에서도 결제 취소 가능?
-	public static boolean canCancelPayment(OrderStatus orderStatus) {
-		return orderStatus == REJECTED || orderStatus == CANCELED;
-	}
+    public static boolean canCancelPayment(OrderStatus orderStatus) {
+        return orderStatus == REJECTED || orderStatus == CANCELED;
+    }
 }

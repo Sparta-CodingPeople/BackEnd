@@ -8,6 +8,7 @@ import com.server.delivery.domain.auth.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +21,7 @@ public class AuthController {
     // 고객 회원가입
     @PostMapping(value = "/api/v1/auth/sign-up/customer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CustomResponse<Void> createCustomerAccount(
-            @RequestPart CustomerCreateRequestDto customerCreateRequestDto,
+            @RequestPart(value = "customerCreateRequestDto") @Validated CustomerCreateRequestDto customerCreateRequestDto,
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
 
         authService.createCustomerAccount(customerCreateRequestDto, profileImage);
@@ -31,7 +32,7 @@ public class AuthController {
     //사업주 회원가입
     @PostMapping(value = "/api/v1/auth/sign-up/owner", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CustomResponse<Void> createOwnerAccount(
-            @RequestPart OwnerCreateRequestDto ownerCreateRequestDto,
+            @RequestPart(value = "ownerCreateRequestDto") @Validated OwnerCreateRequestDto ownerCreateRequestDto,
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage
     ) {
         authService.createOwnerAccount(ownerCreateRequestDto, profileImage);

@@ -69,7 +69,10 @@ public class AuthServiceImpl implements AuthService {
         //비밀번호 암호화
         signUpRequestDto.setPassword(passwordEncoder.encode(signUpRequestDto.getPassword()));
         //이미지 저장
-        String uploadedImage = s3ImageUtilImpl.uploadImageToS3(profileImage);
+        String uploadedImage = null;
+        if (profileImage != null && !profileImage.isEmpty()) {
+            uploadedImage = s3ImageUtilImpl.uploadImageToS3(profileImage);
+        }
 
         //dto -> User
         User user = CustomerCreateRequestDto.from(signUpRequestDto, uploadedImage);
@@ -83,13 +86,20 @@ public class AuthServiceImpl implements AuthService {
         //비밀번호 암호화
         requestDto.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         //이미지 저장
-        String uploadedImage = s3ImageUtilImpl.uploadImageToS3(profileImage);
+        String uploadedImage = null;
+        if (profileImage != null && !profileImage.isEmpty()) {
+            uploadedImage = s3ImageUtilImpl.uploadImageToS3(profileImage);
+        }
 
         //dto -> User
         User user = OwnerCreateRequestDto.from(requestDto, uploadedImage);
 
         User savedUser = userRepository.save(user);
-        Owner owner = Owner.builder().user(savedUser).businessNumber(requestDto.getBusinessNumber()).build();
+        Owner owner = Owner.builder()
+                .user(savedUser)
+                .businessNumber(requestDto.getBusinessNumber())
+                .stores(null)
+                .build();
 
         ownerRepository.save(owner);
 

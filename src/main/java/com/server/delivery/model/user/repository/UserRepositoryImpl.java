@@ -37,4 +37,9 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findByUsername(String username) {
         return jpaRepository.findByUsername(username);
     }
+
+    @Override
+    public Page<User> findAll(Pageable sortedPageable) {
+        return jpaRepository.findAll(sortedPageable);
+    }
 }

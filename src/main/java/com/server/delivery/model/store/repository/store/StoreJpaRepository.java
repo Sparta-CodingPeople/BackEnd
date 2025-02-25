@@ -20,4 +20,6 @@ public interface StoreJpaRepository extends JpaRepository<Store, UUID> {
 
     @Query("SELECT s FROM Store s LEFT JOIN FETCH s.reviews WHERE s.storeUuid = :storeUuid")
     Store findStoreWithReviews(UUID storeUuid);
+
+    Page<Store> findAllByStoreIsGrantedTrue(Pageable sortedPageable);
 }

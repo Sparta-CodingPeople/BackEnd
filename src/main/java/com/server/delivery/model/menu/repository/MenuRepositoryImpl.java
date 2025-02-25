@@ -35,4 +35,9 @@ public class MenuRepositoryImpl implements MenuRepository {
         return menuJpaRepository.findByStoreAndMenuNameContainingAndMenuAvailabilityTrue(store, keyword, pageable);
     }
 
+    @Override
+    public Page<Menu> findAllByStoreAndMenuAvailabilityTrue(Store store, Pageable pageable) {
+        return menuJpaRepository.findAllByStoreAndMenuAvailabilityTrue(store, pageable);
+    }
+
 }

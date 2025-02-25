@@ -32,9 +32,7 @@ public class OwnerServiceImpl implements OwnerService {
         User toBeManagerUser = userHelper.getUserById(toBeManagerUserId);
 
         Store store = storeHelper.getStoreByUuid(updateManagerRequestDto.getStoreUuid());
-        if (store.getUserStore() != null && store.getUserStore().stream().noneMatch(
-                userStore -> userStore.getUser().equals(ownerUser)
-        )) {
+        if (store.getOwner() != null && !store.getOwner().getUser().equals(ownerUser)) {
             throw new CustomUserException(ExceptionCode.OWNER_IS_NOT_MATCHED);
         }
 

@@ -67,11 +67,22 @@ public class UserServiceImpl implements UserService {
         // 기본 정렬 조건: 생성일 내림차순 → 수정일 내림차순
         Sort defaultSort = Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("modifiedAt"));
 
+        // 2. 노출 개수 제한 (10, 30, 50 중 하나, 기본값 10)
+        int size = pageable.getPageSize();
+        if (size != 10 && size != 30 && size != 50) {
+            size = 10; // 허용되지 않는 경우 기본값 10으로 설정
+        }
+
         // pageable 객체에 기본 정렬 적용
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), defaultSort);
 
+        Page<User> userPage;
         // Repository 검색 실행
-        Page<User> userPage = userRepository.findByNicknameContaining(keyword, sortedPageable);
+        if (keyword != null) {
+            userPage = userRepository.findByNicknameContaining(keyword, sortedPageable);
+        } else {
+            userPage = userRepository.findAll(sortedPageable);
+        }
 
         // User 엔티티 → UserResponseDto 변환
         List<UserResponseDto> userDtoList = userPage.getContent().stream()

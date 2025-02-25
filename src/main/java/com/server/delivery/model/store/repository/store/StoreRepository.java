@@ -19,4 +19,6 @@ public interface StoreRepository {
     Page<Store> findByStoreIsGrantedFalse(Pageable sortedPageable);
 
     Store findStoreWithReviews(UUID storeUuid);
+
+    Page<Store> findAllStoreIsGrantedTrue(Pageable sortedPageable);
 }
