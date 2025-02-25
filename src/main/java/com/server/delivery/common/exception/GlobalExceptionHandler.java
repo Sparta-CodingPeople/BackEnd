@@ -3,6 +3,7 @@ package com.server.delivery.common.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -34,5 +35,25 @@ public class GlobalExceptionHandler {
 
         // 기본적인 InternalServerError 처리
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exceptionResponse);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ExceptionResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        // 유효성 검사 실패 필드 오류 메시지 생성
+        StringBuilder errorMessage = new StringBuilder();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            errorMessage.append(error.getDefaultMessage()).append(" ");
+        });
+
+        // 예외 응답 객체 생성
+        ExceptionResponse exceptionResponse = ExceptionResponse.builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .httpStatus(HttpStatus.BAD_REQUEST)
+                .code(400)
+                .message(errorMessage.toString())
+                .build();
+
+        // BAD_REQUEST 상태와 함께 반환
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);
     }
 }
