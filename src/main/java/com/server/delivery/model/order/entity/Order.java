@@ -14,7 +14,6 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -87,7 +86,7 @@ public class Order extends BaseEntity {
     private Boolean isDeleted = Boolean.FALSE;
 
     @OneToMany(mappedBy = "order")
-    private List<OrderMenu> orderMenus = new ArrayList<>();
+    private List<OrderMenu> orderMenus;
 
     public void changeOrderStatusAfterPaymentCancel(Payment payment) {
         this.orderStatus = OrderStatus.CANCELED;
