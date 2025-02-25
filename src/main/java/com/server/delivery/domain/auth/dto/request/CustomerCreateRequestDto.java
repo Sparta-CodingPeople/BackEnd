@@ -34,15 +34,15 @@ public class CustomerCreateRequestDto {
     private String password;
 
     @NotBlank(message = "First name은 필수 입력값입니다.")
-    @Size(min = 1, max = 10)
+    @Size(min = 1, max = 10, message = "성은 1~10글자만 가능합니다.")
     private String firstName;
 
     @NotBlank(message = "Last name은 필수 입력값입니다.")
-    @Size(min = 1, max = 10)
+    @Size(min = 1, max = 10, message = "이름은 1~10글자만 가능합니다.")
     private String lastName;
 
     @NotBlank(message = "Nickname은 필수 입력값입니다.")
-    @Size(min = 1, max = 10)
+    @Size(min = 1, max = 30, message = "닉네임은 1~30글자만 가능합니다.")
     private String nickname;
 
     @Pattern(regexp = "^\\d{3}-\\d{4}-\\d{4}$", message = "Phone number는 000-0000-0000 형식이어야 합니다.")
