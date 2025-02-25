@@ -129,9 +129,20 @@ public class MenuServiceImpl implements MenuService {
 
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), defaultSort);
 
-        Store store = storeHelper.getStoreByUuid(storeUuid);
+        // 2. 노출 개수 제한 (10, 30, 50 중 하나, 기본값 10)
+        int size = pageable.getPageSize();
+        if (size != 10 && size != 30 && size != 50) {
+            size = 10; // 허용되지 않는 경우 기본값 10으로 설정
+        }
 
-        Page<Menu> menuList = menuRepository.findByStoreAndMenuNameContainingAndMenuAvailabilityTrue(store, keyword, pageable);
+        Store store = storeHelper.getStoreByUuid(storeUuid);
+        Page<Menu> menuList;
+        if (keyword != null) {
+            menuList = menuRepository.findByStoreAndMenuNameContainingAndMenuAvailabilityTrue(store, keyword, pageable);
+        } else {
+            menuList = menuRepository.findAllByStoreAndMenuAvailabilityTrue(store, pageable);
+        }
+
 
         List<MenuResponseDto> userDtoList = menuList.getContent().stream()
                 .map(MenuResponseDto::from) // UserResponseDto 변환 메서드 필요
@@ -143,9 +154,14 @@ public class MenuServiceImpl implements MenuService {
 
     private void validateIsUsersStore(Long userId, Store store) {
         User user = userHelper.getUserById(userId);
-        if (!user.getUserStores().isEmpty()) {
-            boolean isUsersStore = user.getUserStores().stream().anyMatch(
-                    userStore -> userStore.getStore().equals(store)
+
+        if (!user.getOwners().isEmpty()) {
+            boolean isUsersStore = user.getOwners().stream().anyMatch(
+                    owners -> {
+                        return owners.getStores().stream().anyMatch(
+                                stores -> stores.equals(store)
+                        );
+                    }
             );
             if (!isUsersStore) {
                 throw new CustomUserException(ExceptionCode.STORE_NOT_MATCH);
