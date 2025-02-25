@@ -19,4 +19,12 @@ public interface OrderJpaRepository extends JpaRepository<Order, UUID> {
 
     @Query("SELECT o FROM Order o WHERE o.store.storeName LIKE %:keyword% AND o.user = :user")
     Page<Order> findByUserAndStoreNameContaining(@Param("user") User user, @Param("keyword") String keyword, Pageable pageable);
+
+    Page<Order> findAllByUser(User user, Pageable sortedPageable);
+
+    @Query("SELECT o FROM Order o WHere o.store.storeName LIKE %:keyword% AND o.store.owner.user = :user")
+    Page<Order> findByStoreNameContainingAndStoreOwner(User user, Pageable sortedPageable, String keyword);
+
+    @Query("SELECT o FROM Order o WHERE o.store.owner.user = :user")
+    Page<Order> findByStoreOwner(User user, Pageable sortedPageable);
 }

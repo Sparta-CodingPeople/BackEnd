@@ -35,5 +35,21 @@ public class OrderRepositoryImpl implements OrderRepository {
         return jpaRepository.findByUserAndStoreNameContaining(user, keyword, sortedPageable);
     }
 
+    @Override
+    public Page<Order> findAllByUser(User user, Pageable sortedPageable) {
+        return jpaRepository.findAllByUser(user, sortedPageable);
+
+    }
+
+    @Override
+    public Page<Order> findByStoreNameContainingAndStoreOwner(User user, Pageable sortedPageable, String keyword) {
+        return jpaRepository.findByStoreNameContainingAndStoreOwner(user, sortedPageable, keyword);
+    }
+
+    @Override
+    public Page<Order> findByStoreOwner(User user, Pageable sortedPageable) {
+        return jpaRepository.findByStoreOwner(user, sortedPageable);
+    }
+
 
 }
