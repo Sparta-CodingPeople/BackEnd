@@ -10,7 +10,6 @@ import com.server.delivery.domain.store.dto.request.StoreRegisterRequestDto;
 import com.server.delivery.domain.store.dto.request.StoreUpdateRequestDto;
 import com.server.delivery.domain.store.dto.response.StoreResponseDto;
 import com.server.delivery.model.owner.entity.Owner;
-import com.server.delivery.model.owner.entity.OwnerStore;
 import com.server.delivery.model.owner.repository.OwnerRepository;
 import com.server.delivery.model.review.entity.Review;
 import com.server.delivery.model.store.constant.SeoulAreaCode;
@@ -24,9 +23,7 @@ import com.server.delivery.model.store.repository.store.StoreRepository;
 import com.server.delivery.model.store.repository.storeCategory.StoreCategoryRepository;
 import com.server.delivery.model.store.repository.storeCategoryMapping.StoreCategoryMappingRepository;
 import com.server.delivery.model.store.repository.storeOperationTimes.StoreOperationTimesRepository;
-import com.server.delivery.model.store.repository.userStore.UserStoreRepository;
 import com.server.delivery.model.user.entity.User;
-import com.server.delivery.model.user.entity.UserStore;
 import com.server.delivery.util.helper.StoreHelper;
 import com.server.delivery.util.helper.UserHelper;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +46,6 @@ public class StoreServiceImpl implements StoreService {
     private final OperationTimesRepository operationTimesRepository;
     private final StoreOperationTimesRepository storeOperationTimesRepository;
     private final StoreCategoryRepository storeCategoryRepository;
-    private final UserStoreRepository userStoreRepository;
     private final StoreCategoryMappingRepository storeCategoryMappingRepository;
     private final OwnerRepository ownerRepository;
     private final OwnerStoreRepository ownerStoreRepository;
@@ -81,19 +77,19 @@ public class StoreServiceImpl implements StoreService {
         store.getReviews().forEach(Review::performSoftDelete);
     }
 
+    @Transactional
     public void registerStore(
             Long userId,
             StoreRegisterRequestDto requestDto
     ) {
         User user = userHelper.getUserById(userId);
 
-
         boolean isExists = storeRepository.existsStoreByStoreName(requestDto.getStoreName());
         if (isExists) {
             throw new CustomStoreException(ExceptionCode.STORE_IS_EXIST);
         }
-        // 여러 명의 Owner를 가져오는 로직
-        List<Owner> owners = ownerRepository.findByUser(user)
+        // 한 명의 Owner를 가져오는 로직
+        Owner owner = ownerRepository.findByUser(user)
                 .orElseThrow(() -> new CustomUserException(ExceptionCode.OWNER_NOT_FOUND));
 
         // Store 생성 (필수 필드 포함)
@@ -103,20 +99,11 @@ public class StoreServiceImpl implements StoreService {
                 .storeDescription(requestDto.getStoreDescription())
                 .storeIsDeleted(false)
                 .storeIsGranted(false)
+                .owner(owner)
                 .build();
-        storeRepository.save(store);
+        Store savedStore = storeRepository.save(store);
 
-        // UserStore 저장
-        UserStore userStore = UserStore.builder().store(store).user(user).build();
-        userStoreRepository.save(userStore);
-
-        owners.forEach(owner -> {
-            OwnerStore ownerStore = OwnerStore.builder()
-                    .store(store)  // 현재 store와 연결
-                    .owner(owner)  // 현재 owner와 연결
-                    .build();
-            ownerStoreRepository.save(ownerStore);  // OwnerStore를 DB에 저장
-        });
+        owner.getStores().add(savedStore);
 
         // 위치 저장
         StoreLocationRequestDto requestLocationDto = requestDto.getStoreLocation();
@@ -131,12 +118,12 @@ public class StoreServiceImpl implements StoreService {
 
         List<StoreOperationTimes> storeOperationTimesList = savedOperationTimesList.stream()
                 .map(operationTimes -> StoreOperationTimes.builder()
-                        .store(store)
+                        .store(savedStore)
                         .operationTimes(operationTimes)
                         .build()
                 ).toList();
 
-        storeOperationTimesRepository.saveAll(storeOperationTimesList);
+        List<StoreOperationTimes> savedStoreOperationTimes = storeOperationTimesRepository.saveAll(storeOperationTimesList);
 
         // 카테고리 저장
         List<StoreCategory> storeCategoryList = requestDto.getStoreCategoryId().stream()
@@ -150,17 +137,19 @@ public class StoreServiceImpl implements StoreService {
         // StoreCategoryMapping 생성 및 저장
         List<StoreCategoryMapping> storeCategoryMappingList = savedStoreCategory.stream().map(
                 category -> StoreCategoryMapping.builder()
-                        .store(store)
+                        .store(savedStore)
                         .storeCategory(category)
                         .build()
         ).toList();
         List<StoreCategoryMapping> categoryMappingList = storeCategoryMappingRepository.saveAll(storeCategoryMappingList);
 
         // Store 엔티티에 추가 정보 업데이트 후 저장
-        store.setLocation(savedLocation);
-        store.setOperatingHours(storeOperationTimesList);
-        store.setCategoryMappings(categoryMappingList);
-        storeRepository.save(store);
+        savedStore.setLocation(savedLocation);
+        savedStore.setOperatingHours(savedStoreOperationTimes);
+        savedStore.setCategoryMappings(categoryMappingList);
+
+        storeRepository.save(savedStore);
+
     }
 
     @Transactional
@@ -206,9 +195,19 @@ public class StoreServiceImpl implements StoreService {
 
         Sort defaultSort = Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("modifiedAt"));
 
-        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), defaultSort);
+        // 2. 노출 개수 제한 (10, 30, 50 중 하나, 기본값 10)
+        int size = pageable.getPageSize();
+        if (size != 10 && size != 30 && size != 50) {
+            size = 10; // 허용되지 않는 경우 기본값 10으로 설정
+        }
 
-        Page<Store> storePage = storeRepository.findByStoreNameContainingAndStoreIsGrantedTrue(keyword, sortedPageable);
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), defaultSort);
+        Page<Store> storePage;
+        if (keyword != null) {
+            storePage = storeRepository.findByStoreNameContainingAndStoreIsGrantedTrue(keyword, sortedPageable);
+        } else {
+            storePage = storeRepository.findAllStoreIsGrantedTrue(sortedPageable);
+        }
 
         // Store 엔티티 → StoreResponseDto 변환
         List<StoreResponseDto> storeResponseDtoList = storePage.getContent().stream()
