@@ -47,4 +47,9 @@ public class StoreRepositoryImpl implements StoreRepository {
 
         return storeJpaRepository.findStoreWithReviews(storeUuid);
     }
+
+    @Override
+    public Page<Store> findAllStoreIsGrantedTrue(Pageable sortedPageable) {
+        return storeJpaRepository.findAllByStoreIsGrantedTrue(sortedPageable);
+    }
 }
